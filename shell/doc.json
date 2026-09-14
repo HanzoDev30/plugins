@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "shell.png",
+  "note": "## Shell Lsp \n - Text completion and with compilation capability" 
+}

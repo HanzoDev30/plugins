@@ -1,0 +1,7 @@
+<resources>
+    <style
+        name="BaseThemeLight"
+        parent="Theme.Material3.Dark.NoActionBar"
+    >
+         </style>
+</resources>

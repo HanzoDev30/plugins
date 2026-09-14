@@ -1,0 +1,8 @@
+{
+  "id": "com.example.rustlsp",
+  "name": "Rust LSP (rust-analyzer)",
+  "version": "1.0.0",
+  "entryClass": "com.example.rustlsp.RustLspPlugin",
+  "description": "Adds Rust language support (completion, diagnostics, hover, code actions) via rust-analyzer running inside the proot sandbox. Includes cargo run integration.",
+  "icon": "rust.png"
+}

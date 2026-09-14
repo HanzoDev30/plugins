@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.pylsp",
+  "name": "Python LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.pylsp.PythonLspPlugin",
+  "description": "Adds Python language support (completion, hover, diagnostics, formatting and more) via python-lsp-server running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "python.png"
+}

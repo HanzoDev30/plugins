@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/KotlinLspGhostPlugin/app/src/main/java/com/example/kotlinlsp/KotlinLspPlugin.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 9331,
+          "line": 77
+        },
+        "start": {
+          "column": 0,
+          "index": 9331,
+          "line": 77
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/KotlinLspGhostPlugin/app/src/main/java/com/example/kotlinlsp/KotlinLspPlugin.java"
+}

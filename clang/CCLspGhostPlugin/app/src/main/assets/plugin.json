@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.cclsp",
+  "name": "C/C++ LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.cclsp.CCLspPlugin",
+  "description": "Adds C/C++ language support (completion, hover, diagnostics, code actions, references and more) via clangd running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "c-cpp.png"
+}

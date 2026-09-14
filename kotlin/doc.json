@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "kotlin.png",
+  "note": "## Kotlin Lsp \n - Text completion and with compilation capability" 
+}

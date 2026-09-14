@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.phplsp",
+  "name": "PHP LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.phplsp.PhpLspPlugin",
+  "description": "Adds PHP language support (completion, hover, diagnostics, formatting, references and more) via intelephense running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "php.png"
+}

@@ -1,0 +1,47 @@
+plugins {
+  id 'com.android.application'
+}
+
+android {
+  namespace 'com.example.rustlsp'
+  compileSdk 36
+
+  defaultConfig {
+    applicationId 'com.example.rustlsp'
+    minSdk 26
+    targetSdk 36
+    versionCode 1
+    versionName '1.0.0'
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+}
+
+dependencies {
+  compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+}
+
+tasks.register('buildGpl') {
+  dependsOn 'assembleDebug'
+  doLast {
+    def apkDir = layout.buildDirectory.dir('outputs/apk/debug').get().asFile
+    def apk = new File(apkDir, 'app-debug.apk')
+    def gpl = new File(layout.buildDirectory.get().asFile, 'outputs/gpl/RustLspGhostPlugin.gpl')
+    gpl.parentFile.mkdirs()
+    if (apk.exists()) {
+      gpl.bytes = apk.bytes
+      println "GPL package created: ${gpl.absolutePath}"
+    } else {
+      println "APK not found at ${apk.absolutePath}"
+    }
+  }
+}

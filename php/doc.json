@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "php.png",
+  "note": "## Php Lsp \n - Text completion and with compilation capability" 
+}

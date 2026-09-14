@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "go.png",
+  "note": "## Go Lsp \n - Text completion and with compilation capability" 
+}

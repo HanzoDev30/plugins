@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.shellsp",
+  "name": "Shell LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.shellsp.ShellLspPlugin",
+  "description": "Adds Shell/Bash language support (completion, hover, diagnostics and more) via bash-language-server running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "shell.png"
+}

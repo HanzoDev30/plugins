@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.golsp",
+  "name": "Go LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.golsp.GoLspPlugin",
+  "description": "Adds Go language support (completion, hover, diagnostics, formatting, references, rename and more) via gopls running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "go.png"
+}

@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "rust.png",
+  "note": "## Rust Lsp \n - Text completion and with compilation capability" 
+}

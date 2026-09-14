@@ -1,0 +1,7 @@
+{
+  "id": "com.opencode.chat",
+  "name": "OpenCode Chat",
+  "version": "1.0.0",
+  "entryClass": "com.opencode.chat.OpenCodeChatPlugin",
+  "description": "Chat with the opencode coding agent (opencode.ai) from inside GhostIDE over its HTTP server API. Demo of the new GhostIDE EditorPanel API (VS Code-style in-editor panel) plus EditorHost and PluginLogger."
+}

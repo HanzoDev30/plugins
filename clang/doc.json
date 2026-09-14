@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "c-cpp.png",
+  "note": "## Clang Lsp \n - Text completion and with compilation capability 20x faster in All Lsp" 
+}

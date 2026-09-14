@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:background="?attr/colorSurfaceContainerLow"
+     android:padding="12dp"
+     android:orientation="vertical"
+     android:id="@+id/theme_root">
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:textSize="11sp"
+         android:paddingBottom="8dp"
+         android:textColor="?attr/colorOnSurfaceVariant"
+         android:id="@+id/theme_tag"
+         android:text="@string/theme_tag" />
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:gravity="center_vertical"
+         android:orientation="horizontal">
+
+        <EditText
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:layout_marginEnd="6dp"
+             android:padding="12dp"
+             android:textSize="13sp"
+             android:textColor="?attr/colorOnSurface"
+             android:background="@drawable/bg_theme_input"
+             android:hint="@string/theme_name_hint"
+             android:maxLines="1"
+             android:inputType="textCapSentences"
+             android:layout_weight="1"
+             android:id="@+id/theme_name" />
+
+        <Button
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:textSize="13sp"
+             android:textColor="?attr/colorOnPrimary"
+             android:paddingStart="16dp"
+             android:minWidth="0dp"
+             android:paddingEnd="16dp"
+             android:background="@drawable/bg_theme_button_primary"
+             android:minHeight="0dp"
+             android:paddingBottom="10dp"
+             android:textAllCaps="false"
+             android:id="@+id/theme_pick"
+             android:text="@string/theme_pick"
+             android:paddingTop="10dp" />
+
+    </LinearLayout>
+
+    <ImageView
+         android:layout_height="200dp"
+         android:layout_width="match_parent"
+         android:layout_marginTop="10dp"
+         android:scaleType="centerCrop"
+         android:background="@drawable/bg_theme_preview"
+         android:padding="1dp"
+         android:contentDescription="@string/theme_preview_desc"
+         android:id="@+id/theme_preview" />
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:textSize="12sp"
+         android:paddingTop="8dp"
+         android:paddingBottom="6dp"
+         android:textColor="?attr/colorOnSurfaceVariant"
+         android:id="@+id/theme_status"
+         android:text="@string/theme_status_idle" />
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:orientation="horizontal"
+         android:id="@+id/theme_swatches"
+         android:paddingTop="2dp"
+         android:paddingBottom="2dp" />
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:orientation="horizontal"
+         android:paddingTop="8dp">
+
+        <Button
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="13sp"
+             android:textColor="?attr/colorOnPrimary"
+             android:minWidth="0dp"
+             android:background="@drawable/bg_theme_button_primary"
+             android:minHeight="0dp"
+             android:paddingBottom="10dp"
+             android:textAllCaps="false"
+             android:layout_weight="1"
+             android:id="@+id/theme_generate"
+             android:text="@string/theme_generate"
+             android:paddingTop="10dp" />
+
+        <Button
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="13sp"
+             android:textColor="?attr/colorOnPrimary"
+             android:layout_marginStart="6dp"
+             android:minWidth="0dp"
+             android:background="@drawable/bg_theme_button_primary"
+             android:minHeight="0dp"
+             android:paddingBottom="10dp"
+             android:textAllCaps="false"
+             android:layout_weight="1"
+             android:id="@+id/theme_apply"
+             android:text="@string/theme_apply"
+             android:paddingTop="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:orientation="horizontal"
+         android:paddingTop="6dp">
+
+        <Button
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="12sp"
+             android:textColor="?attr/colorOnSecondaryContainer"
+             android:minWidth="0dp"
+             android:background="@drawable/bg_theme_button_tonal"
+             android:minHeight="0dp"
+             android:paddingBottom="10dp"
+             android:textAllCaps="false"
+             android:layout_weight="1"
+             android:id="@+id/theme_save_project"
+             android:text="@string/theme_save_project"
+             android:paddingTop="10dp" />
+
+        <Button
+             android:layout_height="wrap_content"
+             android:layout_width="0dp"
+             android:textSize="12sp"
+             android:textColor="?attr/colorOnSecondaryContainer"
+             android:layout_marginStart="6dp"
+             android:minWidth="0dp"
+             android:background="@drawable/bg_theme_button_tonal"
+             android:minHeight="0dp"
+             android:paddingBottom="10dp"
+             android:textAllCaps="false"
+             android:layout_weight="1"
+             android:id="@+id/theme_export"
+             android:text="@string/theme_export"
+             android:paddingTop="10dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

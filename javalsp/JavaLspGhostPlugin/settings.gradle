@@ -1,0 +1,24 @@
+// JavaLspGhostPlugin - Ghost IDE plugin: Java language support via jj-language-server
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://maven.myket.ir' }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://maven.myket.ir' }
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "JavaLspGhostPlugin"
+
+include(':app')

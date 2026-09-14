@@ -1,0 +1,11 @@
+<resources>
+    <string name="theme_tag">Ghost Theme Maker — turn any image into a GhostIDE theme</string>
+    <string name="theme_name_hint">Theme name</string>
+    <string name="theme_pick">Pick image</string>
+    <string name="theme_preview_desc">Selected image preview</string>
+    <string name="theme_status_idle">pick an image to build a palette and a theme</string>
+    <string name="theme_generate">Generate</string>
+    <string name="theme_apply">Apply</string>
+    <string name="theme_save_project">Save to project</string>
+    <string name="theme_export">Export JSON</string>
+</resources>

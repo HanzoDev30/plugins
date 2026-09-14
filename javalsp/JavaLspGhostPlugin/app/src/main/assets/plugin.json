@@ -1,0 +1,9 @@
+{
+  "id": "com.javalsp.ghostide",
+  "name": "Java LSP",
+  "version": "1.1.0",
+  "entryClass": "com.javalsp.ghostide.JavaLspPlugin",
+  "description": "Adds Java language support (completion, hover, diagnostics, document symbols, formatting, code actions, references, rename and more) by running Eclipse JDT Language Server (jdtls) inside the sandboxed Linux rootfs. Requires an existing jdtls installation and Java 21+ on the device.",
+  "minHostVersion": 0,
+  "icon": "java.png"
+}
