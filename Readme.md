@@ -14,4 +14,4 @@
 
 ## Plugin creation documentation
 
-- read [this](https://hanzodev1375.github.io/plugin-doc-ghost-ide/)
+- read [this](https://hanzodev30.github.io/plugin_doc/)
