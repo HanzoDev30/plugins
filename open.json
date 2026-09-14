@@ -1,65 +1,65 @@
 [
   {
-    "name": "kotlin",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/refs/heads/main/kotlin/kotlin.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/refs/heads/main/kotlin/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/kotlin/myktlsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/kotlin/KotlinLspGhostPlugin"
-  },
-  {
-    "name": "opencodeai",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/opencodeai/ai.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/opencodeai/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/opencodeai/opencode.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/opencodeai/OpenCodeChat"
-  },
-  {
-    "name": "rust",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/rust/rust.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/rust/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/rust/rustlsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/rust/RustLspGhostPlugin"
-  },
-  {
-    "name": "javalsp",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/javalsp/java.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/javalsp/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/javalsp/javalsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/javalsp/JavaLspGhostPlugin"
-  },
-  {
     "name": "clang",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/clang/c-cpp.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/clang/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/clang/cpplsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/clang/CCLspGhostPlugin"
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/c-cpp.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/cpplsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/clang/CCLspGhostPlugin"
   },
   {
     "name": "go",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/go/go.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/go/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/go/golsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/go/GoLspGhostPlugin"
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/go.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/golsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/go/GoLspGhostPlugin"
+  },
+  {
+    "name": "javalsp",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/javalsp/java.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/javalsp/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/javalsp/javalsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/javalsp/JavaLspGhostPlugin"
+  },
+  {
+    "name": "kotlin",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kotlin/kotlin.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kotlin/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kotlin/myktlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/kotlin/KotlinLspGhostPlugin"
+  },
+  {
+    "name": "opencodeai",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/ai.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/opencode.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/opencodeai/OpenCodeChat"
   },
   {
     "name": "php",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/php/php.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/php/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/php/phplsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/php/PhpLspGhostPlugin"
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/php/php.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/php/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/php/phplsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/php/PhpLspGhostPlugin"
   },
   {
     "name": "python",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/python/python.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/python/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/python/pylsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/python/PythonLspGhostPlugin"
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/python.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/pylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/python/PythonLspGhostPlugin"
+  },
+  {
+    "name": "rust",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/rust/rust.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/rust/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/rust/rustlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/rust/RustLspGhostPlugin"
   },
   {
     "name": "shell",
-    "icon": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/shell/shell.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/shell/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev1375/ghostideplugins/main/shell/shelllsp.gpl",
-    "source": "https://github.com/HanzoDev1375/ghostideplugins/tree/main/shell/ShellLspGhostPlugin"
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/shell/shell.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/shell/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/shell/shelllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/shell/ShellLspGhostPlugin"
   }
 ]

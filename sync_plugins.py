@@ -3,8 +3,8 @@ import urllib.request
 import os
 import sys
 
-REPO_OWNER = "HanzoDev1375"
-REPO_NAME = "ghostideplugins"
+REPO_OWNER = "HanzoDev30"
+REPO_NAME = "plugins"
 BRANCH = "main"
 API_BASE = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents"
 RAW_BASE = f"https://raw.githubusercontent.com/{REPO_OWNER}/{REPO_NAME}/{BRANCH}"
