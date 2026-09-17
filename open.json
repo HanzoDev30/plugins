@@ -61,5 +61,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/shell/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/shell/shelllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/shell/ShellLspGhostPlugin"
+  },
+  {
+    "name": "markdown",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdown.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdownlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/markdown/MarkdownLspGhostPlugin"
   }
 ]
