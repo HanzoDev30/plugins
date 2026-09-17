@@ -1,0 +1,9 @@
+{
+  "id": "com.example.markdownlsp",
+  "name": "Markdown LSP (markdownlint)",
+  "version": "1.0.0",
+  "entryClass": "com.example.markdownlsp.MarkdownLspPlugin",
+  "description": "Adds real Markdown language support (linting, diagnostics) by running markdownlint-lsp via npm-installed Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "markdown.png"
+}
