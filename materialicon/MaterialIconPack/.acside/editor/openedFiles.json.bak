@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/GhostIconPack/app/src/main/java/ir/ghostides/iconpack/GhostIconPackPlugin.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 1463,
+          "line": 40
+        },
+        "start": {
+          "column": 0,
+          "index": 1463,
+          "line": 40
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/GhostIconPack/app/src/main/java/ir/ghostides/iconpack/GhostIconPackPlugin.java"
+}

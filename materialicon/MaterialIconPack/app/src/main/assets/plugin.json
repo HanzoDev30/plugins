@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostides.iconpack",
+  "name": "Ghost Icon Pack",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostides.iconpack.GhostIconPackPlugin",
+  "description": "Custom VS Code style file icons for GhostIDE.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
