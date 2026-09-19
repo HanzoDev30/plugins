@@ -68,5 +68,19 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdownlsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/markdown/MarkdownLspGhostPlugin"
+  },
+  {
+    "name": "latteicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/latte-icon.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/latteicon/latte-icon"
+  },
+  {
+    "name": "mochaicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/mocha-icon.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/mochaicon/mocha-icon"
   }
 ]
