@@ -82,5 +82,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/mocha-icon.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/mochaicon/mocha-icon"
+  },
+  {
+    "name": "materialicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/materialicons.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/materialicon/MaterialIconPack"
   }
 ]
