@@ -1,0 +1,312 @@
+{
+  "modules": [
+    {
+      "name": "LemminxLspGhostPlugin",
+      "type": "JAVA_MODULE",
+      "contentRoots": [
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin",
+          "excludedPatterns": [
+            "build/**",
+            ".gradle/**"
+          ],
+          "excludedUrls": [],
+          "sourceRoots": [
+            {
+              "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin",
+              "type": "kotlin-source"
+            }
+          ]
+        }
+      ],
+      "dependencies": [
+        {
+          "type": "moduleSource"
+        },
+        {
+          "type": "sdk",
+          "name": "17",
+          "kind": "jdk"
+        },
+        {
+          "type": "library",
+          "name": "android-36",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "jdk-stubs",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "transformed:ide-ui-api-release:jars:classes",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "LemminxLspGhostPlugin:app:libs:ide-api-0.1.0",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "LemminxLspGhostPlugin:app:libs:plugin-api-0.1.0",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "compile_and_runtime_not_namespaced_r_class_jar:debug:processDebugResources:R",
+          "scope": "compile"
+        }
+      ]
+    },
+    {
+      "name": "app",
+      "type": "JAVA_MODULE",
+      "contentRoots": [
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app",
+          "excludedPatterns": [
+            "build/**",
+            ".gradle/**"
+          ],
+          "excludedUrls": [],
+          "sourceRoots": [
+            {
+              "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/src/main/java",
+              "type": "java-source"
+            }
+          ]
+        },
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/src/main/java",
+          "excludedPatterns": [],
+          "excludedUrls": [],
+          "sourceRoots": [
+            {
+              "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/src/main/java",
+              "type": "java-source"
+            }
+          ]
+        },
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/build/generated/ap_generated_sources/debug/out",
+          "excludedPatterns": [],
+          "excludedUrls": [],
+          "sourceRoots": [
+            {
+              "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/build/generated/ap_generated_sources/debug/out",
+              "type": "java-source"
+            }
+          ]
+        },
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/build/generated/updated_navigation_xml/debug",
+          "excludedPatterns": [],
+          "excludedUrls": [],
+          "sourceRoots": [
+            {
+              "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/build/generated/updated_navigation_xml/debug",
+              "type": "java-source"
+            }
+          ]
+        }
+      ],
+      "dependencies": [
+        {
+          "type": "moduleSource"
+        },
+        {
+          "type": "sdk",
+          "name": "17",
+          "kind": "jdk"
+        },
+        {
+          "type": "library",
+          "name": "android-36",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "jdk-stubs",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "transformed:ide-ui-api-release:jars:classes",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "LemminxLspGhostPlugin:app:libs:ide-api-0.1.0",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "LemminxLspGhostPlugin:app:libs:plugin-api-0.1.0",
+          "scope": "compile"
+        },
+        {
+          "type": "library",
+          "name": "compile_and_runtime_not_namespaced_r_class_jar:debug:processDebugResources:R",
+          "scope": "compile"
+        }
+      ]
+    }
+  ],
+  "libraries": [
+    {
+      "name": "android-36",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/home/Android/Sdk/platforms/android-36/android.jar",
+          "type": "CLASSES"
+        }
+      ]
+    },
+    {
+      "name": "jdk-stubs",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/home/lsp/jdk-stubs.jar",
+          "type": "CLASSES"
+        }
+      ]
+    },
+    {
+      "name": "transformed:ide-ui-api-release:jars:classes",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/home/.gradle/caches/9.0.0/transforms/7f50510608fdd6e7e60a103c938b2a88/transformed/ide-ui-api-release/jars/classes.jar",
+          "type": "CLASSES"
+        }
+      ]
+    },
+    {
+      "name": "LemminxLspGhostPlugin:app:libs:ide-api-0.1.0",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/libs/ide-api-0.1.0.jar",
+          "type": "CLASSES"
+        }
+      ]
+    },
+    {
+      "name": "LemminxLspGhostPlugin:app:libs:plugin-api-0.1.0",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/libs/plugin-api-0.1.0.jar",
+          "type": "CLASSES"
+        }
+      ]
+    },
+    {
+      "name": "compile_and_runtime_not_namespaced_r_class_jar:debug:processDebugResources:R",
+      "type": "COMPILE",
+      "roots": [
+        {
+          "path": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar",
+          "type": "CLASSES"
+        }
+      ]
+    }
+  ],
+  "sdks": [
+    {
+      "name": "17",
+      "type": "jdk",
+      "version": "JDK_17",
+      "homePath": "/opt/temurin/current",
+      "roots": [
+        {
+          "url": "jar:///home/lsp/jdk-stubs.jar!/",
+          "type": "CLASSES"
+        }
+      ],
+      "additionalData": ""
+    }
+  ],
+  "kotlinSettings": [
+    {
+      "name": "LemminxLspGhostPlugin",
+      "module": "LemminxLspGhostPlugin",
+      "useProjectSettings": false,
+      "sourceRoots": [],
+      "configFileItems": [],
+      "implementedModuleNames": [],
+      "dependsOnModuleNames": [],
+      "additionalVisibleModuleNames": [],
+      "productionOutputPath": null,
+      "testOutputPath": null,
+      "sourceSetNames": [],
+      "isTestModule": false,
+      "externalProjectId": "",
+      "isHmppEnabled": false,
+      "pureKotlinSourceFolders": [],
+      "kind": "default",
+      "compilerArguments": "J{\"pluginClasspaths\":[\"/home/acslab/lsp/kotlin/lib/kotlin-compose-compiler-plugin-embeddable-2.3.0.jar\"]}",
+      "additionalArguments": null,
+      "scriptTemplates": null,
+      "scriptTemplatesClasspath": null,
+      "copyJsLibraryFiles": false,
+      "outputDirectoryForJsLibraryFiles": null,
+      "targetPlatform": null,
+      "externalSystemRunTasks": [],
+      "version": 1,
+      "flushNeeded": false
+    },
+    {
+      "name": "app",
+      "module": "app",
+      "useProjectSettings": false,
+      "sourceRoots": [],
+      "configFileItems": [],
+      "implementedModuleNames": [],
+      "dependsOnModuleNames": [],
+      "additionalVisibleModuleNames": [],
+      "productionOutputPath": null,
+      "testOutputPath": null,
+      "sourceSetNames": [],
+      "isTestModule": false,
+      "externalProjectId": "",
+      "isHmppEnabled": false,
+      "pureKotlinSourceFolders": [],
+      "kind": "default",
+      "compilerArguments": "J{\"pluginClasspaths\":[\"/home/acslab/lsp/kotlin/lib/kotlin-compose-compiler-plugin-embeddable-2.3.0.jar\"]}",
+      "additionalArguments": null,
+      "scriptTemplates": null,
+      "scriptTemplatesClasspath": null,
+      "copyJsLibraryFiles": false,
+      "outputDirectoryForJsLibraryFiles": null,
+      "targetPlatform": null,
+      "externalSystemRunTasks": [],
+      "version": 1,
+      "flushNeeded": false
+    }
+  ],
+  "javaSettings": [
+    {
+      "module": "LemminxLspGhostPlugin",
+      "inheritedCompilerOutput": false,
+      "excludeOutput": false,
+      "compilerOutput": null,
+      "compilerOutputForTests": null,
+      "languageLevelId": "JDK_17",
+      "manifestAttributes": {}
+    },
+    {
+      "module": "app",
+      "inheritedCompilerOutput": false,
+      "excludeOutput": false,
+      "compilerOutput": null,
+      "compilerOutputForTests": null,
+      "languageLevelId": "JDK_17",
+      "manifestAttributes": {}
+    }
+  ]
+}

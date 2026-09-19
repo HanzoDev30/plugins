@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "xml.png",
+  "note": "## Xml Lsp \n - Text completion and with compilation capability" 
+}

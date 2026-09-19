@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/src/main/java/com/example/lemminxlsp/LemminxLspPlugin.java",
+      "selection": {
+        "end": {
+          "column": 14,
+          "index": 1381,
+          "line": 34
+        },
+        "start": {
+          "column": 14,
+          "index": 1381,
+          "line": 34
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/LemminxLspGhostPlugin/app/src/main/java/com/example/lemminxlsp/LemminxLspPlugin.java"
+}

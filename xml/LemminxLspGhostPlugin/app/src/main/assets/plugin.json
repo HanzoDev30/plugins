@@ -1,0 +1,8 @@
+{
+  "id": "com.example.lemminxlsp",
+  "name": "XML LSP (Lemminx)",
+  "version": "1.0.0",
+  "entryClass": "com.example.lemminxlsp.LemminxLspPlugin",
+  "description": "Adds real XML language support (completion, diagnostics, hover) by running Lemminx inside the sandboxed Linux rootfs.",
+  "icon": "xml.png"
+}
