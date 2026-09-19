@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostides.iconpack.mocha",
+  "name": "Mocha Icon",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostides.iconpack.mocha.MochaIconPackPlugin",
+  "description": "Catppuccin Mocha style file icons for GhostIDE.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}

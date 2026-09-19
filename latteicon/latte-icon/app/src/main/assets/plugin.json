@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostides.iconpack.latte",
+  "name": "Latte Icon",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostides.iconpack.latte.LatteIconPackPlugin",
+  "description": "Catppuccin Latte style file icons for GhostIDE.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
