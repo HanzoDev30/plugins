@@ -1,0 +1,30 @@
+plugins {
+  id 'com.android.application'
+}
+
+android {
+  namespace 'ir.ghostides.volume_cursor'
+  compileSdk 36
+
+  defaultConfig {
+    applicationId 'ir.ghostides.volume_cursor'
+    minSdk 26
+    targetSdk 36
+    versionCode 1
+    versionName '1.0.0'
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
+}
+
+dependencies {
+  compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+  compileOnly 'io.github.rosemoe:editor:0.24.6'
+  compileOnly 'io.github.rosemoe:editor-lsp:0.24.6'
+  implementation 'androidx.appcompat:appcompat:1.8.0-alpha01'
+  implementation 'com.google.android.material:material:1.14.0'
+  implementation 'androidx.activity:activity:1.9.3'
+}

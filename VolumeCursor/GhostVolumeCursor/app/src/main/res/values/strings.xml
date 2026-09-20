@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugin_title">Volume Cursor</string>
+
+  <string name="header_move_cursor">حرکت مکان‌نما</string>
+  <string name="header_select_two_buttons">انتخاب با هر دو دکمه</string>
+
+  <string name="pref_direction_title">جهت حرکت با دکمه‌های صدا</string>
+  <string name="pref_direction_desc">افقی یا عمودی؛ با وارونه کلیدها جابه‌جا می‌شوند</string>
+  <string name="pref_movement_title">حالت حرکت</string>
+  <string name="pref_movement_desc">نویسه‌به‌نویسه یا کلمه‌به‌کلمه</string>
+  <string name="pref_wrap_title">پیچیدن به خط بعد</string>
+  <string name="pref_wrap_desc">در انتهای خط، منو به خط بعد ببر</string>
+  <string name="pref_only_keyboard_title">فقط با صفحه‌کلید باز</string>
+  <string name="pref_only_keyboard_desc">وقتی صفحه‌کلید بسته است، دکمه‌های صدا کار نکنند</string>
+  <string name="pref_haptic_title">بازخورد لرزشی</string>
+  <string name="pref_haptic_desc">هنگام هر حرکت، یک لرزش کوتاه</string>
+  <string name="pref_both_title">عمل هم‌زمان هر دو دکمه</string>
+  <string name="pref_both_desc">فشار هم‌زمان + و -</string>
+
+  <string name="direction_horizontal">افقی</string>
+  <string name="direction_horizontal_reverse">افقی (وارونه)</string>
+  <string name="direction_vertical">عمودی</string>
+  <string name="direction_vertical_reverse">عمودی (وارونه)</string>
+  <string name="movement_character">نویسه‌به‌نویسه</string>
+  <string name="movement_word">کلمه‌به‌کلمه</string>
+  <string name="action_none">غیرفعال</string>
+  <string name="action_word">انتخاب کلمه‌ی جاری</string>
+  <string name="action_all">انتخاب همه</string>
+</resources>

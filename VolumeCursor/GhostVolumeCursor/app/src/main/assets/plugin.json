@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostides.volume_cursor",
+  "name": "Volume Cursor",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostides.volume_cursor.VolumeCursorPlugin",
+  "description": "Move the cursor with the volume keys.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
