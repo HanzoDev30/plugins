@@ -1,0 +1,39 @@
+plugins {
+  id 'com.android.application'
+}
+
+android {
+  namespace 'ir.ghostides.iconpack.bearded'
+  compileSdk 36
+
+  defaultConfig {
+    applicationId 'ir.ghostides.iconpack.bearded'
+    minSdk 26
+    targetSdk 36
+    versionCode 1
+    versionName '1.0.0'
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
+}
+
+dependencies {
+  compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+}
+tasks.register('gplPkg') {
+  dependsOn 'assembleDebug'
+  doLast {
+    def apk = layout.buildDirectory.file('outputs/apk/debug/app-debug.apk').get().asFile
+    def out = layout.buildDirectory.file('outputs/gpl/bearded.gpl').get().asFile
+    out.parentFile.mkdirs()
+    copy {
+      from apk
+      into out.parentFile
+      rename { 'bearded.gpl' }
+    }
+    println "GPL package: ${out}"
+  }
+}

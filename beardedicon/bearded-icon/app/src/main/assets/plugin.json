@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostides.iconpack.bearded",
+  "name": "Bearded Icons",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostides.iconpack.bearded.BeardedIconPackPlugin",
+  "description": "Bearded Icons file icons for GhostIDE.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
