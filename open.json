@@ -7,6 +7,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/clang/CCLspGhostPlugin"
   },
   {
+    "name": "css",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/css.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/csslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/css/CssLspGhostPlugin"
+  },
+  {
     "name": "go",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/go.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/doc.json",
@@ -19,6 +26,20 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/javalsp/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/javalsp/javalsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/javalsp/JavaLspGhostPlugin"
+  },
+  {
+    "name": "json",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/json/json.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/json/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/json/jsonlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/json/JsonLspGhostPlugin"
+  },
+  {
+    "name": "typescript",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TypeScriptLspGhostPlugin"
   },
   {
     "name": "kotlin",

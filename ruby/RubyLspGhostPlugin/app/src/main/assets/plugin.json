@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.rubylsp",
+  "name": "Ruby LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.rubylsp.RubyLspPlugin",
+  "description": "Adds real Ruby language support (completion, diagnostics, hover, go-to-definition, rename, formatting) by running solargraph via stdio inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "ruby.png"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.jsonsp",
+  "name": "JSON LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.jsonsp.JsonLspPlugin",
+  "description": "Adds real JSON/JSONC language support (completion, validation, hover, folding, formatting, sort) by running vscode-json-language-server via Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "json.png"
+}

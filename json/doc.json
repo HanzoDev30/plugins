@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "json.png",
+  "note": "## JSON Lsp \n - Completion, validation, hover, folding and formatting for JSON/JSONC files"
+}

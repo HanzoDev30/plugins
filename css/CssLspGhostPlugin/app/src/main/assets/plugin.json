@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.csslsp",
+  "name": "CSS LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.csslsp.CssLspPlugin",
+  "description": "Adds real CSS language support (completion, diagnostics, hover, formatting) by running vscode-css-language-server via Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "css.png"
+}

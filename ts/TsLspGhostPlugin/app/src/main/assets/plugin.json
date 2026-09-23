@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.tslsp",
+  "name": "TypeScript LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.tslsp.TsLspPlugin",
+  "description": "Adds real TypeScript/JavaScript language support (completion, diagnostics, hover, go-to-definition, rename, signature help, inlay hints) by running typescript-language-server via Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "ts.png"
+}

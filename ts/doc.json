@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "ts.png",
+  "note": "## TypeScript Lsp \n - Completion, diagnostics, hover, references, rename, definition and more for TS/JS files"
+}

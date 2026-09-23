@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "css.png",
+  "note": "## Css Lsp \n - Completion, diagnostics, hover, formatting and symbols for CSS files"
+}
