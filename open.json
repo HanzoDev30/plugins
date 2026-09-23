@@ -131,5 +131,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/bearded.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
+  },
+  {
+    "name": "ruby",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/ruby.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/rubylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ruby/RubyLspGhostPlugin"
   }
 ]
