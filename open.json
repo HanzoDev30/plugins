@@ -103,5 +103,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/VolumeCursor.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
+  },
+  {
+    "name": "beardedicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/bearded.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
   }
 ]
