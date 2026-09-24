@@ -35,13 +35,6 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/json/JsonLspGhostPlugin"
   },
   {
-    "name": "typescript",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TypeScriptLspGhostPlugin"
-  },
-  {
     "name": "kotlin",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kotlin/kotlin.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kotlin/doc.json",
