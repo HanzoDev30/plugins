@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "haskell.png",
+  "note": "## Haskell Lsp \n - Text completion and with compilation capability \n - Bundled TextMate grammar (source.haskell) \n - haskell-language-server via GHCup \n - Haskell code runner (runghc)"
+}

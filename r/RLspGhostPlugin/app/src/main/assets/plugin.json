@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.rlsp",
+  "name": "R LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.rlsp.RLspPlugin",
+  "description": "Adds R language support (completion, diagnostics, linting, formatting, go-to-definition) via the languageserver R package running inside the sandboxed Linux rootfs. Includes an Rscript code runner.",
+  "minHostVersion": 0,
+  "icon": "r.png"
+}

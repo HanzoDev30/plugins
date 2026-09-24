@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "powershell.png",
+  "note": "## R Lsp \n - Text completion and with compilation capability \n - Bundled TextMate grammar (source.r) \n - r-languageserver via R \n - R code runner (Rscript)"
+}

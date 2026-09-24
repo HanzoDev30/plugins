@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.vue",
+  "name": "Vue Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.vue.VuePlugin",
+  "description": "Vue editing features: TextMate grammar (source.vue) bundled from assets and a vue-language-server LSP provider through the proot rootfs. Adds a Sora editor panel with the Vue grammar applied.",
+  "minHostVersion": 0,
+  "icon": "vue.png"
+}

@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "perl.png",
+  "note": "## Perl Lsp \n - Text completion and with compilation capability \n - Bundled TextMate grammar (source.perl) \n - Perl Navigator (Node) via npm \n - Perl code runner"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.haskelllsp",
+  "name": "Haskell LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.haskelllsp.HaskellLspPlugin",
+  "description": "Adds Haskell language support (completion, hover, diagnostics, type information and more) via haskell-language-server running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "haskell.png"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.perllsp",
+  "name": "Perl LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.perllsp.PerlLspPlugin",
+  "description": "Adds Perl language support (completion, go-to-definition, hover, diagnostics, formatting) via the Node-based Perl Navigator language server running inside the sandboxed Linux rootfs. Includes a perl code runner.",
+  "minHostVersion": 0,
+  "icon": "perl.png"
+}

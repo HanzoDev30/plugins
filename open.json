@@ -138,5 +138,26 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/rubylsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/ruby/RubyLspGhostPlugin"
+  },
+  {
+    "name": "haskell",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskell.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskelllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/haskell/HaskellLspGhostPlugin"
+  },
+  {
+    "name": "perl",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perl.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/perl/PerlLspGhostPlugin"
+  },
+  {
+    "name": "r",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/r.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/rlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/r/RLspGhostPlugin"
   }
 ]
