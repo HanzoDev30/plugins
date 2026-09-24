@@ -159,5 +159,26 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/rlsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/r/RLspGhostPlugin"
+  },
+  {
+    "name": "powershell",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershell.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershelllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/powershell/PowerShellLspGhostPlugin"
+  },
+  {
+    "name": "ts",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TsLspGhostPlugin"
+  },
+  {
+    "name": "vue",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/vue.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/vuesupport.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/vue/VueSupportGhostPlugin"
   }
 ]
