@@ -180,5 +180,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduinolsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/arduino/ArduinoLspGhostPlugin"
+  },
+  {
+    "name": "androidbuilderforir",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/androidbuilderir.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/androidbuilderforir/AndroidBuilderPlugin"
   }
 ]
