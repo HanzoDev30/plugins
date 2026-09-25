@@ -18,7 +18,11 @@ MIRROR="${ANDROIDBUILDER_MIRROR:-https://maven.myket.ir/android-sdk}"
 CSV_URL="${ANDROIDBUILDER_CSV:-https://maven.myket.ir/sdk-archives.csv}"
 CMDLINE_ZIP="commandlinetools-linux-14742923_latest.zip"
 CMDLINE_SHA1="48833c34b761c10cb20bcd16582129395d121b27"
-BUILD_TOOLS="${ANDROIDBUILDER_BUILD_TOOLS:-37.0.0}"
+# Both revisions are installed on purpose. compileSdk and the build-tools revision are
+# independent: compileSdk 36 still leaves AGP 8.13 asking for build-tools 35.0.0, and a project on
+# a newer AGP asks for 37.0.0. Whichever the project declares, the SDK already carries it, and
+# patch-build-tools.sh replaces the x86_64 binaries of each with arm64 ones.
+BUILD_TOOLS="${ANDROIDBUILDER_BUILD_TOOLS:-35.0.0 37.0.0}"
 PLATFORMS="${ANDROIDBUILDER_PLATFORMS:-android-36}"
 NDK_VERSIONS="${ANDROIDBUILDER_NDK:-27.3.13750724 28.2.13676358 29.0.14206865}"
 CMAKE_VERSIONS="${ANDROIDBUILDER_CMAKE:-3.22.1 3.31.6}"

@@ -58,19 +58,39 @@ fi
 cd "$PROJECT_DIR"
 echo "  project: $PROJECT_DIR"
 
-# ── 2. the wrapper must be executable ───────────────────────────────────────────
-say "chmod +x gradlew"
-chmod +x ./gradlew || die "chmod +x ./gradlew failed (read-only filesystem?)"
-[ -x ./gradlew ] || die "./gradlew is still not executable"
-[ -f ./gradlew.bat ] && chmod +x ./gradlew.bat 2>/dev/null || true
+# ── 2. is the Gradle distribution already on disk? ─────────────────────────────
+# The wrapper keeps every distribution it ever unpacked under
+# $GRADLE_USER_HOME/wrapper/dists/<name>/<hash-of-url>/<name>.zip.ok, and it only downloads
+# again when that .ok marker is missing. This is checked and reported up front, so it is clear
+# whether a build is about to pull ~140 MB or reuse what is already there.
+GRADLE_HOME_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}"
+WRAPPER_PROPS="$PROJECT_DIR/gradle/wrapper/gradle-wrapper.properties"
+DIST_URL=""
+[ -f "$WRAPPER_PROPS" ] && DIST_URL="$(sed -n 's/^distributionUrl=//p' "$WRAPPER_PROPS" | tr -d '\\')"
+if [ -n "$DIST_URL" ]; then
+  DIST_NAME="$(basename "$DIST_URL")"
+  DIST_NAME="${DIST_NAME%.zip}"
+  # The hash directory name is Gradle's own, so match on the .ok marker instead of guessing it.
+  if ls "$GRADLE_HOME_DIR"/wrapper/dists/"$DIST_NAME"/*/"$DIST_NAME.zip.ok" >/dev/null 2>&1; then
+    echo "  gradle    : $DIST_NAME already installed, no download"
+  else
+    warn "gradle $DIST_NAME is not installed yet; this first build downloads it from $DIST_URL"
+  fi
+else
+  warn "no distributionUrl in $WRAPPER_PROPS, cannot tell whether Gradle is already installed"
+fi
 
 # ── 3. run the wrapper ──────────────────────────────────────────────────────────
-say "./gradlew $TASK"
-./gradlew "$TASK" || die "./gradlew $TASK failed (exit $?)"
+# /sdcard is a FUSE mount where Android grants no exec bit, so chmod silently does nothing and
+# a direct ./gradlew dies with "Permission denied". The wrapper is a shell script, so it is run
+# through bash and addressed by absolute path, never relatively.
+[ -f "$PROJECT_DIR/gradlew" ] || die "no gradlew in $PROJECT_DIR (this is not a Gradle project)"
+say "bash $PROJECT_DIR/gradlew $TASK"
+bash "$PROJECT_DIR/gradlew" "$TASK" || die "./gradlew $TASK failed (exit $?)"
 
 # ── 4. show what came out ───────────────────────────────────────────────────────
 say "APK files"
-APK_LIST="$(find . -path '*/build/outputs/apk/*' -name '*.apk' -type f 2>/dev/null | sort)"
+APK_LIST="$(find "$PROJECT_DIR" -path '*/build/outputs/apk/*' -name '*.apk' -type f 2>/dev/null | sort)"
 if [ -n "$APK_LIST" ]; then
   printf '%s\n' "$APK_LIST"
 else
