@@ -74,7 +74,8 @@ final class AndroidBuilderView {
     projectField.setSingleLine(true);
     projectField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
     projectField.setPadding(dp(context, 12), dp(context, 10), dp(context, 12), dp(context, 10));
-    projectField.setBackground(roundRect(blend(surface, Color.WHITE, 0.05f), PANEL_STROKE, 10));
+    projectField.setBackground(
+        roundRect(blend(surface, Color.TRANSPARENT, 0.05f), PANEL_STROKE, 10));
     projectField.addTextChangedListener(
         new TextWatcher() {
           @Override
