@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/AndroidBuilderPlugin/app/src/main/java/ir/ghostide/androidbuilder/AndroidBuilderPanel.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 1548,
+          "line": 57
+        },
+        "start": {
+          "column": 0,
+          "index": 1548,
+          "line": 57
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/AndroidBuilderPlugin/app/src/main/java/ir/ghostide/androidbuilder/AndroidBuilderPanel.java"
+}
