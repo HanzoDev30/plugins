@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.arduinolsp",
+  "name": "Arduino LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.arduinolsp.ArduinoLspPlugin",
+  "description": "Adds Arduino (.ino/.pde) language support (completion, diagnostics, hover, go-to-definition) via arduino-language-server running inside the sandboxed Linux rootfs, driven by arduino-cli. Includes an arduino-cli compile code runner.",
+  "minHostVersion": 0,
+  "icon": "arduino.png"
+}

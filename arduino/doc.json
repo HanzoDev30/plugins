@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "arduino.png",
+  "note": "## Arduino Lsp \n - Completion, diagnostics, hover and go-to-definition via arduino-language-server \n - Bundled TextMate grammar (source.arduino) \n - arduino-cli driven inside the proot rootfs (AVR core included) \n - arduino-cli compile code runner for .ino/.pde sketches"
+}
