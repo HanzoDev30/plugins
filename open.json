@@ -21,13 +21,6 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
   },
   {
-    "name": "breadcrumbs",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/breadcrumbs.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/breadcrumbs/BreadcrumbsPlugin"
-  },
-  {
     "name": "clang",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/c-cpp.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/doc.json",
