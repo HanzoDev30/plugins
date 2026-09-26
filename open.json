@@ -194,5 +194,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/xmllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/xml/LemminxLspGhostPlugin"
+  },
+  {
+    "name": "jsontocode",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jsontocode/json.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jsontocode/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jsontocode/jsontocode.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/jsontocode/JsonToCodePlugin"
   }
 ]
