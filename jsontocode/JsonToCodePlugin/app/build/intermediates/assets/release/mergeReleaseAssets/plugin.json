@@ -1,9 +1,0 @@
-{
-  "id": "com.jsoncode.ghostide",
-  "name": "JSON to Code",
-  "version": "1.0.0",
-  "entryClass": "com.jsoncode.ghostide.JsonToCodePlugin",
-  "description": "Convert selected JSON into source code for 20 languages.",
-  "author": "jsoncode",
-  "icon":"json.png"
-}

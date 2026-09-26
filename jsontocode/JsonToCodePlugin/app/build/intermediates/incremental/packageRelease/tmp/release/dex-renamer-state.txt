@@ -1,4 +1,0 @@
-#Sat Sep 26 09:14:53 UTC 2026
-base.0=/sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/intermediates/dex/release/mergeDexRelease/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
