@@ -1,0 +1,8 @@
+com.jsoncode.ghostide.app-pngs-0 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/generated/res/pngs/release
+com.jsoncode.ghostide.app-resValues-1 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/generated/res/resValues/release
+com.jsoncode.ghostide.app-updated_navigation_xml-2 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/generated/updated_navigation_xml/release
+com.jsoncode.ghostide.app-packageReleaseResources-3 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
+com.jsoncode.ghostide.app-packageReleaseResources-4 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
+com.jsoncode.ghostide.app-release-5 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/build/intermediates/merged_res/release/mergeReleaseResources
+com.jsoncode.ghostide.app-main-6 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/src/main/res
+com.jsoncode.ghostide.app-release-7 /sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app/src/release/res

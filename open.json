@@ -1,5 +1,33 @@
 [
   {
+    "name": "androidbuilderforir",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/androidbuilderir.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/androidbuilderforir/AndroidBuilderPlugin"
+  },
+  {
+    "name": "arduino",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduino.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduinolsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/arduino/ArduinoLspGhostPlugin"
+  },
+  {
+    "name": "beardedicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/bearded.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
+  },
+  {
+    "name": "breadcrumbs",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/breadcrumbs/breadcrumbs.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/breadcrumbs/BreadcrumbsPlugin"
+  },
+  {
     "name": "clang",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/c-cpp.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/doc.json",
@@ -19,6 +47,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/go/golsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/go/GoLspGhostPlugin"
+  },
+  {
+    "name": "haskell",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskell.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskelllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/haskell/HaskellLspGhostPlugin"
   },
   {
     "name": "javalsp",
@@ -42,11 +77,46 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/kotlin/KotlinLspGhostPlugin"
   },
   {
+    "name": "latteicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/latte-icon.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/latteicon/latte-icon"
+  },
+  {
+    "name": "markdown",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdown.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdownlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/markdown/MarkdownLspGhostPlugin"
+  },
+  {
+    "name": "materialicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/materialicons.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/materialicon/MaterialIconPack"
+  },
+  {
+    "name": "mochaicon",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/mocha-icon.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/mochaicon/mocha-icon"
+  },
+  {
     "name": "opencodeai",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/ai.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/opencode.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/opencodeai/OpenCodeChat"
+  },
+  {
+    "name": "perl",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perl.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/perl/PerlLspGhostPlugin"
   },
   {
     "name": "php",
@@ -56,11 +126,32 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/php/PhpLspGhostPlugin"
   },
   {
+    "name": "powershell",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershell.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershelllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/powershell/PowerShellLspGhostPlugin"
+  },
+  {
     "name": "python",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/python.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/pylsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/python/PythonLspGhostPlugin"
+  },
+  {
+    "name": "r",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/r.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/rlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/r/RLspGhostPlugin"
+  },
+  {
+    "name": "ruby",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/ruby.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/rubylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ruby/RubyLspGhostPlugin"
   },
   {
     "name": "rust",
@@ -77,39 +168,11 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/shell/ShellLspGhostPlugin"
   },
   {
-    "name": "markdown",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdown.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/markdown/markdownlsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/markdown/MarkdownLspGhostPlugin"
-  },
-  {
-    "name": "latteicon",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/latteicon/latte-icon.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/latteicon/latte-icon"
-  },
-  {
-    "name": "mochaicon",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/mochaicon/mocha-icon.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/mochaicon/mocha-icon"
-  },
-  {
-    "name": "materialicon",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/materialicon/materialicons.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/materialicon/MaterialIconPack"
-  },
-  {
-    "name": "xml",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/xml.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/xmllsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/xml/LemminxLspGhostPlugin"
+    "name": "ts",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TsLspGhostPlugin"
   },
   {
     "name": "VolumeCursor",
@@ -119,55 +182,6 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
   },
   {
-    "name": "beardedicon",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/bearded.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
-  },
-  {
-    "name": "ruby",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/ruby.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ruby/rubylsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/ruby/RubyLspGhostPlugin"
-  },
-  {
-    "name": "haskell",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskell.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/haskell/haskelllsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/haskell/HaskellLspGhostPlugin"
-  },
-  {
-    "name": "perl",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perl.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/perl/perllsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/perl/PerlLspGhostPlugin"
-  },
-  {
-    "name": "r",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/r.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/r/rlsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/r/RLspGhostPlugin"
-  },
-  {
-    "name": "powershell",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershell.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/powershell/powershelllsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/powershell/PowerShellLspGhostPlugin"
-  },
-  {
-    "name": "ts",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TsLspGhostPlugin"
-  },
-  {
     "name": "vue",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/vue.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/doc.json",
@@ -175,17 +189,10 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/vue/VueSupportGhostPlugin"
   },
   {
-    "name": "arduino",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduino.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduinolsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/arduino/ArduinoLspGhostPlugin"
-  },
-  {
-    "name": "androidbuilderforir",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/androidbuilderir.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/androidbuilderforir/AndroidBuilderPlugin"
+    "name": "xml",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/xml.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/xml/xmllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/xml/LemminxLspGhostPlugin"
   }
 ]

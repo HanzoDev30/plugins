@@ -1,0 +1,7 @@
+int id json_class_name 0x7f010000
+int id json_generate 0x7f010001
+int id json_language 0x7f010002
+int id json_status 0x7f010003
+int id json_to_code_root 0x7f010004
+int id json_use_selection 0x7f010005
+int layout json_to_code_view 0x7f020000

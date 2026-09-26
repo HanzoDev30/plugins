@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/sdcard/apk/ghostideplugins-main/jsontocode/JsonToCodePlugin/app"
+    name=":app"
+    type="APP"
+    maven="ArduinoLspGhostPlugin:app:unspecified"
+    agpVersion="8.13.0"
+    buildFolder="build"
+    bootClassPath="/root/Android/sdk/platforms/android-36/android.jar:/root/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

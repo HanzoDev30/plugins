@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/JsonToCodePlugin/app/src/main/java/com/jsoncode/ghostide/JsonToCodeView.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 6439,
+          "line": 198
+        },
+        "start": {
+          "column": 0,
+          "index": 6439,
+          "line": 198
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/JsonToCodePlugin/app/src/main/java/com/jsoncode/ghostide/JsonToCodeView.java"
+}

@@ -1,0 +1,9 @@
+R_DEF: Internal format may change without notice
+local
+id json_class_name
+id json_generate
+id json_language
+id json_status
+id json_to_code_root
+id json_use_selection
+layout json_to_code_view

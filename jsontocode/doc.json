@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "json.png",
+  "note": "## JSON to Code \n - Turn a JSON selection into a ready to use model class \n - Long press a JSON object or array to grab the whole block, or select the text yourself \n - Nothing is generated until text is actually selected \n - 20 output languages: Java, Kotlin, JavaScript, TypeScript, Python, PHP, C#, C++, Go, Rust, Swift, Dart, Ruby, Scala, Groovy, Perl, Lua, R, Shell and SQL \n - Nested objects and arrays are typed recursively, and the file is written to the project root then opened in the editor"
+}

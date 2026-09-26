@@ -1,0 +1,10 @@
+
+base"
+
+https://maven.myket.ir")
+'
+%https://repo.maven.apache.org/maven2/"
+
+https://maven.myket.ir"
+
+https://jitpack.io
