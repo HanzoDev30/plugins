@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "lua.png",
+  "note": "## Lua Language Server\n - Official `lua-language-server` (LuaLS) running inside the rootfs\n - Completion, diagnostics, hover, goto definition, references and formatting for `.lua` files\n - Works with LuaRocks, Neovim configs, LÖVE2D and OpenResty projects\n - The setup action auto-detects arm64/x64 and downloads the matching release"
+}

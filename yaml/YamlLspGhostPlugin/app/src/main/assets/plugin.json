@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.yamllsp",
+  "name": "YAML LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.yamllsp.YamlLspPlugin",
+  "description": "Adds real YAML language support (schema-aware completion, validation, hover, formatting) by running yaml-language-server via Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "yaml.png"
+}

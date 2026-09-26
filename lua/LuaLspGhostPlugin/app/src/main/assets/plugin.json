@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.lualls",
+  "name": "Lua LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.lualls.LuaLspPlugin",
+  "description": "Adds real Lua language support (completion, diagnostics, hover, goto definition, formatting) by running the official lua-language-server binary inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "lua.png"
+}

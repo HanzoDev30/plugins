@@ -1,0 +1,108 @@
+# test.yml — sanity check for the YAML LSP plugin
+# Covers: comments, anchors, multi-document, nested maps/sequences,
+# block scalars, quoting, env interpolation, empty values.
+
+name: ghostide-yaml-demo
+version: 1.0.0
+description: >
+  Multi-line folded scalar used to test
+  hover and folding behaviour.
+license: MIT
+
+defaults: &defaults
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  web:
+    <<: *defaults
+    image: nginx:1.27-alpine
+    container_name: web
+    ports:
+      - "8080:80"
+      - target: 8443
+        published: "8443"
+        protocol: tcp
+    environment:
+      - NODE_ENV=production
+      - TZ=Asia/Tehran
+    depends_on: [api, db]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      retries: 3
+    command: |
+      nginx -g 'daemon off;'
+
+  api:
+    <<: *defaults
+    image: ghostide/api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD: production
+    env_file:
+      - .env
+      - .env.local
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1G
+
+  db:
+    <<: *defaults
+    image: postgres:16-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER:-ghost}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?required}
+      POSTGRES_DB: app
+    ports: []
+    profiles: [dev, debug]
+
+volumes:
+  pgdata: {}
+
+networks:
+  default:
+    driver: bridge
+
+---
+# second document: GitHub Actions style
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag"
+        required: true
+        default: v0.0.1
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: |
+          npm ci
+          npm test
+      - name: Upload
+        if: always()
+        run: echo "done" && exit 0

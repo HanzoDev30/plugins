@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "pip.png",
+  "note": "## Pip Installer\n - A panel next to the editor: search a package on PyPI and tap **Install**\n - No terminal — the install runs inside the proot Debian with live output in the log box\n - Curated list of common libraries (Essentials, Web, Data, Dev, Automation) plus a free-form pip command box\n - Resolves the real project through the official PyPI JSON API, so `python_telegram_bot` installs `python-telegram-bot`\n - Missing Python/pip is installed automatically before the first package\n - Buttons for `pip list`, clearing the log, and sending the command to a real terminal when needed\n - Colours come from the IDE theme, so it follows light/dark and every colour scheme"
+}

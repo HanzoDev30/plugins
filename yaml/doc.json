@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "yaml.png",
+  "note": "## YAML Language Server\n - Schema-aware completion, validation and hover for `.yaml` / `.yml` files\n - Works with Docker Compose, GitHub Actions, Ansible and Kubernetes manifests\n - Installs `yaml-language-server` through Node.js inside the rootfs"
+}

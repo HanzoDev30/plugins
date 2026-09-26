@@ -3,6 +3,8 @@ package ir.ghostide.androidbuilder;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import ir.hanzodev1375.ghostide.ide.ui.api.EditorPanel;
 import ir.hanzodev1375.ghostide.ide.ui.api.PluginStateMod;
@@ -39,6 +41,14 @@ final class AndroidBuilderPanel implements EditorPanel {
     return "AndroidBuilder for ir";
   }
 
+  /**
+   * The host caches one view per panel id, but that cache lives on the host and the host is rebuilt
+   * whenever the editor Activity is (rotation, theme change, a second editor window). This panel is
+   * a process-wide singleton, so the root it hands out can still be attached to the previous host's
+   * wrapper, and {@code ViewGroup.addView} throws on a child that already has a parent — the whole
+   * app goes down. Handing the view back detached makes the panel safe to open from any host, any
+   * number of times.
+   */
   @Override
   public View createView() {
     if (view == null) {
@@ -47,7 +57,15 @@ final class AndroidBuilderPanel implements EditorPanel {
     } else {
       view.refresh();
     }
-    return view.getRoot();
+    View root = view.getRoot();
+    ViewParent parent = root.getParent();
+    if (parent instanceof ViewGroup) {
+      ((ViewGroup) parent).removeView(root);
+    }
+    root.setLayoutParams(
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    return root;
   }
 
   @Override

@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.pipui",
+  "name": "Pip Installer",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.pipui.PipUiPlugin",
+  "description": "A side panel next to the editor that installs Python packages without opening a terminal: search PyPI live, tap a package, and the install runs inside the proot Debian with live output. Also ships a curated list of common libraries and a free-form command box.",
+  "minHostVersion": 0,
+  "icon": "pip.png"
+}
