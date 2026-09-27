@@ -1,7 +1,14 @@
 [
   {
+    "name": "VolumeCursor",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/VolumeCursor.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
+  },
+  {
     "name": "androidbuilderforir",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/.trashed-1793014153-icon.png",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/icon.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/androidbuilderir.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/androidbuilderforir/AndroidBuilderPlugin"
@@ -38,8 +45,8 @@
     "name": "composerlsp",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/composerlsp.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/composerlsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/composerlsp/ComposerLspGhostPlugin"
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/app-debug.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/composerlsp/test-project"
   },
   {
     "name": "css",
@@ -82,6 +89,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jsontocode/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jsontocode/jsontocode.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/jsontocode/JsonToCodePlugin"
+  },
+  {
+    "name": "kmplsp",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/kmplsp.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/kmplsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/kmplsp/test-project"
   },
   {
     "name": "kotlin",
@@ -203,13 +217,6 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TsLspGhostPlugin"
   },
   {
-    "name": "VolumeCursor",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/VolumeCursor.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
-  },
-  {
     "name": "vue",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/vue.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/vue/doc.json",
@@ -229,12 +236,5 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
-  },
-  {
-    "name": "kmplsp",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/kmplsp.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/kmplsp/kmplsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/kmplsp/test-project"
   }
 ]
