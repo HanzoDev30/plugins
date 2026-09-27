@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import ir.hanzodev1375.ghostide.ide.ui.api.EditorPanel;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileEvent;
 import ir.hanzodev1375.ghostide.ide.ui.api.PluginStateMod;
 import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
 
@@ -16,6 +17,10 @@ import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
  * <p>{@link #getLastPath()} deliberately stays {@code null}: the host asks every registered panel
  * which file the code runner should run, and an empty answer keeps the runner on the file the user
  * has open instead of hijacking it.
+ *
+ * <p>The project path is the opposite: it is never stored, it is read from the tab that is open
+ * every time the panel appears. {@link #onFileEvent} is how a tab that opens while the panel is
+ * already up reaches the field.
  */
 final class AndroidBuilderPanel implements EditorPanel {
 
@@ -71,5 +76,16 @@ final class AndroidBuilderPanel implements EditorPanel {
   @Override
   public String getLastPath() {
     return null;
+  }
+
+  /**
+   * A tab opened, closed, renamed or was deleted: the project field follows whatever is in front of
+   * the user now. A panel that was never opened has no field to move, so there is nothing to do.
+   */
+  void onFileEvent(FileEvent event) {
+    AndroidBuilderView view = this.view;
+    if (view != null) {
+      view.onTabChanged();
+    }
   }
 }

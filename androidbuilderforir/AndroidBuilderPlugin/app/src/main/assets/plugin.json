@@ -3,7 +3,7 @@
   "name": "AndroidBuilder for ir",
   "version": "1.0.0",
   "entryClass": "ir.ghostide.androidbuilder.AndroidBuilderPlugin",
-  "description": "Builds Android APKs inside Ghost IDE: installs the Android SDK from the Iranian mirror maven.myket.ir (checksum verified), accepts the SDK licenses, points Gradle at the same mirror, patches build-tools for arm64, and then builds the project with its own ./gradlew wrapper (chmod +x, then ./gradlew assembleDebug / assembleRelease).",
+  "description": "Builds Android APKs inside Ghost IDE: installs the Android SDK from the Iranian mirror maven.myket.ir (checksum verified), accepts the SDK licenses, points Gradle at the same mirror, patches build-tools for arm64, and then builds the project with its own Gradle wrapper, always as 'bash <path>/gradlew assembleDebug' because /sdcard grants no exec bit.",
   "minHostVersion": 0,
   "icon": "icon.png"
 }

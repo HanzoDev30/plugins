@@ -30,6 +30,21 @@ final class PluginScripts {
   static final String CONFIGURE_GRADLE = "configure-gradle.sh";
   static final String PATCH_BUILD_TOOLS = "patch-build-tools.sh";
   static final String BUILD_APK = "build-apk.sh";
+  static final String STOP_BUILD = "stop-build.sh";
+
+  /**
+   * Every command the panel hands to the terminal carries this. The scripts use it to keep quiet
+   * about the things the panel shows itself: the build result box in the terminal would be a second
+   * window for the event the panel already reports as an install dialog.
+   */
+  private static final String PLUGIN_UI = "ANDROIDBUILDER_PLUGIN_UI=1";
+  static final String LIST_TASKS = "list-tasks.sh";
+
+  /** Sourced, not executed: the project lookup and the task list shared by the two commands. */
+  private static final String GRADLE_COMMON = "gradle-common.sh";
+
+  /** Sourced: asks a host whether it is reachable, so a mirror is only used where it is needed. */
+  private static final String NET_ROUTE = "net-route.sh";
 
   private static final String STAGE_DIR_NAME = "androidbuilder";
   private static final String PROOT_STAGE_DIR = "/ghostide/files/" + STAGE_DIR_NAME;
@@ -50,9 +65,47 @@ final class PluginScripts {
     if (body.isEmpty()) {
       return null;
     }
+    List<String> companions = companions(asset);
+    List<String> bodies = new ArrayList<>();
+    for (String companion : companions) {
+      String library = readAsset(companion);
+      if (library.isEmpty()) {
+        plugin.getLogger().error("Cannot read asset " + companion);
+        return null;
+      }
+      bodies.add(library);
+    }
     String tail = withArguments(arguments);
-    String staged = stage(asset, body);
-    return staged == null ? inline(asset, body, tail) : "bash " + staged + tail + "\n";
+
+    List<String> staged = new ArrayList<>();
+    boolean allStaged = true;
+    for (int index = 0; index < companions.size(); index++) {
+      String path = stage(companions.get(index), bodies.get(index));
+      if (path == null) {
+        allStaged = false;
+        break;
+      }
+      staged.add(path);
+    }
+    String script = stage(asset, body);
+    if (!allStaged || script == null) {
+      return inline(asset, body, companions, bodies, tail);
+    }
+    return PLUGIN_UI + " bash " + script + tail + "\n";
+  }
+
+  /** Scripts that are {@code source}d rather than run, so they have to sit in the same directory. */
+  private static List<String> companions(String asset) {
+    if (BUILD_APK.equals(asset) || LIST_TASKS.equals(asset)) {
+      return List.of(GRADLE_COMMON);
+    }
+    if (INSTALL_JDK.equals(asset)
+        || INSTALL_SDK.equals(asset)
+        || CONFIGURE_GRADLE.equals(asset)
+        || PATCH_BUILD_TOOLS.equals(asset)) {
+      return List.of(NET_ROUTE);
+    }
+    return List.of();
   }
 
   /** Terminal path of a staged script, or {@code null} if it is not on disk. */
@@ -76,23 +129,42 @@ final class PluginScripts {
   }
 
   /**
-   * Fallback for the rare case where the Android side cannot write the script: the script travels
-   * inside the command as base64, which is still a single line.
+   * Fallback for the rare case where the Android side cannot write the scripts: they travel inside
+   * the command as base64, which is still a single line.
    */
-  private String inline(String asset, String body, String tail) {
-    String payload = android.util.Base64.encodeToString(
+  private String inline(
+      String asset, String body, List<String> companions, List<String> bodies, String tail) {
+    StringBuilder command = new StringBuilder("mkdir -p ").append(FALLBACK_DIR);
+    for (int index = 0; index < companions.size(); index++) {
+      command
+          .append(" && printf %s '")
+          .append(base64(bodies.get(index)))
+          .append("' | base64 -d > ")
+          .append(FALLBACK_DIR)
+          .append("/")
+          .append(companions.get(index));
+    }
+    command
+        .append(" && printf %s '")
+        .append(base64(body))
+        .append("' | base64 -d > ")
+        .append(FALLBACK_DIR)
+        .append("/")
+        .append(asset)
+        .append(" && ")
+        .append(PLUGIN_UI)
+        .append(" bash ")
+        .append(FALLBACK_DIR)
+        .append("/")
+        .append(asset)
+        .append(tail)
+        .append("\n");
+    return command.toString();
+  }
+
+  private static String base64(String body) {
+    return android.util.Base64.encodeToString(
         body.getBytes(StandardCharsets.UTF_8), android.util.Base64.NO_WRAP);
-    String path = FALLBACK_DIR + "/" + asset;
-    return "mkdir -p "
-        + FALLBACK_DIR
-        + " && printf %s '"
-        + payload
-        + "' | base64 -d > "
-        + path
-        + " && bash "
-        + path
-        + tail
-        + "\n";
   }
 
   private static String withArguments(String... arguments) {

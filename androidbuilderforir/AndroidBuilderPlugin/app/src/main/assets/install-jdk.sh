@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
 # AndroidBuilder for ir - OpenJDK 17 inside the proot Debian; ./gradlew cannot start without it.
+#
+# The JDK itself comes from apt, so the only question is which archive apt should talk to. Debian's
+# own servers are asked first: on a network that cannot reach them they answer 403/404 (or not at
+# all), and then one of the regional mirrors is picked - the first that answers, not a hard coded
+# one, since a mirror that is blocked here may be perfectly fine elsewhere.
 set -e
 
 JDK_PACKAGE="${ANDROIDBUILDER_JDK_PACKAGE:-openjdk-17-jdk-headless}"
 APT_MIRROR="${ANDROIDBUILDER_APT_MIRROR:-}"
+DEBIAN_PROBE="${ANDROIDBUILDER_DEBIAN_PROBE:-https://deb.debian.org/debian/dists/bookworm/Release}"
+MIRROR_CANDIDATES="${ANDROIDBUILDER_APT_MIRRORS:-https://mirrors.aliyun.com/debian https://mirrors.cloud.tencent.com/debian}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 say()  { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[1;33mWARNING: %s\033[0m\n' "$*"; }
 die()  { printf '\033[1;31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
+
+# shellcheck source=net-route.sh
+[ -f "$SCRIPT_DIR/net-route.sh" ] && . "$SCRIPT_DIR/net-route.sh"
 
 java_major() {
   java -version 2>&1 | sed -nE 's/.*version "([0-9]+).*/\1/p' | head -n1
@@ -31,6 +42,26 @@ fi
 
 # ── 2. install when needed ──────────────────────────────────────────────────────
 if [ "$NEED_INSTALL" = 1 ]; then
+  if [ -z "$APT_MIRROR" ] && command -v ab_route >/dev/null 2>&1; then
+    say "asking deb.debian.org whether it answers from here"
+    DEBIAN_ROUTE="$(ab_route "$DEBIAN_PROBE" '^Package:')"
+    case "$DEBIAN_ROUTE" in
+      direct*)
+        say "deb.debian.org answers normally here ($DEBIAN_ROUTE): apt keeps its own archive"
+        ;;
+      *)
+        warn "deb.debian.org is not usable here ($DEBIAN_ROUTE)"
+        APT_MIRROR="$(ab_route_pick $MIRROR_CANDIDATES || true)"
+        if [ -n "$APT_MIRROR" ]; then
+          warn "using $APT_MIRROR instead"
+        else
+          APT_MIRROR="${MIRROR_CANDIDATES%% *}"
+          warn "none of the regional mirrors answered either; trying $APT_MIRROR anyway"
+        fi
+        ;;
+    esac
+  fi
+
   if [ -n "$APT_MIRROR" ]; then
     say "switching apt to $APT_MIRROR"
     if [ -f /etc/apt/sources.list ]; then

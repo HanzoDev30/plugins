@@ -41,7 +41,8 @@ final class TerminalLauncher {
       plugin.getLogger().warn("Terminal intent failed, falling back to the code runner", e);
       CodeRunnerHost runner = plugin.getServices().get(IdeHostServices.CODE_RUNNER_HOST);
       if (runner == null) {
-        Toast.makeText(context, "ترمینال در دسترس نیست", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, context.getString(R.string.toast_terminal_missing), Toast.LENGTH_LONG)
+            .show();
         return;
       }
       runner.runShell(command, false);

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # AndroidBuilder for ir - replace the x86_64 binaries inside build-tools with arm64 ones
 # and make Gradle use the local aapt2 instead of downloading it from Google.
+#
+# The arm64 binaries come from a GitHub release. GitHub is asked first whether it answers from this
+# network - on a link that cannot reach it the API answers 403, and then a proxy in front of the
+# same release is used, so the script works on a sanctioned network and on a clean one.
 set -e
 
 SDK_DIR="${ANDROID_HOME:-$HOME/Android/sdk}"
@@ -8,14 +12,49 @@ BUILD_TOOLS_DIR="$SDK_DIR/build-tools"
 GRADLE_USER_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}"
 REPO="Commit451/android-arm-build-tools"
 RELEASE_BASE="${ANDROIDBUILDER_RELEASE_BASE:-https://github.com/$REPO/releases/download}"
+GITHUB_API="https://api.github.com"
+PROXY_CANDIDATES="${ANDROIDBUILDER_GITHUB_PROXIES:-https://ghproxy.net/https://github.com https://gh-proxy.com/https://github.com}"
 BINARIES="aapt2 aidl zipalign split-select"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 say()  { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[1;33mWARNING: %s\033[0m\n' "$*" >&2; }
 die()  { printf '\033[1;31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
 
+# shellcheck source=net-route.sh
+[ -f "$SCRIPT_DIR/net-route.sh" ] && . "$SCRIPT_DIR/net-route.sh"
+
 [ -d "$BUILD_TOOLS_DIR" ] || die "no build-tools at $BUILD_TOOLS_DIR. Run 'Install Android SDK' first."
 command -v curl >/dev/null 2>&1 || { apt-get update -qq; apt-get install -y -qq curl; }
+
+# ── 0. can GitHub be reached, and if not, through which proxy? ───────────────────
+API_BASE="$GITHUB_API"
+if command -v ab_route >/dev/null 2>&1; then
+  say "asking the GitHub API whether it answers from here"
+  GITHUB_ROUTE="$(ab_route "$GITHUB_API/repos/$REPO/releases?per_page=1" '"tag_name"')"
+  case "$GITHUB_ROUTE" in
+    direct*)
+      say "GitHub answers normally here ($GITHUB_ROUTE)"
+      ;;
+    *)
+      warn "the GitHub API is not usable here ($GITHUB_ROUTE)"
+      for proxy in $PROXY_CANDIDATES; do
+        PROXY_ROUTE="$(ab_route "$proxy/$REPO/releases/latest" 'platform-tools')"
+        case "$PROXY_ROUTE" in
+          direct*)
+            API_BASE="$proxy/api"
+            RELEASE_BASE="$proxy/$REPO/releases/download"
+            say "using the proxy $proxy ($PROXY_ROUTE)"
+            break
+            ;;
+        esac
+      done
+      case "$API_BASE" in
+        "$GITHUB_API") die "GitHub is blocked here and no configured proxy answered; set ANDROIDBUILDER_RELEASE_BASE to a reachable copy of the arm64 build-tools" ;;
+      esac
+      ;;
+  esac
+fi
 
 # ── 1. the arm64 releases that exist ─────────────────────────────────────────────
 # Upstream publishes one release per build-tools revision, but not every revision has one:
@@ -23,7 +62,7 @@ command -v curl >/dev/null 2>&1 || { apt-get update -qq; apt-get install -y -qq 
 # fine, so a missing tag falls back to the newest release of the same major version, and
 # only then to the newest release overall.
 say "listing the available arm64 build-tools releases"
-TAGS_RAW="$(curl -fsSL --retry 3 --max-time 90 "https://api.github.com/repos/$REPO/releases?per_page=100" \
+TAGS_RAW="$(curl -fsSL --retry 3 --max-time 90 "$API_BASE/repos/$REPO/releases?per_page=100" \
   | sed -n 's/.*"tag_name": *"platform-tools-\([^"]*\)".*/\1/p')" \
   || die "could not reach the GitHub API to list the arm64 releases"
 [ -n "$TAGS_RAW" ] || die "no platform-tools-* release found in $REPO"
@@ -116,4 +155,4 @@ else
 fi
 
 say "done"
-echo "Next: 'Build debug APK' runs ./gradlew assembleDebug for you."
+echo "Next: 'Build debug APK' runs 'bash gradlew assembleDebug' for you (/sdcard has no exec bit, so never ./.)"

@@ -25,17 +25,19 @@ set -euo pipefail
 
 KMP_LSP_VERSION="${KMP_LSP_VERSION:-v0.27.0}"
 REPO="Hessesian/kmp-lsp"
-INSTALL_DIR="/opt/kmp-lsp"
-BIN_DIR="/usr/local/bin"
+INSTALL_DIR="${KMP_LSP_INSTALL_DIR:-/opt/kmp-lsp}"
+BIN_DIR="${KMP_LSP_BIN_DIR:-/usr/local/bin}"
 WRAPPER="$BIN_DIR/kmp-lsp"
 DEBUG_FLAG="/tmp/kmp-lsp-debug"
 LOG_FILE="/tmp/kmp-lsp.log"
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Scratch space for the downloads, removed on any exit path.
+# Scratch space for the downloads, removed on any exit path. Written as an `if` and not as
+# `[ -n "$KMP_TMP" ] && rm ...`: the trap runs under `set -e`, so a failing test as the trap's last
+# command would end the whole install with status 1 - a successful install reported as a failure.
 KMP_TMP=""
-cleanup() { [ -n "$KMP_TMP" ] && rm -rf "$KMP_TMP"; }
+cleanup() { if [ -n "${KMP_TMP:-}" ]; then rm -rf "$KMP_TMP"; fi; }
 trap cleanup EXIT
 
 say()  { printf ':: %s\n' "$*"; }
@@ -179,14 +181,22 @@ write_env_file() {
 # Ghost IDE's process launcher cannot pass environment variables to the server, so anything
 # kmp-lsp reads from the environment has to be exported here.
 #
+# ${INSTALL_DIR}/kmp-env.sh already detects the Android SDK, the Gradle cache and the JDK from
+# the paths the AndroidBuilder plugin installs them into, and it is sourced first. Anything set
+# here wins, so this file is only for the cases it cannot guess.
+#
 # Android SDK: kmp-lsp looks at local.properties' sdk.dir first, then ANDROID_HOME, then
-# ANDROID_SDK_ROOT. Export it here if your project has no local.properties. It indexes the
-# highest platforms/android-XX/android.jar it finds, so the SDK has to be inside the rootfs.
-#export ANDROID_HOME=/opt/android-sdk
+# ANDROID_SDK_ROOT. It indexes the highest platforms/android-XX/android.jar it finds, so the SDK
+# has to be inside the rootfs.
+#export ANDROID_HOME=/root/Android/sdk
 #
 # Gradle cache: *-sources.jar and compiled jars are read from here, which is what makes
 # library hover/completion work. Point it at the directory that holds caches/modules-2.
 #export GRADLE_USER_HOME=/root/.gradle
+#
+# Workspace root: the launcher sets this to the directory the server is started in, which is the
+# project root the editor opened. Set it only to pin one project for every file.
+#export KMP_LSP_WORKSPACE_ROOT=/root/projects/MyApp
 #
 # Server log: set to a path to get DEBUG logging into that file (kmp-lsp-debug does this too).
 #export KMP_LSP_LOG_FILE=/tmp/kmp-lsp.log
@@ -197,8 +207,9 @@ KMP_ENV_EOF
 
 # ── 4. launcher ──────────────────────────────────────────────────────────────
 # The plugin launches /usr/local/bin/kmp-lsp, so the wrapper owns the stable path and
-# the version-independent bits (debug logging); the real binaries stay in /opt/kmp-lsp
-# together, because the sidecar is discovered relative to the running executable.
+# the version-independent bits (environment, workspace preparation, debug logging); the real
+# binaries stay in /opt/kmp-lsp together, because the sidecar is discovered relative to the
+# running executable.
 write_wrapper() {
   mkdir -p "$BIN_DIR"
   cat > "$WRAPPER" <<KMP_WRAPPER_EOF
@@ -212,26 +223,34 @@ if [ ! -x "\$REAL" ]; then
   exit 127
 fi
 
-# ── Android SDK ─────────────────────────────────────────────────────────────
+# ── Android SDK, Gradle cache, JDK ───────────────────────────────────────────
 # The host runs this wrapper as a non-interactive process, so the shell startup files the
-# AndroidBuilder plugin writes are never read: bash only sources /etc/profile.d/* and ~/.bashrc
+# AndroidBuilder plugin writes are not read: bash only sources /etc/profile.d/* and ~/.bashrc
 # for login/interactive shells. kmp-lsp needs ANDROID_HOME to find the android.jar that makes
-# Activity/Context/Compose resolve, so pick the same paths that plugin uses - in the same order,
-# and prefer its own env file when it exists so both plugins cannot disagree.
-if [ -z "\${ANDROID_HOME:-}" ]; then
-  if [ -f /etc/profile.d/androidbuilder-env.sh ]; then
-    . /etc/profile.d/androidbuilder-env.sh
+# Activity/Context/Compose resolve, and GRADLE_USER_HOME to find the *-sources.jar that carries
+# library documentation. Both come from the same place the AndroidBuilder plugin installs them
+# into, and both are optional here so that a missing SDK is a warning and not a dead server.
+if [ -f "${INSTALL_DIR}/kmp-env.sh" ]; then
+  . "${INSTALL_DIR}/kmp-env.sh"
+fi
+
+# ── workspace ────────────────────────────────────────────────────────────────
+# The host hands the server the project root as its working directory but no way to pass
+# environment variables or a --root flag, and kmp-lsp resolves its root from
+# KMP_LSP_WORKSPACE_ROOT, then the client's rootUri, then a config file. Saying it here makes
+# the root the directory the file was opened from instead of a guess - a wrong root is exactly
+# what makes a server "not recognise the project".
+#
+# Only with no arguments: with arguments this wrapper is running a CLI subcommand
+# (kmp-lsp sources --root .), which must not be second-guessed. The preparation itself is
+# idempotent, and it writes workspace.json (the local jars: app/libs, build/libs) plus
+# verifies the discovered sources, which is what the CLI subcommands read as well.
+if [ "\$#" -eq 0 ]; then
+  export KMP_LSP_WORKSPACE_ROOT="\${KMP_LSP_WORKSPACE_ROOT:-\$PWD}"
+  if [ -f "${INSTALL_DIR}/prepare.sh" ]; then
+    bash "${INSTALL_DIR}/prepare.sh" --quick "\$PWD" >/dev/null 2>&1 || true
   fi
 fi
-if [ -z "\${ANDROID_HOME:-}" ]; then
-  for candidate in "\$HOME/Android/sdk" "\$HOME/.Android/sdk" /opt/android-sdk; do
-    if [ -d "\$candidate" ]; then
-      export ANDROID_HOME="\$candidate"
-      break
-    fi
-  done
-fi
-[ -n "\${ANDROID_HOME:-}" ] && export ANDROID_SDK_ROOT="\${ANDROID_SDK_ROOT:-\$ANDROID_HOME}"
 
 # Last, so anything set here wins over the detection above.
 [ -f "${INSTALL_DIR}/env" ] && . "${INSTALL_DIR}/env"
@@ -248,6 +267,19 @@ exec "\$REAL" "\$@"
 KMP_WRAPPER_EOF
   chmod 0755 "$WRAPPER"
   ok "launcher -> ${WRAPPER}"
+
+  # The full preparation, on demand: `cd <project> && kmp-lsp-prepare`. The launcher only ever
+  # does the cheap half, because a phone should not extract hundreds of sources jars on every
+  # keystroke-triggered server start.
+  cat > "$BIN_DIR/kmp-lsp-prepare" <<KMP_PREPARE_EOF
+#!/usr/bin/env bash
+# Prepares the project in the current directory (or the one given as the 1st argument) for
+# kmp-lsp: points it at the Android SDK and the Gradle cache, writes workspace.json for the
+# project's own jars, lists the sources it will index and extracts the library sources.
+exec bash "${INSTALL_DIR}/prepare.sh" "\$@"
+KMP_PREPARE_EOF
+  chmod 0755 "$BIN_DIR/kmp-lsp-prepare"
+  ok "workspace preparation -> ${BIN_DIR}/kmp-lsp-prepare"
 
   # Convenience toggle for the flag above, so the user never has to remember the path.
   cat > "$BIN_DIR/kmp-lsp-debug" <<KMP_DEBUG_EOF
@@ -279,6 +311,15 @@ smoke_test() {
   else
     warn "kmp-jar-indexer sidecar did not respond - library symbols stay limited to the rg fallback"
   fi
+
+  # What the environment detection found, before any file is opened: a missing SDK here is the
+  # reason a Java file resolves no Android class later on, and it is much easier to fix now.
+  if [ -f "${INSTALL_DIR}/prepare.sh" ]; then
+    echo
+    bash "${INSTALL_DIR}/prepare.sh" --quick "${INSTALL_DIR}" || true
+    echo
+    warn "the report above is for ${INSTALL_DIR} itself; run 'kmp-lsp-prepare' inside a project"
+  fi
 }
 
 # ── 6. main ──────────────────────────────────────────────────────────────────
@@ -293,6 +334,14 @@ main() {
     download_binaries
   fi
 
+  # kmp-env.sh and prepare.sh are written by the plugin, straight from the assets, before this
+  # script runs: the launcher and the preparation must not be a copy of what is in here, or a
+  # fix in one place and not the other is exactly how the two drift apart.
+  for required in kmp-env.sh prepare.sh; do
+    [ -f "${INSTALL_DIR}/${required}" ] \
+      || warn "${INSTALL_DIR}/${required} is missing - re-run the install action from the plugin manager"
+  done
+
   write_wrapper
   write_env_file
   smoke_test
@@ -302,14 +351,18 @@ main() {
 kmp-lsp ${KMP_LSP_VERSION} is ready.
 
   .kt .kts .java .swift  ->  ${WRAPPER}
+  prepare a project      ->  cd <project> && ${BIN_DIR}/kmp-lsp-prepare
+  what will be indexed   ->  kmp-lsp sources --root . --json
   server log (debug)     ->  ${LOG_FILE}   (enable: kmp-lsp-debug on)
   real binaries          ->  ${INSTALL_DIR}
   environment overrides  ->  ${INSTALL_DIR}/env
 
-Android SDK: the launcher picks up whatever the AndroidBuilder plugin installed
-(\$HOME/Android/sdk by default) and hands it to kmp-lsp as ANDROID_HOME, so android.jar and the
-SDK sources are indexed without any extra configuration. Library symbols come from
-*-sources.jar in ~/.gradle/caches - run one build with AndroidBuilder once and they appear.
+Android SDK: the launcher resolves it from the paths the AndroidBuilder plugin installs into
+(\$HOME/Android/sdk) and hands it to kmp-lsp as ANDROID_HOME, so android.jar - and with it
+Activity/Context/Compose - is indexed with no configuration. The Gradle cache is resolved the
+same way; run one build with AndroidBuilder so *-sources.jar exist, and run kmp-lsp-prepare once
+per project to extract them. A project's own jars (app/libs, build/libs) are handed to the server
+by the launcher as initializationOptions.indexingOptions.jarPaths, relative to the project root.
 KMP_SUMMARY_EOF
 }
 

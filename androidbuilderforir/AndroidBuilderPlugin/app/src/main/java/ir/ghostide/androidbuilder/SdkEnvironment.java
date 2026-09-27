@@ -23,13 +23,28 @@ final class SdkEnvironment {
 
   private static final String ROOTFS = "rootfs/debian";
 
+  private final Context context;
   private final File rootfs;
   private final File sdk;
 
   SdkEnvironment(PluginContext plugin) {
-    Context context = plugin.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+    this.context = plugin.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
     this.rootfs = new File(context.getFilesDir(), ROOTFS);
     this.sdk = new File(new File(rootfs, "root/Android"), "sdk");
+  }
+
+  /** One step a first build needs: what the dialog says, and the script that provides it. */
+  static final class Missing {
+
+    final int label;
+    final String script;
+    final String argument;
+
+    Missing(int label, String script, String argument) {
+      this.label = label;
+      this.script = script;
+      this.argument = argument;
+    }
   }
 
   boolean hasRootfs() {
@@ -47,7 +62,7 @@ final class SdkEnvironment {
   String jdkLabel() {
     File jdk = jdkDirectory();
     if (jdk == null) {
-      return "نصب نیست - پروژه بدون JVM بیلد نمی‌شود";
+      return context.getString(R.string.jdk_missing_note);
     }
     return jdk.getName();
   }
@@ -138,22 +153,22 @@ final class SdkEnvironment {
   }
 
   /** Everything a first build needs, ignoring the optional NDK and CMake. */
-  List<String> missingForBuild() {
-    List<String> missing = new ArrayList<>();
+  List<Missing> missingForBuild() {
+    List<Missing> missing = new ArrayList<>();
     if (!hasRootfs()) {
-      missing.add("proot (ترمینال هنوز بوت نشده)");
+      missing.add(new Missing(R.string.missing_proot, null, null));
     }
     if (!hasJdk()) {
-      missing.add("JDK 17");
+      missing.add(new Missing(R.string.missing_jdk, PluginScripts.INSTALL_JDK, null));
     }
     if (!hasSdk()) {
-      missing.add("Android SDK");
+      missing.add(new Missing(R.string.missing_sdk, PluginScripts.INSTALL_SDK, null));
     }
     if (!hasBuildTools()) {
-      missing.add("build-tools");
+      missing.add(new Missing(R.string.missing_build_tools, PluginScripts.INSTALL_SDK, null));
     }
     if (!gradleMirrorReady()) {
-      missing.add("آینه Gradle");
+      missing.add(new Missing(R.string.missing_mirror, PluginScripts.CONFIGURE_GRADLE, null));
     }
     return missing;
   }

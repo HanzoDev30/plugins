@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">AndroidBuilder for ir</string>
+    <string name="app_subtitle">ساخت APK با bash gradlew — منبع دانلود در لحظهٔ نصف انتخاب می‌شود</string>
+
+    <string name="action_refresh">به‌روزرسانی</string>
+    <string name="action_detect">تشخیص</string>
+
+    <string name="section_status">وضعیت محیط</string>
+    <string name="section_project">پروژه</string>
+    <string name="section_setup">نصب و راه‌اندازی</string>
+    <string name="section_build">ساخت</string>
+
+    <string name="status_proot">پروژهٔ ترمینال (proot)</string>
+    <string name="status_jdk">JDK 17</string>
+    <string name="status_sdk">Android SDK</string>
+    <string name="status_build_tools">build-tools</string>
+    <string name="status_platforms">platforms</string>
+    <string name="status_mirror">منبع Gradle</string>
+    <string name="status_optional">NDK / CMake (اختیاری)</string>
+    <string name="status_last_build">آخرین بیلد</string>
+    <string name="status_checking">در حال بررسی…</string>
+    <string name="status_not_installed">نصب نیست</string>
+    <string name="status_rootfs_ready">Debian آماده است</string>
+    <string name="status_rootfs_missing">هنوز بوت نشده</string>
+    <string name="status_mirror_ready">آینه فعال</string>
+    <string name="status_mirror_missing">تنظیم نشده</string>
+    <string name="status_optional_none">نصب نشده — برای اپ‌های Kotlin لازم نیست</string>
+    <string name="status_optional_item">%1$s %2$s</string>
+    <string name="status_last_build_none">هنوز بیلدی نشده</string>
+    <string name="status_last_build_running">در حال بیلد %1$s…</string>
+    <string name="status_last_build_ok">موفق: %1$s (%2$s)</string>
+    <string name="status_last_build_no_apk">موفق، ولی APK پیدا نشد</string>
+    <string name="status_last_build_failed">شکست خورد: %1$s</string>
+    <string name="status_last_build_cancelled">لغو شد (%1$s)</string>
+
+    <string name="project_hint">از تب باز گرفته می‌شود</string>
+    <string name="project_label">مسیر پروژه‌ای که gradlew دارد</string>
+    <string name="project_help">با هر تبی که باز می‌کنی همین‌جا نوشته می‌شود و ذخیره نمی‌شود؛ می‌توانی دستی هم بنویسی.</string>
+
+    <string name="action_install_jdk">نصب JDK 17</string>
+    <string name="action_install_sdk">نصب SDK</string>
+    <string name="action_install_ndk">نصب NDK (اختیاری)</string>
+    <string name="action_install_cmake">نصب CMake (اختیاری)</string>
+    <string name="action_configure_gradle">آینهٔ Gradle</string>
+    <string name="action_patch_build_tools">ابزارهای ARM64</string>
+    <string name="action_sdkmanager_ready">sdkmanager نصب است</string>
+    <string name="action_install_sdkmanager">نصب sdkmanager (اختیاری، ۱۳۰ مگ)</string>
+
+    <string name="action_build_debug">ساخت Debug APK</string>
+    <string name="action_build_release">ساخت Release APK</string>
+    <string name="action_list_tasks">لیست تسک‌های پروژه</string>
+    <string name="action_stop_build">توقف بیلد</string>
+    <string name="toast_stopping">در حال توقف بیلد…</string>
+    <string name="action_install_last">نصب آخرین APK</string>
+    <string name="build_help">هر دکمه ترمینال را باز می‌کند و کار را همان‌جا انجام می‌دهد؛ وقتی بیلد تمام شد، خود پلاگین دیالوگ نصب را نشان می‌دهد.</string>
+
+    <string name="section_custom_task">تسک سفارشی</string>
+    <string name="custom_task_label">هر تسک Gradle را می‌پذیرد</string>
+    <string name="custom_task_hint">مثال: testDebugUnitTest</string>
+    <string name="custom_task_help">مثال: bundleRelease، :app:test، clean یا installDebug. هرچه اینجا نیست، با «لیست تسک‌های پروژه» پیدا می‌شود.</string>
+    <string name="action_run_task">اجرا</string>
+    <string name="toast_no_task">اول اسم تسک را بنویس</string>
+    <string name="toast_task_shape">اسم تسک باید فقط حروف، عدد، نقطه، خط تیره و : داشته باشد</string>
+
+    <string name="section_custom_flags">فلگ کاستوم گریدل</string>
+    <string name="custom_flags_label">این فلگ‌ها به هر بیلد و لیست تسک اضافه می‌شود</string>
+    <string name="custom_flags_hint">مثال: --info --offline</string>
+    <string name="custom_flags_help">مثال: --info --stacktrace، یا --offline، یا --no-build-cache، یا -PversionName=2. مقدار فلگ را حتماً با = بنویس. خالی بگذاری، بیلد مثل قبل اجرا می‌شود.</string>
+    <string name="toast_flag_shape">این یک فلگ گریدل نیست: %1$s</string>
+    <string name="toast_flags_long">فلگ‌ها خیلی طولانی‌اند (بیشتر از %1$d کاراکتر)</string>
+
+    <string name="dialog_env_incomplete">محیط بیلد کامل نیست</string>
+    <string name="dialog_env_incomplete_question">همین الان در ترمینال نصبش کنم و بعد بیلد بگیرم؟</string>
+    <string name="missing_proot">proot (ترمینال هنوز بوت نشده)</string>
+    <string name="missing_jdk">JDK 17</string>
+    <string name="missing_sdk">Android SDK</string>
+    <string name="missing_build_tools">build-tools</string>
+    <string name="missing_mirror">آینهٔ Gradle</string>
+    <string name="jdk_missing_note">نصب نیست - پروژه بدون JVM بیلد نمی‌شود</string>
+    <string name="dialog_build_ok">بیلد کامل شد</string>
+    <string name="dialog_build_ok_message">%1$s\n%2$s\n%3$s\n\nهمین حالا نصبش کنم؟</string>
+    <string name="dialog_build_done_no_apk">بیلد تمام شد</string>
+    <string name="dialog_build_done_no_apk_message">بیلد موفق بود، ولی فایل APK پیدا نشد:\n%1$s</string>
+    <string name="dialog_build_failed">بیلد شکست خورد</string>
+    <string name="dialog_build_failed_message">تسک %1$s شکست خورد.\n\n%2$s\n\nلاگ کامل در ترمینال: %3$s</string>
+    <string name="dialog_install_failed">نصب نشد</string>
+    <string name="dialog_install_failed_message">نصب خودکار ممکن نشد%1$s\n\nمسیر فایل:\n%2$s</string>
+    <string name="dialog_install_failed_reason">:\n%1$s</string>
+    <string name="reason_unknown">دلیل نامشخص</string>
+    <string name="proot_log_path">~/.config/androidbuilder/build.log</string>
+
+    <string name="toast_script_missing">اسکریپت در دسترس نیست: %1$s</string>
+    <string name="toast_no_project">پروژه‌ای با gradlew پیدا نشد</string>
+    <string name="toast_tab_not_project">این تب داخل پروژه‌ای با gradlew نیست</string>
+    <string name="toast_project">پروژه: %1$s</string>
+    <string name="toast_scripts_incomplete">اسکریپت‌ها کامل آماده نشدند</string>
+    <string name="toast_no_apk_yet">هنوز APK ساخته نشده</string>
+    <string name="toast_installing">در حال نصت %1$s…</string>
+    <string name="toast_install_handed_over">نصب به سیستم سپرده شد</string>
+    <string name="toast_build_failed">بیلد شکست خورد: %1$s</string>
+    <string name="toast_build_ok_no_apk">بیلد موفق بود ولی APK روی دیسک نیست</string>
+    <string name="toast_install_failed">نصب خودکار ممکن نشد: %1$s</string>
+    <string name="toast_terminal_missing">ترمینال در دسترس نیست</string>
+</resources>
