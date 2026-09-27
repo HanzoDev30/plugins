@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- نام محصول: ترجمه نمی‌شود -->
+    <string name="pipui_app_name" translatable="false">Pip Installer</string>
+
+    <string name="pipui_subtitle">نصب کتابخانه‌های پایتون بدون ترمینال — داخل همان Debian</string>
+
+    <!-- ورودی‌ها -->
+    <string name="pipui_hint_search">نام پکیج را بنویس، مثلا requests یا fastapi</string>
+    <string name="pipui_hint_command">یا هر دستور pip دلخواه، مثلا: install httpx</string>
+
+    <!-- عنوان بخش‌ها -->
+    <string name="pipui_section_search">جستجو در PyPI</string>
+    <string name="pipui_section_custom">دستور دلخواه</string>
+    <string name="pipui_section_catalog">پکیج‌های پرکاربرد</string>
+    <string name="pipui_section_output">خروجی</string>
+
+    <!-- دکمه‌ها -->
+    <string name="pipui_action_search">جستجو</string>
+    <string name="pipui_action_install_direct">نصب مستقیم</string>
+    <string name="pipui_action_run_in_proot">اجرا در پروت</string>
+    <string name="pipui_action_open_terminal">باز کردن در ترمینال</string>
+    <string name="pipui_action_clear_output">پاک کردن خروجی</string>
+    <string name="pipui_action_installed_list">فهرست نصب‌شده‌ها</string>
+    <string name="pipui_action_install">نصب</string>
+    <string name="pipui_action_install_requirement">نصب %1$s</string>
+
+    <!-- مشخصات پکیج -->
+    <string name="pipui_label_version">نسخه %1$s</string>
+    <string name="pipui_label_author">نویسنده: %1$s</string>
+    <string name="pipui_label_requires_python">نیازمند پایتون: %1$s</string>
+
+    <!-- عنوان عملیات (در لاگ و توست) -->
+    <string name="pipui_title_install">نصب %1$s</string>
+    <string name="pipui_title_run_command">اجرای دستور</string>
+    <string name="pipui_title_list_installed">فهرست پکیج‌های نصب‌شده</string>
+
+    <!-- وضعیت -->
+    <string name="pipui_status_no_debian">Debian نصب نیست</string>
+    <string name="pipui_status_no_python">پایتون نصب نیست</string>
+    <string name="pipui_status_ready">آماده</string>
+    <string name="pipui_status_running">در حال اجرا</string>
+    <string name="pipui_status_success">موفق</string>
+    <string name="pipui_status_failure">ناموفق</string>
+
+    <!-- نتیجه جستجو -->
+    <string name="pipui_searching">در حال جستجو…</string>
+    <string name="pipui_search_fail_hint">با «نصب مستقیم» می‌توانی همین متن را به pip بدهی.</string>
+
+    <!-- خطوط لاگ؛ نماد ابتدای خط رنگ لاگ را تعیین می‌کند، پس باید اول بماند -->
+    <string name="pipui_log_intro">یک پکیج را سرچ کن یا از لیست زیر انتخاب کن.</string>
+    <string name="pipui_log_command">$ %1$s</string>
+    <string name="pipui_log_done">✔ %1$s انجام شد</string>
+    <string name="pipui_log_failed">✘ %1$s با کد %2$d شکست خورد</string>
+    <!-- داخل کوتیشن تا فاصله پایانی حذف نشود؛ هم‌زمان نشانه رنگ لاگ هم هست -->
+    <string name="pipui_log_error_prefix">"خطا: "</string>
+
+    <!-- توست‌ها -->
+    <string name="pipui_toast_type_package_name">اول یک نام پکیج بنویس</string>
+    <string name="pipui_toast_type_command">اول یک دستور بنویس</string>
+    <string name="pipui_toast_empty_package_name">نام پکیج خالی است</string>
+    <string name="pipui_toast_debian_not_booted">Debian هنوز بوت نشده</string>
+    <string name="pipui_toast_no_terminal">ترمینال در دسترس نیست</string>
+    <string name="pipui_toast_busy">یک عملیات در حال اجراست</string>
+    <string name="pipui_toast_success">موفق %1$s</string>
+    <string name="pipui_toast_failure">خطا %1$s</string>
+
+    <!-- خطاهای شبکه و PyPI -->
+    <string name="pipui_error_type_package_name">اول یک نام پکیج بنویس</string>
+    <string name="pipui_error_no_project">پروژه‌ای با نام \'%1$s\' در PyPI نیست</string>
+    <string name="pipui_error_http_status">PyPI پاسخ HTTP %1$d داد</string>
+    <string name="pipui_error_network">دسترسی به PyPI ممکن نشد: %1$s</string>
+    <string name="pipui_error_no_rootfs">"روت‌فایل Debian پیدا نشد: "</string>
+
+    <!-- گروه‌های کاتالوگ -->
+    <string name="pipui_group_essentials">پایه و پرکاربرد</string>
+    <string name="pipui_group_web_api">وب و API</string>
+    <string name="pipui_group_data_science">داده و علم</string>
+    <string name="pipui_group_dev_tooling">توسعه و ابزار</string>
+    <string name="pipui_group_automation">اتوماسیون</string>
+
+    <!-- کاتالوگ: پایه و پرکاربرد -->
+    <string name="pipui_pkg_requests_summary">کتابخانه HTTP، نقطه شروع همه کارها</string>
+    <string name="pipui_pkg_pip_summary">خود pip را به‌روز نگه می‌دارد</string>
+    <string name="pipui_pkg_setuptools_summary">بک‌اند ساخت پکیج برای setup.py</string>
+    <string name="pipui_pkg_build_summary">ابزار ساخت بر اساس PEP 517</string>
+    <string name="pipui_pkg_wheel_summary">چرخ آماده برای نصب سریع</string>
+    <string name="pipui_pkg_virtualenv_summary">محیط ایزوله بدون نیاز به venv</string>
+    <string name="pipui_pkg_rich_summary">جدول و نوار پیشرفت و خط‌های زیبا</string>
+    <string name="pipui_pkg_colorama_summary">خروجی رنگی در ترمینال ویندوز</string>
+
+    <!-- کاتالوگ: وب و API -->
+    <string name="pipui_pkg_flask_summary">وب‌اپ سبک WSGI</string>
+    <string name="pipui_pkg_fastapi_summary">فریم‌ورک وب ناهمگام با مستندات OpenAPI</string>
+    <string name="pipui_pkg_uvicorn_summary">سرور ASGI برای FastAPI</string>
+    <string name="pipui_pkg_django_summary">فریم‌ورک کامل وب با پنل مدیریت و ORM</string>
+    <string name="pipui_pkg_httpx_summary">کلاینت HTTP با پشتیبانی ناهمگام و HTTP/2</string>
+    <string name="pipui_pkg_pydantic_summary">اعتبارسنجی داده بر اساس type hint</string>
+    <string name="pipui_pkg_python_dotenv_summary">خواندن فایل‌های .env</string>
+    <string name="pipui_pkg_jinja2_summary">موتور قالب‌بندی</string>
+
+    <!-- کاتالوگ: داده و علم -->
+    <string name="pipui_pkg_numpy_summary">آرایه چندبعدی و هسته ریاضی</string>
+    <string name="pipui_pkg_pandas_summary">دیتافریم و کار با CSV/Excel</string>
+    <string name="pipui_pkg_matplotlib_summary">رسم نمودار</string>
+    <string name="pipui_pkg_scipy_summary">روتین‌های محاسبات علمی</string>
+    <string name="pipui_pkg_scikit_learn_summary">یادگیری ماشین</string>
+    <string name="pipui_pkg_pillow_summary">باز کردن، ذخیره و تغییر اندازه تصویر</string>
+    <string name="pipui_pkg_openpyxl_summary">خواندن و نوشتن فایل .xlsx</string>
+    <string name="pipui_pkg_lxml_summary">تجزیه سریع XML و HTML</string>
+    <string name="pipui_pkg_beautifulsoup4_summary">استخراج داده از HTML</string>
+
+    <!-- کاتالوگ: توسعه و ابزار -->
+    <string name="pipui_pkg_pytest_summary">اجرای تست</string>
+    <string name="pipui_pkg_black_summary">فرمت‌کننده کد با سبک ثابت</string>
+    <string name="pipui_pkg_ruff_summary">لینتر و فرمت‌کننده سریع</string>
+    <string name="pipui_pkg_mypy_summary">بررسی ایستای نوع</string>
+    <string name="pipui_pkg_pylint_summary">لینت عمیق کد</string>
+    <string name="pipui_pkg_ipython_summary">محیط تعاملی REPL</string>
+    <string name="pipui_pkg_debugpy_summary">دیباگر برای VS Code</string>
+    <string name="pipui_pkg_pyinstaller_summary">تبدیل اسکریپت به فایل اجرایی</string>
+
+    <!-- کاتالوگ: اتوماسیون -->
+    <string name="pipui_pkg_click_summary">ساخت ابزار خط فرمان</string>
+    <string name="pipui_pkg_typer_summary">ابزار خط فرمان بر پایه Click و type hint</string>
+    <string name="pipui_pkg_schedule_summary">زمان‌بندی کارها به سبک cron</string>
+    <string name="pipui_pkg_paramiko_summary">کلاینت SSH</string>
+    <string name="pipui_pkg_psutil_summary">اطلاعات پروسه و سیستم</string>
+    <string name="pipui_pkg_watchdog_summary">رویدادهای تغییر فایل‌سیستم</string>
+    <string name="pipui_pkg_openai_summary">کلاینت API اوپن‌ای‌آی</string>
+    <string name="pipui_pkg_python_telegram_bot_summary">ربات تلگرام</string>
+
+</resources>

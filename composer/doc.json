@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "composer.png",
+  "note": "## Composer\n - A panel next to the editor for PHP packages: search Packagist and tap **Install**\n - No terminal — `composer require / remove / update / install` runs inside the proot Debian with live output in the log box\n - Curated list of common packages (Essentials, Frameworks, Database, Web, Dev) grouped by category, plus a free-form composer command box\n - Project actions: install all, update, validate, dump-autoload and show direct dependencies\n - Resolves the real project by walking up to the nearest `composer.json`, or pick a folder by hand\n - Buttons for clearing the log and sending a command to a real terminal when needed\n - Missing PHP or Composer is installed automatically before the first package\n - Every widget is built in code on a `ContextThemeWrapper` of the platform DayNight theme and every colour is read from a theme attribute, so the panel follows light/dark without shipping a single resource of its own"
+}

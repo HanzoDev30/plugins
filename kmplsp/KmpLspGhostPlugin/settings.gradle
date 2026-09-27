@@ -1,0 +1,24 @@
+// KmpLspGhostPlugin - Ghost IDE plugin: Kotlin/Java/Swift language support via kmp-lsp
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://maven.myket.ir' }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://maven.myket.ir' }
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "KmpLspGhostPlugin"
+
+include(':app')

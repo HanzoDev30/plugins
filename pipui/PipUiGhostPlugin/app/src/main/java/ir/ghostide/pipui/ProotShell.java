@@ -68,7 +68,8 @@ final class ProotShell {
       throws IOException, InterruptedException {
     File rootfs = rootfsDir(context);
     if (!rootfs.isDirectory()) {
-      throw new IOException("Debian rootfs not found: " + rootfs.getAbsolutePath());
+      throw new IOException(
+          context.getString(R.string.pipui_error_no_rootfs) + rootfs.getAbsolutePath());
     }
 
     String nativeLibDir = context.getApplicationInfo().nativeLibraryDir;

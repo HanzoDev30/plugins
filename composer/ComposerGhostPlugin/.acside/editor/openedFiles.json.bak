@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/apk/ghostideplugins-main/pipui/PipUiGhostPlugin/app/src/main/java/ir/ghostide/pipui/PipPanelView.java",
+      "selection": {
+        "end": {
+          "column": 2,
+          "index": 16074,
+          "line": 459
+        },
+        "start": {
+          "column": 2,
+          "index": 16074,
+          "line": 459
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/apk/ghostideplugins-main/pipui/PipUiGhostPlugin/app/src/main/java/ir/ghostide/pipui/PipPanelView.java"
+}

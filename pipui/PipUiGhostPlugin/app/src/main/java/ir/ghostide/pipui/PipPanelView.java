@@ -76,8 +76,8 @@ final class PipPanelView {
     this.context = context;
     this.plugin = plugin;
 
-    this.searchField = field("نام پکیج را بنویس، مثلا requests یا fastapi");
-    this.commandField = field("یا هر دستور pip دلخواه، مثلا: install httpx");
+    this.searchField = field(getString(R.string.pipui_hint_search));
+    this.commandField = field(getString(R.string.pipui_hint_command));
 
     LinearLayout content = column();
     content.setPadding(dp(18), dp(14), dp(18), dp(20));
@@ -86,10 +86,10 @@ final class PipPanelView {
     header.setOrientation(LinearLayout.HORIZONTAL);
     header.setGravity(Gravity.CENTER_VERTICAL);
     LinearLayout titles = column();
-    TextView title = label("Pip Installer", 20, true);
+    TextView title = label(getString(R.string.pipui_app_name), 20, true);
     title.setTextColor(C_INSTALL);
     titles.addView(title);
-    TextView sub = label("نصب کتابخانه‌های پایتون بدون ترمینال — داخل همان Debian", 12, false);
+    TextView sub = label(getString(R.string.pipui_subtitle), 12, false);
     sub.setTextColor(C_HINT);
     titles.addView(sub);
     header.addView(titles, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
@@ -97,14 +97,14 @@ final class PipPanelView {
     header.addView(statusLabel);
     content.addView(header, gap(14));
 
-    content.addView(section("جستجو در PyPI", C_SEARCH));
+    content.addView(section(getString(R.string.pipui_section_search), C_SEARCH));
     LinearLayout searchCard = column();
     searchCard.addView(searchField);
     searchCard.addView(
         buttonRow(
-            "جستجو", C_SEARCH,
+            getString(R.string.pipui_action_search), C_SEARCH,
             v -> search(),
-            "نصب مستقیم", C_INSTALL,
+            getString(R.string.pipui_action_install_direct), C_INSTALL,
             v -> installTyped(searchField.getText().toString().trim())),
         gap(8));
     this.resultCard = column();
@@ -112,24 +112,24 @@ final class PipPanelView {
     searchCard.addView(this.resultCard, gap(8));
     content.addView(searchCard, gap(16));
 
-    content.addView(section("دستور دلخواه", C_DIRECT));
+    content.addView(section(getString(R.string.pipui_section_custom), C_DIRECT));
     LinearLayout commandCard = column();
     commandCard.addView(commandField);
     commandCard.addView(
         buttonRow(
-            "اجرا در پروت", C_DIRECT,
+            getString(R.string.pipui_action_run_in_proot), C_DIRECT,
             v -> installTyped(commandField.getText().toString().trim()),
-            "باز کردن در ترمینال", C_TERMINAL,
+            getString(R.string.pipui_action_open_terminal), C_TERMINAL,
             v -> openInTerminal(commandField.getText().toString().trim())),
         gap(8));
     content.addView(commandCard, gap(16));
 
-    content.addView(section("پکیج‌های پرکاربرد", C_CATALOG));
+    content.addView(section(getString(R.string.pipui_section_catalog), C_CATALOG));
     LinearLayout catalog = column();
     buildCatalog(catalog);
     content.addView(catalog, gap(16));
 
-    content.addView(section("خروجی", C_LIST));
+    content.addView(section(getString(R.string.pipui_section_output), C_LIST));
     LinearLayout logCard = column();
     this.logView = new TextView(context);
     this.logView.setTextSize(11);
@@ -137,12 +137,16 @@ final class PipPanelView {
     this.logView.setTextIsSelectable(true);
     this.logView.setMinLines(6);
     this.logView.setTextColor(C_TEXT);
-    this.clearButton = button("پاک کردن خروجی", C_CLEAR, v -> clearLog());
+    this.clearButton = button(getString(R.string.pipui_action_clear_output), C_CLEAR, v -> clearLog());
     this.listButton =
         button(
-            "فهرست نصب‌شده‌ها",
+            getString(R.string.pipui_action_installed_list),
             C_LIST,
-            v -> run(PIP + " list", "pip list", "pip3 list --format=columns"));
+            v ->
+                run(
+                    PIP + " list",
+                    getString(R.string.pipui_title_list_installed),
+                    "pip3 list --format=columns"));
     logCard.addView(logView);
     logCard.addView(buttonRowHolder(clearButton, listButton), gap(8));
     content.addView(logCard);
@@ -154,9 +158,18 @@ final class PipPanelView {
         new ScrollView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     this.root = scroll;
+    applyLayoutDirection();
 
-    appendLog("یک پکیج را سرچ کن یا از لیست زیر انتخاب کن.");
+    appendLog(getString(R.string.pipui_log_intro));
     refreshEnvironment();
+  }
+
+  /**
+   * Mirrors the resolved locale onto the view tree: the panel is built in code, so nothing picks
+   * RTL up on its own and a Persian phone would still lay the rows out left to right.
+   */
+  private void applyLayoutDirection() {
+    root.setLayoutDirection(context.getResources().getConfiguration().getLayoutDirection());
   }
 
   View getRoot() {
@@ -171,11 +184,11 @@ final class PipPanelView {
           main.post(
               () -> {
                 if (!rootfs) {
-                  setStatus("Debian نصب نیست", C_CLEAR);
+                  setStatus(getString(R.string.pipui_status_no_debian), C_CLEAR);
                 } else if (!python) {
-                  setStatus("پایتون نصب نیست", C_TERMINAL);
+                  setStatus(getString(R.string.pipui_status_no_python), C_TERMINAL);
                 } else {
-                  setStatus("آماده", C_INSTALL);
+                  setStatus(getString(R.string.pipui_status_ready), C_INSTALL);
                 }
               });
         });
@@ -190,17 +203,17 @@ final class PipPanelView {
     String query = searchField.getText().toString().trim();
     if (query.isEmpty()) {
       resultCard.setVisibility(View.GONE);
-      toast("اول یک نام پکیج بنویس");
+      toast(getString(R.string.pipui_toast_type_package_name));
       return;
     }
     resultCard.setVisibility(View.VISIBLE);
     resultCard.removeAllViews();
-    TextView loading = label("در حال جستجو…", 13, false);
+    TextView loading = label(getString(R.string.pipui_searching), 13, false);
     loading.setTextColor(C_SEARCH);
     resultCard.addView(loading);
     worker.execute(
         () -> {
-          PyPiClient.Result result = PyPiClient.lookup(query);
+          PyPiClient.Result result = PyPiClient.lookup(context, query);
           main.post(() -> showResult(query, result));
         });
   }
@@ -211,7 +224,7 @@ final class PipPanelView {
       TextView err = label(result.error, 13, true);
       err.setTextColor(C_CLEAR);
       resultCard.addView(err);
-      TextView hint = label("با «نصب مستقیم» می‌توانی همین متن را به pip بدهی.", 12, false);
+      TextView hint = label(getString(R.string.pipui_search_fail_hint), 12, false);
       hint.setTextColor(C_HINT);
       resultCard.addView(hint, gap(6));
       return;
@@ -224,7 +237,7 @@ final class PipPanelView {
     name.setTextColor(C_SEARCH);
     resultCard.addView(name);
     if (!pkg.version.isEmpty()) {
-      TextView v = label("نسخه " + pkg.version, 12, true);
+      TextView v = label(getString(R.string.pipui_label_version, pkg.version), 12, true);
       v.setTextColor(C_CATALOG);
       resultCard.addView(v);
     }
@@ -234,23 +247,26 @@ final class PipPanelView {
       resultCard.addView(s, gap(6));
     }
     if (!pkg.author.isEmpty()) {
-      TextView a = label("نویسنده: " + pkg.author, 12, false);
+      TextView a = label(getString(R.string.pipui_label_author, pkg.author), 12, false);
       a.setTextColor(C_HINT);
       resultCard.addView(a);
     }
     if (!pkg.requiresPython.isEmpty()) {
-      TextView p = label("نیازمند پایتون: " + pkg.requiresPython, 12, false);
+      TextView p =
+          label(getString(R.string.pipui_label_requires_python, pkg.requiresPython), 12, false);
       p.setTextColor(C_HINT);
       resultCard.addView(p);
     }
     String requirement = requirement(query, pkg.name);
     resultCard.addView(
         button(
-            "نصب " + requirement,
+            getString(R.string.pipui_action_install_requirement, requirement),
             C_INSTALL,
             v -> {
               if (pending != null) {
-                install(requirement, "نصب " + pending.name);
+                install(
+                    requirement,
+                    getString(R.string.pipui_title_install, pending.name));
               }
             }),
         gap(8));
@@ -267,49 +283,51 @@ final class PipPanelView {
 
   private void installTyped(String rawCommand) {
     if (rawCommand.isEmpty()) {
-      toast("اول یک پکیج بنویس");
+      toast(getString(R.string.pipui_toast_type_package_name));
       return;
     }
     if (rawCommand.startsWith(PIP)
         || rawCommand.startsWith("pip3 ")
         || rawCommand.startsWith("pip ")) {
       String withFlag = ensureBreakFlag(rawCommand);
-      run(withFlag, "اجرای دستور", withFlag);
+      run(withFlag, getString(R.string.pipui_title_run_command), withFlag);
       return;
     }
     String requirement = rawCommand;
     if (requirement.startsWith("install ")) {
       requirement = requirement.substring("install ".length()).trim();
     }
-    install(requirement, "نصب " + requirement);
-  }
-private void install(String requirement, String title) {
-  String cleanRequirement =
-      requirement == null
-          ? ""
-          : requirement.trim();
-
-  if (cleanRequirement.isEmpty()) {
-    toast("نام پکیج خالی است");
-    return;
+    install(requirement, getString(R.string.pipui_title_install, requirement));
   }
 
-  String cmd =
-      PIP
-          + " install "
-          + cleanRequirement
-          + " "
-          + BREAK;
+  private void install(String requirement, String title) {
+    String cleanRequirement =
+        requirement == null
+            ? ""
+            : requirement.trim();
 
-  String fullCommand =
-      PYTHON_GUARD
-          + cmd;
+    if (cleanRequirement.isEmpty()) {
+      toast(getString(R.string.pipui_toast_empty_package_name));
+      return;
+    }
 
-  run(
-      fullCommand,
-      title,
-      cmd);
-}
+    String cmd =
+        PIP
+            + " install "
+            + cleanRequirement
+            + " "
+            + BREAK;
+
+    String fullCommand =
+        PYTHON_GUARD
+            + cmd;
+
+    run(
+        fullCommand,
+        title,
+        cmd);
+  }
+
   private static String ensureBreakFlag(String command) {
     String cmd = command.trim();
     if (cmd.contains(BREAK)) {
@@ -329,11 +347,11 @@ private void install(String requirement, String title) {
 
   private void openInTerminal(String command) {
     if (command.isEmpty()) {
-      toast("اول یک دستور بنویس");
+      toast(getString(R.string.pipui_toast_type_command));
       return;
     }
     if (!ProotShell.isInstalled(context)) {
-      toast("Debian هنوز بوت نشده");
+      toast(getString(R.string.pipui_toast_debian_not_booted));
       return;
     }
     String full;
@@ -354,18 +372,18 @@ private void install(String requirement, String title) {
       context.startActivity(intent);
     } catch (RuntimeException e) {
       plugin.getLogger().warn("Terminal intent failed", e);
-      toast("ترمینال در دسترس نیست");
+      toast(getString(R.string.pipui_toast_no_terminal));
     }
   }
 
   private void run(String command, String title, String echo) {
     if (!busy.compareAndSet(false, true)) {
-      toast("یک عملیات در حال اجراست");
+      toast(getString(R.string.pipui_toast_busy));
       return;
     }
     setButtonsEnabled(false);
-    setStatus("در حال اجرا", C_TERMINAL);
-    appendLog("$ " + echo);
+    setStatus(getString(R.string.pipui_status_running), C_TERMINAL);
+    appendLog(getString(R.string.pipui_log_command, echo));
 
     worker.execute(
         () -> {
@@ -375,9 +393,9 @@ private void install(String requirement, String title) {
             main.post(
                 () -> {
                   if (result.isSuccess()) {
-                    appendLog("✔ " + title + " انجام شد");
+                    appendLog(getString(R.string.pipui_log_done, title));
                   } else {
-                    appendLog("✘ " + title + " با کد " + result.exitCode + " شکست خورد");
+                    appendLog(getString(R.string.pipui_log_failed, title, result.exitCode));
                   }
                   finish(title, result.isSuccess());
                 });
@@ -385,7 +403,9 @@ private void install(String requirement, String title) {
             String message = e.getMessage();
             main.post(
                 () -> {
-                  appendLog("خطا: " + (message == null ? e.getClass().getSimpleName() : message));
+                  appendLog(
+                      getString(R.string.pipui_log_error_prefix)
+                          + (message == null ? e.getClass().getSimpleName() : message));
                   finish(title, false);
                 });
           }
@@ -395,8 +415,10 @@ private void install(String requirement, String title) {
   private void finish(String title, boolean success) {
     busy.set(false);
     setButtonsEnabled(true);
-    setStatus(success ? "موفق" : "ناموفق", success ? C_INSTALL : C_CLEAR);
-    toast((success ? "موفق " : "خطا ") + title);
+    setStatus(
+        getString(success ? R.string.pipui_status_success : R.string.pipui_status_failure),
+        success ? C_INSTALL : C_CLEAR);
+    toast(getString(success ? R.string.pipui_toast_success : R.string.pipui_toast_failure, title));
     refreshEnvironment();
   }
 
@@ -404,7 +426,7 @@ private void install(String requirement, String title) {
     List<PackageCatalog.Group> groups = PackageCatalog.groups();
     for (int g = 0; g < groups.size(); g++) {
       PackageCatalog.Group group = groups.get(g);
-      TextView groupTitle = label(group.title, 14, true);
+      TextView groupTitle = label(getString(group.titleRes), 14, true);
       groupTitle.setTextColor(C_CATALOG);
       container.addView(groupTitle, gap(g == 0 ? 0 : 12));
       LinearLayout card = column();
@@ -424,17 +446,19 @@ private void install(String requirement, String title) {
     TextView name = label(entry.name, 14, true);
     name.setTextColor(C_TEXT);
     titles.addView(name);
-    TextView summary = label(entry.summary, 12, false);
+    TextView summary = label(getString(entry.summaryRes), 12, false);
     summary.setTextColor(C_HINT);
     titles.addView(summary);
     row.addView(titles, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
     row.addView(
         button(
-            "نصب",
+            getString(R.string.pipui_action_install),
             C_CATALOG,
             v -> {
               searchField.setText(entry.name);
-              install(entry.requirement, "نصب " + entry.name);
+              install(
+                  entry.requirement,
+                  getString(R.string.pipui_title_install, entry.name));
             }));
     return row;
   }
@@ -462,11 +486,15 @@ private void install(String requirement, String title) {
     logView.setText(sb);
   }
 
-  private static int logColor(String line) {
-    if (line.startsWith("✔")) return C_INSTALL;
-    if (line.startsWith("✘")) return C_CLEAR;
-    if (line.startsWith("خطا")) return C_CLEAR;
-    if (line.startsWith("$")) return C_SEARCH;
+  private int logColor(String line) {
+    if (line.isEmpty()) {
+      return C_TEXT;
+    }
+    char marker = line.charAt(0);
+    if (marker == '✔') return C_INSTALL;
+    if (marker == '✘') return C_CLEAR;
+    if (marker == '$') return C_SEARCH;
+    if (line.startsWith(getString(R.string.pipui_log_error_prefix))) return C_CLEAR;
     return C_TEXT;
   }
 
@@ -485,6 +513,10 @@ private void install(String requirement, String title) {
     if (feedback != null) {
       feedback.toast(message, false);
     }
+  }
+
+  private String getString(int resId, Object... args) {
+    return context.getString(resId, args);
   }
 
   private EditText field(String hint) {

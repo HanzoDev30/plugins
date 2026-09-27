@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-  namespace 'ir.ghostide.lualls'
+  namespace 'ir.ghostide.pipui'
   compileSdk 36
 
   defaultConfig {
-    applicationId 'ir.ghostide.lualls'
+    applicationId 'ir.ghostide.pipui'
     minSdk 26
     targetSdk 36
     versionCode 1

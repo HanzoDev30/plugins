@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Product name: never translated. -->
+    <string name="pipui_app_name" translatable="false">Pip Installer</string>
+
+    <string name="pipui_subtitle">Install Python libraries without a terminal — inside the same Debian</string>
+
+    <!-- Input fields -->
+    <string name="pipui_hint_search">Type a package name, e.g. requests or fastapi</string>
+    <string name="pipui_hint_command">Or any pip command, e.g. install httpx</string>
+
+    <!-- Section headers -->
+    <string name="pipui_section_search">Search PyPI</string>
+    <string name="pipui_section_custom">Custom command</string>
+    <string name="pipui_section_catalog">Popular packages</string>
+    <string name="pipui_section_output">Output</string>
+
+    <!-- Buttons -->
+    <string name="pipui_action_search">Search</string>
+    <string name="pipui_action_install_direct">Install directly</string>
+    <string name="pipui_action_run_in_proot">Run in proot</string>
+    <string name="pipui_action_open_terminal">Open in terminal</string>
+    <string name="pipui_action_clear_output">Clear output</string>
+    <string name="pipui_action_installed_list">Installed list</string>
+    <string name="pipui_action_install">Install</string>
+    <string name="pipui_action_install_requirement">Install %1$s</string>
+
+    <!-- Package metadata -->
+    <string name="pipui_label_version">Version %1$s</string>
+    <string name="pipui_label_author">Author: %1$s</string>
+    <string name="pipui_label_requires_python">Requires Python: %1$s</string>
+
+    <!-- Operation titles (used in the log and the toast) -->
+    <string name="pipui_title_install">Install %1$s</string>
+    <string name="pipui_title_run_command">Run command</string>
+    <string name="pipui_title_list_installed">List installed packages</string>
+
+    <!-- Status label -->
+    <string name="pipui_status_no_debian">Debian is not installed</string>
+    <string name="pipui_status_no_python">Python is not installed</string>
+    <string name="pipui_status_ready">Ready</string>
+    <string name="pipui_status_running">Running</string>
+    <string name="pipui_status_success">Succeeded</string>
+    <string name="pipui_status_failure">Failed</string>
+
+    <!-- Search result -->
+    <string name="pipui_searching">Searching…</string>
+    <string name="pipui_search_fail_hint">You can still hand this text to pip with “Install directly”.</string>
+
+    <!-- Log lines; the leading glyph drives the log colouring, so it must stay first -->
+    <string name="pipui_log_intro">Search for a package or pick one from the list below.</string>
+    <string name="pipui_log_command">$ %1$s</string>
+    <string name="pipui_log_done">✔ %1$s finished</string>
+    <string name="pipui_log_failed">✘ %1$s failed with code %2$d</string>
+    <!-- Quoted so the trailing space survives resource trimming; also the log colour marker -->
+    <string name="pipui_log_error_prefix">"Error: "</string>
+
+    <!-- Toasts -->
+    <string name="pipui_toast_type_package_name">Type a package name first</string>
+    <string name="pipui_toast_type_command">Type a command first</string>
+    <string name="pipui_toast_empty_package_name">Package name is empty</string>
+    <string name="pipui_toast_debian_not_booted">Debian has not booted yet</string>
+    <string name="pipui_toast_no_terminal">Terminal is not available</string>
+    <string name="pipui_toast_busy">Another operation is already running</string>
+    <string name="pipui_toast_success">Done: %1$s</string>
+    <string name="pipui_toast_failure">Failed: %1$s</string>
+
+    <!-- Network / PyPI errors -->
+    <string name="pipui_error_type_package_name">Type a package name first</string>
+    <string name="pipui_error_no_project">No project named \'%1$s\' on PyPI</string>
+    <string name="pipui_error_http_status">PyPI answered HTTP %1$d</string>
+    <string name="pipui_error_network">Could not reach PyPI: %1$s</string>
+    <!-- Quoted so the trailing space survives, the path is appended after it -->
+    <string name="pipui_error_no_rootfs">"Debian rootfs not found: "</string>
+
+    <!-- Catalog groups -->
+    <string name="pipui_group_essentials">Essentials</string>
+    <string name="pipui_group_web_api">Web &amp; API</string>
+    <string name="pipui_group_data_science">Data &amp; Science</string>
+    <string name="pipui_group_dev_tooling">Dev &amp; Tooling</string>
+    <string name="pipui_group_automation">Automation</string>
+
+    <!-- Catalog: Essentials -->
+    <string name="pipui_pkg_requests_summary">HTTP library, the usual starting point</string>
+    <string name="pipui_pkg_pip_summary">Keeps pip itself current</string>
+    <string name="pipui_pkg_setuptools_summary">Package build backend used by setup.py</string>
+    <string name="pipui_pkg_build_summary">PEP 517 build frontend</string>
+    <string name="pipui_pkg_wheel_summary">Prebuilt wheels for fast installs</string>
+    <string name="pipui_pkg_virtualenv_summary">Isolated environments without venv</string>
+    <string name="pipui_pkg_rich_summary">Pretty tables, progress bars and tracebacks</string>
+    <string name="pipui_pkg_colorama_summary">Coloured output on Windows terminals</string>
+
+    <!-- Catalog: Web & API -->
+    <string name="pipui_pkg_flask_summary">Lightweight WSGI web app</string>
+    <string name="pipui_pkg_fastapi_summary">Async web framework with OpenAPI docs</string>
+    <string name="pipui_pkg_uvicorn_summary">ASGI server for FastAPI</string>
+    <string name="pipui_pkg_django_summary">Full web framework with admin and ORM</string>
+    <string name="pipui_pkg_httpx_summary">HTTP client with async and HTTP/2</string>
+    <string name="pipui_pkg_pydantic_summary">Data validation from type hints</string>
+    <string name="pipui_pkg_python_dotenv_summary">Loads .env files</string>
+    <string name="pipui_pkg_jinja2_summary">Templating engine</string>
+
+    <!-- Catalog: Data & Science -->
+    <string name="pipui_pkg_numpy_summary">N-dimensional arrays and math core</string>
+    <string name="pipui_pkg_pandas_summary">DataFrames and CSV/Excel handling</string>
+    <string name="pipui_pkg_matplotlib_summary">Plotting</string>
+    <string name="pipui_pkg_scipy_summary">Scientific computing routines</string>
+    <string name="pipui_pkg_scikit_learn_summary">Machine learning</string>
+    <string name="pipui_pkg_pillow_summary">Image open/save/resize</string>
+    <string name="pipui_pkg_openpyxl_summary">Reads and writes .xlsx</string>
+    <string name="pipui_pkg_lxml_summary">Fast XML and HTML parsing</string>
+    <string name="pipui_pkg_beautifulsoup4_summary">HTML scraping</string>
+
+    <!-- Catalog: Dev & Tooling -->
+    <string name="pipui_pkg_pytest_summary">Test runner</string>
+    <string name="pipui_pkg_black_summary">Opinionated code formatter</string>
+    <string name="pipui_pkg_ruff_summary">Fast linter and formatter</string>
+    <string name="pipui_pkg_mypy_summary">Static type checker</string>
+    <string name="pipui_pkg_pylint_summary">Deep linting</string>
+    <string name="pipui_pkg_ipython_summary">Interactive REPL</string>
+    <string name="pipui_pkg_debugpy_summary">Debugger adapter for VS Code</string>
+    <string name="pipui_pkg_pyinstaller_summary">Freezes scripts into a binary</string>
+
+    <!-- Catalog: Automation -->
+    <string name="pipui_pkg_click_summary">Command line interfaces</string>
+    <string name="pipui_pkg_typer_summary">CLI built on Click and type hints</string>
+    <string name="pipui_pkg_schedule_summary">Cron-like job scheduling in Python</string>
+    <string name="pipui_pkg_paramiko_summary">SSH client</string>
+    <string name="pipui_pkg_psutil_summary">Process and system metrics</string>
+    <string name="pipui_pkg_watchdog_summary">Filesystem change events</string>
+    <string name="pipui_pkg_openai_summary">OpenAI API client</string>
+    <string name="pipui_pkg_python_telegram_bot_summary">Telegram bots</string>
+
+</resources>

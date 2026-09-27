@@ -30,7 +30,7 @@ public final class PipUiPlugin implements GhostPlugin {
             .getExtensions()
             .register(
                 PluginUiExtensionPoints.EDITOR_PANEL,
-                new PipPanel(view),
+                new PipPanel(view, androidContext),
                 context.getDescriptor().getId(),
                 0);
     context.registerDisposable(panelRegistration);

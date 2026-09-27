@@ -9,6 +9,10 @@ import java.util.List;
  *
  * <p>Every entry is a plain pip requirement; the install button prepends the guard copied from the
  * host's own {@code CodeRuner} so a missing interpreter is installed first instead of failing.
+ *
+ * <p>Group titles and summaries are kept as string resource ids, not literal text, so the panel
+ * renders them in the device language; only the package names and the requirement itself are
+ * language neutral and stay in code.
  */
 final class PackageCatalog {
 
@@ -16,22 +20,22 @@ final class PackageCatalog {
 
   static final class Entry {
     final String name;
-    final String summary;
+    final int summaryRes;
     final String requirement;
 
-    Entry(String name, String summary, String requirement) {
+    Entry(String name, int summaryRes, String requirement) {
       this.name = name;
-      this.summary = summary;
+      this.summaryRes = summaryRes;
       this.requirement = requirement;
     }
   }
 
   static final class Group {
-    final String title;
+    final int titleRes;
     final List<Entry> entries;
 
-    Group(String title, List<Entry> entries) {
-      this.title = title;
+    Group(int titleRes, List<Entry> entries) {
+      this.titleRes = titleRes;
       this.entries = entries;
     }
   }
@@ -41,69 +45,90 @@ final class PackageCatalog {
 
     groups.add(
         new Group(
-            "Essentials",
+            R.string.pipui_group_essentials,
             Arrays.asList(
-                new Entry("requests", "HTTP library, the usual starting point", "requests"),
-                new Entry("pip", "Keeps pip itself current", "--upgrade pip"),
-                new Entry("setuptools", "Package build backend used by setup.py", "setuptools wheel"),
-                new Entry("build", "PEP 517 build frontend", "build"),
-                new Entry("wheel", "Prebuilt wheels for fast installs", "wheel"),
-                new Entry("virtualenv", "Isolated environments without venv", "virtualenv"),
-                new Entry("rich", "Pretty tables, progress bars and tracebacks", "rich"),
-                new Entry("colorama", "Coloured output on Windows terminals", "colorama"))));
+                new Entry("requests", R.string.pipui_pkg_requests_summary, "requests"),
+                new Entry("pip", R.string.pipui_pkg_pip_summary, "--upgrade pip"),
+                new Entry(
+                    "setuptools",
+                    R.string.pipui_pkg_setuptools_summary,
+                    "setuptools wheel"),
+                new Entry("build", R.string.pipui_pkg_build_summary, "build"),
+                new Entry("wheel", R.string.pipui_pkg_wheel_summary, "wheel"),
+                new Entry(
+                    "virtualenv",
+                    R.string.pipui_pkg_virtualenv_summary,
+                    "virtualenv"),
+                new Entry("rich", R.string.pipui_pkg_rich_summary, "rich"),
+                new Entry("colorama", R.string.pipui_pkg_colorama_summary, "colorama"))));
 
     groups.add(
         new Group(
-            "Web & API",
+            R.string.pipui_group_web_api,
             Arrays.asList(
-                new Entry("flask", "Lightweight WSGI web app", "flask"),
-                new Entry("fastapi", "Async web framework with OpenAPI docs", "fastapi"),
-                new Entry("uvicorn", "ASGI server for FastAPI", "uvicorn"),
-                new Entry("django", "Full web framework with admin and ORM", "django"),
-                new Entry("httpx", "HTTP client with async and HTTP/2", "httpx"),
-                new Entry("pydantic", "Data validation from type hints", "pydantic"),
-                new Entry("python-dotenv", "Loads .env files", "python-dotenv"),
-                new Entry("jinja2", "Templating engine", "jinja2"))));
+                new Entry("flask", R.string.pipui_pkg_flask_summary, "flask"),
+                new Entry("fastapi", R.string.pipui_pkg_fastapi_summary, "fastapi"),
+                new Entry("uvicorn", R.string.pipui_pkg_uvicorn_summary, "uvicorn"),
+                new Entry("django", R.string.pipui_pkg_django_summary, "django"),
+                new Entry("httpx", R.string.pipui_pkg_httpx_summary, "httpx"),
+                new Entry("pydantic", R.string.pipui_pkg_pydantic_summary, "pydantic"),
+                new Entry(
+                    "python-dotenv",
+                    R.string.pipui_pkg_python_dotenv_summary,
+                    "python-dotenv"),
+                new Entry("jinja2", R.string.pipui_pkg_jinja2_summary, "jinja2"))));
 
     groups.add(
         new Group(
-            "Data & Science",
+            R.string.pipui_group_data_science,
             Arrays.asList(
-                new Entry("numpy", "N-dimensional arrays and math core", "numpy"),
-                new Entry("pandas", "DataFrames and CSV/Excel handling", "pandas"),
-                new Entry("matplotlib", "Plotting", "matplotlib"),
-                new Entry("scipy", "Scientific computing routines", "scipy"),
-                new Entry("scikit-learn", "Machine learning", "scikit-learn"),
-                new Entry("pillow", "Image open/save/resize", "pillow"),
-                new Entry("openpyxl", "Reads and writes .xlsx", "openpyxl"),
-                new Entry("lxml", "Fast XML and HTML parsing", "lxml"),
-                new Entry("beautifulsoup4", "HTML scraping", "beautifulsoup4"))));
+                new Entry("numpy", R.string.pipui_pkg_numpy_summary, "numpy"),
+                new Entry("pandas", R.string.pipui_pkg_pandas_summary, "pandas"),
+                new Entry("matplotlib", R.string.pipui_pkg_matplotlib_summary, "matplotlib"),
+                new Entry("scipy", R.string.pipui_pkg_scipy_summary, "scipy"),
+                new Entry(
+                    "scikit-learn",
+                    R.string.pipui_pkg_scikit_learn_summary,
+                    "scikit-learn"),
+                new Entry("pillow", R.string.pipui_pkg_pillow_summary, "pillow"),
+                new Entry("openpyxl", R.string.pipui_pkg_openpyxl_summary, "openpyxl"),
+                new Entry("lxml", R.string.pipui_pkg_lxml_summary, "lxml"),
+                new Entry(
+                    "beautifulsoup4",
+                    R.string.pipui_pkg_beautifulsoup4_summary,
+                    "beautifulsoup4"))));
 
     groups.add(
         new Group(
-            "Dev & Tooling",
+            R.string.pipui_group_dev_tooling,
             Arrays.asList(
-                new Entry("pytest", "Test runner", "pytest"),
-                new Entry("black", "Opinionated code formatter", "black"),
-                new Entry("ruff", "Fast linter and formatter", "ruff"),
-                new Entry("mypy", "Static type checker", "mypy"),
-                new Entry("pylint", "Deep linting", "pylint"),
-                new Entry("ipython", "Interactive REPL", "ipython"),
-                new Entry("debugpy", "Debugger adapter for VS Code", "debugpy"),
-                new Entry("pyinstaller", "Freezes scripts into a binary", "pyinstaller"))));
+                new Entry("pytest", R.string.pipui_pkg_pytest_summary, "pytest"),
+                new Entry("black", R.string.pipui_pkg_black_summary, "black"),
+                new Entry("ruff", R.string.pipui_pkg_ruff_summary, "ruff"),
+                new Entry("mypy", R.string.pipui_pkg_mypy_summary, "mypy"),
+                new Entry("pylint", R.string.pipui_pkg_pylint_summary, "pylint"),
+                new Entry("ipython", R.string.pipui_pkg_ipython_summary, "ipython"),
+                new Entry("debugpy", R.string.pipui_pkg_debugpy_summary, "debugpy"),
+                new Entry(
+                    "pyinstaller",
+                    R.string.pipui_pkg_pyinstaller_summary,
+                    "pyinstaller"))));
 
     groups.add(
         new Group(
-            "Automation",
+            R.string.pipui_group_automation,
             Arrays.asList(
-                new Entry("click", "Command line interfaces", "click"),
-                new Entry("typer", "CLI built on Click and type hints", "typer"),
-                new Entry("schedule", "Cron-like job scheduling in Python", "schedule"),
-                new Entry("paramiko", "SSH client", "paramiko"),
-                new Entry("psutil", "Process and system metrics", "psutil"),
-                new Entry("watchdog", "Filesystem change events", "watchdog"),
-                new Entry("openai", "OpenAI API client", "openai"),
-                new Entry("python-telegram-bot", "Telegram bots", "python-telegram-bot"))));
+                new Entry("click", R.string.pipui_pkg_click_summary, "click"),
+                new Entry("typer", R.string.pipui_pkg_typer_summary, "typer"),
+                new Entry("schedule", R.string.pipui_pkg_schedule_summary, "schedule"),
+                new Entry("paramiko", R.string.pipui_pkg_paramiko_summary, "paramiko"),
+                new Entry("psutil", R.string.pipui_pkg_psutil_summary, "psutil"),
+                new Entry("watchdog", R.string.pipui_pkg_watchdog_summary, "watchdog"),
+                new Entry("openai", R.string.pipui_pkg_openai_summary, "openai"),
+                new Entry(
+                    "python-telegram-bot",
+                    R.string.pipui_pkg_python_telegram_bot_summary,
+                    "python-telegram-bot"))));
 
     return groups;
   }

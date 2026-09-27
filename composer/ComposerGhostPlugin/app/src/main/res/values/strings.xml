@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subtitle">Manage PHP packages — no terminal</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_busy">Running</string>
+    <string name="status_ok">Done</string>
+    <string name="status_failed">Failed</string>
+    <string name="status_no_rootfs">Debian is not installed</string>
+    <string name="status_no_composer">Composer is not installed</string>
+    <string name="status_no_project">No composer.json found in this folder</string>
+    <string name="status_searching">Searching…</string>
+
+    <string name="hint_search">Package name, e.g. laravel/framework or guzzlehttp/guzzle</string>
+    <string name="hint_command">Or any composer command, e.g. require --dev phpunit/phpunit</string>
+    <string name="hint_type_package">Type a package name first</string>
+    <string name="hint_type_command">Type a command first</string>
+
+    <string name="section_search">Search Packagist</string>
+    <string name="section_command">Custom command</string>
+    <string name="section_catalog">Popular packages</string>
+    <string name="section_output">Output</string>
+    <string name="section_actions">Project actions</string>
+
+    <string name="action_search">Search</string>
+    <string name="action_install">Install</string>
+    <string name="action_install_requirement">Install %1$s</string>
+    <string name="action_run">Run in proot</string>
+    <string name="action_terminal">Open in terminal</string>
+    <string name="action_pick">Choose project folder</string>
+    <string name="action_clear">Clear output</string>
+    <string name="action_show">Installed packages</string>
+    <string name="action_install_all">Install all dependencies</string>
+    <string name="action_update">Update all</string>
+    <string name="action_validate">Validate composer.json</string>
+    <string name="action_dump">Regenerate autoload</string>
+
+    <string name="label_project">Project: %1$s</string>
+    <string name="label_version">Version %1$s</string>
+    <string name="label_downloads">%1$s downloads</string>
+    <string name="label_license">License: %1$s</string>
+    <string name="label_requires">Requires: %1$s</string>
+
+    <string name="log_intro">Search for a package or pick one from the list below.</string>
+    <string name="log_error">Error: %1$s</string>
+    <string name="error_not_found">No such package on Packagist: %1$s</string>
+</resources>

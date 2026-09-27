@@ -1,12 +1,5 @@
 [
   {
-    "name": "VolumeCursor",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/VolumeCursor.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
-  },
-  {
     "name": "androidbuilderforir",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/.trashed-1793014153-icon.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidbuilderforir/doc.json",
@@ -33,6 +26,20 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/clang/cpplsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/clang/CCLspGhostPlugin"
+  },
+  {
+    "name": "composer",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composer/composer.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composer/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composer/composer.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/composer/ComposerGhostPlugin"
+  },
+  {
+    "name": "composerlsp",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/composerlsp.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/composerlsp/composerlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/composerlsp/ComposerLspGhostPlugin"
   },
   {
     "name": "css",
@@ -194,6 +201,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/tslsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/ts/TsLspGhostPlugin"
+  },
+  {
+    "name": "VolumeCursor",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/VolumeCursor.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/VolumeCursor/GhostVolumeCursor"
   },
   {
     "name": "vue",

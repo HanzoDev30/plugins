@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.composer",
+  "name": "Composer",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.composer.ComposerPlugin",
+  "description": "Manages PHP dependencies from a panel next to the editor: search Packagist, then require / remove / update packages without ever opening a terminal. Runs inside the proot Debian rootfs.",
+  "minHostVersion": 0,
+  "icon": "composer.png"
+}

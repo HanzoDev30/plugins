@@ -1,5 +1,7 @@
 package ir.ghostide.pipui;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,7 +16,8 @@ import java.nio.charset.StandardCharsets;
  *
  * <p>Only the name is looked up; pip itself resolves the specifier, so {@code requests==2.31.0} and
  * {@code requests[security]} both work as long as the part before the first version/extras marker
- * is a real project name. Network calls happen on a background thread.
+ * is a real project name. Network calls happen on a background thread, and every message that
+ * reaches the panel comes from {@code res/values/strings.xml} so it follows the device language.
  */
 final class PyPiClient {
 
@@ -79,10 +82,10 @@ final class PyPiClient {
     return name.substring(0, cut).trim();
   }
 
-  static Result lookup(String rawQuery) {
+  static Result lookup(Context context, String rawQuery) {
     String name = baseName(rawQuery);
     if (name.isEmpty()) {
-      return Result.failed("Type a package name first");
+      return Result.failed(context.getString(R.string.pipui_error_type_package_name));
     }
     HttpURLConnection connection = null;
     try {
@@ -96,10 +99,10 @@ final class PyPiClient {
 
       int status = connection.getResponseCode();
       if (status == HttpURLConnection.HTTP_NOT_FOUND) {
-        return Result.failed("No project named '" + name + "' on PyPI");
+        return Result.failed(context.getString(R.string.pipui_error_no_project, name));
       }
       if (status != HttpURLConnection.HTTP_OK) {
-        return Result.failed("PyPI answered HTTP " + status);
+        return Result.failed(context.getString(R.string.pipui_error_http_status, status));
       }
 
       StringBuilder body = new StringBuilder();
@@ -125,8 +128,10 @@ final class PyPiClient {
           new Package(resolvedName, version, summary, requiresPython.trim(), collapse(author)));
     } catch (Exception e) {
       String message = e.getMessage();
-      return Result.failed(
-          message == null || message.isEmpty() ? e.getClass().getSimpleName() : message);
+      if (message == null || message.isEmpty()) {
+        message = e.getClass().getSimpleName();
+      }
+      return Result.failed(context.getString(R.string.pipui_error_network, message));
     } finally {
       if (connection != null) {
         connection.disconnect();

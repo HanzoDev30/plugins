@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subtitle">مدیریت پکیج‌های PHP — بدون ترمینال</string>
+    <string name="status_ready">آماده</string>
+    <string name="status_busy">در حال اجرا</string>
+    <string name="status_ok">موفق</string>
+    <string name="status_failed">ناموفق</string>
+    <string name="status_no_rootfs">Debian نصب نیست</string>
+    <string name="status_no_composer">Composer نصب نیست</string>
+    <string name="status_no_project">composer.json در این پوشه پیدا نشد</string>
+    <string name="status_searching">در حال جستجو…</string>
+
+    <string name="hint_search">نام پکیج، مثلا laravel/framework یا guzzlehttp/guzzle</string>
+    <string name="hint_command">یا هر دستور composer دلخواه، مثلا: require --dev phpunit/phpunit</string>
+    <string name="hint_type_package">اول یک نام پکیج بنویس</string>
+    <string name="hint_type_command">اول یک دستور بنویس</string>
+
+    <string name="section_search">جستجو در Packagist</string>
+    <string name="section_command">دستور دلخواه</string>
+    <string name="section_catalog">پکیج‌های پرکاربرد</string>
+    <string name="section_output">خروجی</string>
+    <string name="section_actions">عملیات روی پروژه</string>
+
+    <string name="action_search">جستجو</string>
+    <string name="action_install">نصب</string>
+    <string name="action_install_requirement">نصب %1$s</string>
+    <string name="action_run">اجرا در پروت</string>
+    <string name="action_terminal">باز کردن در ترمینال</string>
+    <string name="action_pick">انتخاب پوشه پروژه</string>
+    <string name="action_clear">پاک کردن خروجی</string>
+    <string name="action_show">پکیج‌های نصب‌شده</string>
+    <string name="action_install_all">نصب همه وابستگی‌ها</string>
+    <string name="action_update">به‌روزرسانی همه</string>
+    <string name="action_validate">بررسی composer.json</string>
+    <string name="action_dump">ساخت دوباره autoload</string>
+
+    <string name="label_project">پروژه: %1$s</string>
+    <string name="label_version">نسخه %1$s</string>
+    <string name="label_downloads">%1$s دانلود</string>
+    <string name="label_license">لایسنس: %1$s</string>
+    <string name="label_requires">نیازمند: %1$s</string>
+
+    <string name="log_intro">یک پکیج را سرچ کن یا از لیست زیر انتخاب کن.</string>
+    <string name="log_error">خطا: %1$s</string>
+    <string name="error_not_found">چنین پکیجی در Packagist پیدا نشد: %1$s</string>
+</resources>

@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "composerlsp.png",
+  "note": "## Composer Lsp\n - Schema-aware language support for `composer.json` and `composer.lock`\n - Completion for the `require`, `require-dev`, `scripts` and config keys, plus validation and diagnostics\n - Runs `vscode-json-language-server` inside the rootfs at a priority above the plain JSON server\n - Only the two Composer filenames are claimed, so every other `.json` file still goes to the JSON language server\n - Installs itself: PHP, Composer and the language server are handed to the IDE terminal automatically on first activation\n - A manual setup action is available in the Plugin Manager as well"
+}

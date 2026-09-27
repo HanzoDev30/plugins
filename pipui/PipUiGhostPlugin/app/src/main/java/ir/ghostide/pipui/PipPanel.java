@@ -1,5 +1,6 @@
 package ir.ghostide.pipui;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -17,9 +18,11 @@ import ir.hanzodev1375.ghostide.ide.ui.api.PluginStateMod;
 final class PipPanel implements EditorPanel {
 
   private final PipPanelView view;
+  private final Context context;
 
-  PipPanel(PipPanelView view) {
+  PipPanel(PipPanelView view, Context context) {
     this.view = view;
+    this.context = context;
     setState(PluginStateMod.BOTTOMSHEETDIALOG);
   }
 
@@ -45,7 +48,7 @@ final class PipPanel implements EditorPanel {
 
   @Override
   public String getTitle() {
-    return "Pip Installer";
+    return context.getString(R.string.pipui_app_name);
   }
 
   /**

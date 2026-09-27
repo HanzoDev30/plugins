@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.composerlsp",
+  "name": "Composer Lsp",
+  "version": "1.1.0",
+  "entryClass": "ir.ghostide.composerlsp.ComposerLspPlugin",
+  "description": "Schema-aware language support for composer.json and composer.lock: completion for the require/scripts keys, validation and diagnostics, from vscode-json-language-server running inside the sandboxed Linux rootfs. Only the two Composer filenames are claimed, so every other .json file still goes to the JSON language server. Also highlights require/require-dev entries in composer.json whose newest Packagist release is not covered by the declared constraint, in the same colour the IDE uses for outdated Gradle coordinates, and updates the constraint in place when tapped. Installs itself by handing the script to the IDE terminal.",
+  "minHostVersion": 0,
+  "icon": "composerlsp.png"
+}
