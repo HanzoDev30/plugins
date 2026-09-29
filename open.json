@@ -236,5 +236,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
+  },
+  {
+    "name": "tailwindcss",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwind.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwindcsslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/tailwindcss/test"
   }
 ]
