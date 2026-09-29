@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.tailwindcsslsp",
+  "name": "Tailwind CSS LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.tailwindcsslsp.TailwindCssLspPlugin",
+  "description": "Adds Tailwind CSS language support (completion, diagnostics, hover, formatting, IntelliSense) by running @tailwindcss/language-server via Node inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "tailwind.png"
+}

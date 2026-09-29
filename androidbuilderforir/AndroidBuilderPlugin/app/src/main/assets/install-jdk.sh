@@ -20,6 +20,42 @@ die()  { printf '\033[1;31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
 # shellcheck source=net-route.sh
 [ -f "$SCRIPT_DIR/net-route.sh" ] && . "$SCRIPT_DIR/net-route.sh"
 
+# ── apt sources rewrite ───────────────────────────────────────────────────────
+# The security suite does NOT live under the regular archive root: deb.debian.org serves
+# bookworm-security from /debian-security, and every regional mirror follows the same split
+# (mirrors.aliyun.com/debian-security, mirrors.cloud.tencent.com/debian-security, ...).
+# So a mirror swap has to move the "-security" suites to <mirror>-security as well. Rewriting
+# every debian URL to the plain mirror base silently repoints them at
+# <mirror>/dists/bookworm-security, which is a 404, and then apt-get update fails as a whole
+# and not a single package can be installed.
+ab_rewrite_apt_sources() {
+  base="${1%/}"
+  file=/etc/apt/sources.list
+  tmp="$file.androidbuilder.tmp"
+  awk -v base="$base" '
+    # comments and blank lines are copied through untouched
+    /^[[:space:]]*#/ || /^[[:space:]]*$/ { print; next }
+    {
+      is_security = ($0 ~ /-security/)
+      line = $0
+      n = split(line, tok, /[[:space:]]+/)
+      for (i = 1; i <= n; i++) {
+        if (tok[i] ~ /^(https?|ftp):\/\//) {
+          uri = tok[i]
+          sub(/\/+$/, "", uri)
+          tok[i] = is_security ? base "-security" : base
+          break
+        }
+      }
+      out = ""
+      for (i = 1; i <= n; i++) out = out (out == "" ? "" : " ") tok[i]
+      if (out != "") print out
+    }
+  ' "$file" > "$tmp" && mv "$tmp" "$file" || { rm -f "$tmp"; return 1; }
+  say "apt sources now:"
+  sed -n 's/^deb /  /p' "$file" || true
+}
+
 java_major() {
   java -version 2>&1 | sed -nE 's/.*version "([0-9]+).*/\1/p' | head -n1
 }
@@ -66,7 +102,7 @@ if [ "$NEED_INSTALL" = 1 ]; then
     say "switching apt to $APT_MIRROR"
     if [ -f /etc/apt/sources.list ]; then
       cp /etc/apt/sources.list "/etc/apt/sources.list.androidbuilder.bak"
-      sed -i "s#https\\?://[^ ]*debian[^ ]*#${APT_MIRROR}#g" /etc/apt/sources.list || true
+      ab_rewrite_apt_sources "$APT_MIRROR"
     fi
   fi
   apt-get update

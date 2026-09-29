@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.hsi{
+    padding:20px;
+    color: gold;
+    background-color: black;
+    text-align: center;
+    display: block;
+}

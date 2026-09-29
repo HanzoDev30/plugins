@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "tailwind.svg",
+  "note": "## Tailwind CSS LSP \n - Completion, diagnostics, hover, formatting and IntelliSense for Tailwind CSS classes\n - Supports class name completion with documentation\n - Provides linting for Tailwind CSS files\n - Works with HTML, JSX, TSX, Vue, Svelte and other template files"
+}
