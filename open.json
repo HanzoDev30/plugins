@@ -245,10 +245,10 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/tailwindcss/test"
   },
   {
-    "name": "ty",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/ty.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/tylsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/ty/TyGhostPlugin"
+    "name": "python ty lang server",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/ty.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/tylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/python ty lang server/test"
   }
 ]
