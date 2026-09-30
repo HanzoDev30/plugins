@@ -1,8 +1,0 @@
-ir.ghostide.kmplsp.app-pngs-0 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/generated/res/pngs/release
-ir.ghostide.kmplsp.app-resValues-1 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/generated/res/resValues/release
-ir.ghostide.kmplsp.app-updated_navigation_xml-2 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/generated/updated_navigation_xml/release
-ir.ghostide.kmplsp.app-packageReleaseResources-3 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
-ir.ghostide.kmplsp.app-packageReleaseResources-4 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
-ir.ghostide.kmplsp.app-release-5 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/build/intermediates/merged_res/release/mergeReleaseResources
-ir.ghostide.kmplsp.app-main-6 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/src/main/res
-ir.ghostide.kmplsp.app-release-7 /sdcard/apk/ghostideplugins-main/kmplsp/KmpLspGhostPlugin/app/src/release/res

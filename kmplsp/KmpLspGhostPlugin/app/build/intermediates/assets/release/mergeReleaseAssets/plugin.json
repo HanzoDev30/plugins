@@ -1,9 +1,0 @@
-{
-  "id": "ir.ghostide.kmplsp",
-  "name": "KMP LSP",
-  "version": "1.0.0",
-  "entryClass": "ir.ghostide.kmplsp.KmpLspPlugin",
-  "description": "Adds Kotlin, Java and Swift language support (completion, hover, go-to-definition, references, rename, signature help, inlay hints, semantic highlighting, folding) by running kmp-lsp inside the sandboxed Linux rootfs. kmp-lsp is written in Rust on top of tree-sitter: it starts instantly, needs no JVM and no Gradle import, and stays under 200 MB. A native jar indexer sidecar is installed next to it so library symbols and stdlib docs resolve too.",
-  "minHostVersion": 0,
-  "icon": "kmplsp.png"
-}
