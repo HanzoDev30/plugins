@@ -250,5 +250,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/tylsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/python ty lang server/test"
+  },
+  {
+    "name": "astro",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astro.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astrolsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/astro/test"
   }
 ]
