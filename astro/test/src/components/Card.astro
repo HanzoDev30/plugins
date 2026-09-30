@@ -1,0 +1,33 @@
+---
+export interface Props {
+  href: string;
+  title: string;
+  tags?: string[];
+  accent?: 'purple' | 'orange';
+}
+
+const { href, title, tags = [], accent = 'purple' } = Astro.props;
+---
+
+<article class={`card card--${accent}`} data-tags={tags.length}>
+  <a href={href}>
+    <slot name="icon" />
+    <h3>{title}</h3>
+  </a>
+
+  <ul>
+    {tags.map((tag) => <li>#{tag}</li>)}
+  </ul>
+
+  <style>
+    .card {
+      border: 1px solid rgb(229 229 229);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+
+    .card--orange {
+      background: linear-gradient(135deg, #ff5d01, #bc52ee);
+    }
+  </style>
+</article>

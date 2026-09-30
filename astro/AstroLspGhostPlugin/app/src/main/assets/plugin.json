@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.astro",
+  "name": "Astro Support",
+  "version": "1.0.1",
+  "entryClass": "ir.hanzodev1375.astro.AstroPlugin",
+  "description": "Astro editing features: bundled TextMate grammar (source.astro) with its TypeScript/JavaScript/CSS/JSON dependencies, plus an @astrojs/language-server provider launched through the proot rootfs. Adds a Sora editor panel with the Astro grammar applied for .astro files.",
+  "minHostVersion": 0,
+  "icon": "astro.png"
+}

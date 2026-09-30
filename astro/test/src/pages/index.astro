@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Astro plugin sample page' } = Astro.props;
+const year: number = new Date().getFullYear();
+
+const posts = [
+  { slug: 'hello-astro', tags: ['astro', 'intro'] },
+  { slug: 'textmate', tags: ['grammar'] },
+];
+---
+
+<Layout title={title} description={description}>
+  <main class="page">
+    <h1>{title}</h1>
+    <p class="lead">{description}</p>
+
+    {posts.map((post) => (
+      <Card href={`/blog/${post.slug}`} title={post.slug} tags={post.tags} />
+    ))}
+
+    <style>
+      .page {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      .lead {
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+    </style>
+  </main>
+</Layout>
+
+<footer>&copy; {year} Ghost</footer>
