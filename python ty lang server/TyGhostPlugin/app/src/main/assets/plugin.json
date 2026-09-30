@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.tylsp",
+  "name": "Ty LSP",
+  "version": "1.0.0",
+  "entryClass": "ir.ghostide.tylsp.TyLspPlugin",
+  "description": "Adds blazing fast Python language support (diagnostics, hover, completion, inlay hints) via ty, the Rust based type checker from Astral, running inside the sandboxed Linux rootfs.",
+  "minHostVersion": 0,
+  "icon": "ty.png"
+}

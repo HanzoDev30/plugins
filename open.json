@@ -243,5 +243,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwindcsslsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/tailwindcss/test"
+  },
+  {
+    "name": "ty",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/ty.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ty/tylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/ty/TyGhostPlugin"
   }
 ]

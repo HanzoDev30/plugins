@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "ty.png",
+  "note": "## Ty Lsp (Astral)\n - Rust based Python type checker and language server from astral-sh/ty\n - 10x to 100x faster than mypy/pyright, runs inside the proot rootfs\n - Diagnostics, hover, completion, go to definition and inlay hints for .py files"
+}

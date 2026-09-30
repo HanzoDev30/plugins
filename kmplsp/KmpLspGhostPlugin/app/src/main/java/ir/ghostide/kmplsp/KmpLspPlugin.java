@@ -20,36 +20,17 @@ import ir.hanzodev1375.ghostide.plugin.api.PluginSetupAction;
  *
  * <p>The setup action writes {@code assets/install-kmp-lsp.sh} to {@code /opt/kmp-lsp/install.sh}
  * with a single heredoc and executes it, so the installer on disk is exactly the readable script
- * shipped in the APK — the same thing a user gets by pasting it into a terminal. The script
- * downloads the release binaries, verifies them against the published {@code sha256sums.txt},
- * installs them into {@code /opt/kmp-lsp} and writes the {@code /usr/local/bin/kmp-lsp} wrapper
+ * shipped in the APK - the same thing a user gets by pasting it into a terminal. The script
+ * downloads the release tarball, verifies it against the published {@code sha256sums.txt}, unpacks
+ * both binaries into {@code /opt/kmp-lsp} and writes the {@code /usr/local/bin/kmp-lsp} wrapper
  * this plugin launches.
- *
- * <p>Two more assets go next to it, because the server can only see what it is pointed at:
- * {@code kmp-env.sh} resolves the Android SDK, the Gradle cache and the JDK (kmp-lsp finds
- * android.jar and {@code *-sources.jar} only through those), and {@code prepare.sh} writes the
- * project's {@code workspace.json} and reports what will be indexed. They are written as files of
- * their own rather than inlined into the installer, so the launcher and the preparation can never
- * disagree about where the SDK is.
  */
 public final class KmpLspPlugin implements GhostPlugin {
 
   private static final String INSTALL_SCRIPT_ASSET = "install-kmp-lsp.sh";
 
-  /** Written next to the installer and sourced by the launcher; see the class comment. */
-  private static final String ENV_SCRIPT_ASSET = "kmp-env.sh";
-
-  private static final String PREPARE_SCRIPT_ASSET = "prepare-workspace.sh";
-
-  /**
-   * The names the scripts are known by inside the rootfs. The launcher, the installer and the
-   * plugin manager all address them by these, so they are spelled out here rather than derived from
-   * the asset name: an asset called {@code prepare-workspace.sh} is {@code prepare.sh} on disk.
-   */
+  /** The name the installer is known by inside the rootfs; the plugin manager runs it directly. */
   private static final String INSTALL_SCRIPT = "install.sh";
-
-  private static final String ENV_SCRIPT = "kmp-env.sh";
-  private static final String PREPARE_SCRIPT = "prepare.sh";
 
   private static final String INSTALL_DIR = "/opt/kmp-lsp";
 
@@ -60,52 +41,40 @@ public final class KmpLspPlugin implements GhostPlugin {
     if (context == null) {
       return List.of();
     }
-    if (readAsset(context, INSTALL_SCRIPT_ASSET).isBlank()) {
+    String body = readAsset(context, INSTALL_SCRIPT_ASSET);
+    if (body.isBlank()) {
       return List.of();
     }
-    StringBuilder command = new StringBuilder("mkdir -p ").append(INSTALL_DIR).append('\n');
-    // Written before the installer runs: its own main() checks for them, and the launcher it writes
-    // sources one of them on every single start.
-    if (!writeAsset(command, ENV_SCRIPT_ASSET, ENV_SCRIPT)
-        || !writeAsset(command, PREPARE_SCRIPT_ASSET, PREPARE_SCRIPT)
-        || !writeAsset(command, INSTALL_SCRIPT_ASSET, INSTALL_SCRIPT)) {
-      return List.of();
-    }
-    command.append(INSTALL_DIR).append('/').append(INSTALL_SCRIPT).append('\n');
+    String command =
+        "mkdir -p "
+            + INSTALL_DIR
+            + "\n"
+            + "cat > "
+            + INSTALL_DIR
+            + "/"
+            + INSTALL_SCRIPT
+            + " <<'KMP_ASSET_EOF'\n"
+            + body
+            + "\nKMP_ASSET_EOF\n"
+            + "chmod +x "
+            + INSTALL_DIR
+            + "/"
+            + INSTALL_SCRIPT
+            + "\n"
+            + INSTALL_DIR
+            + "/"
+            + INSTALL_SCRIPT
+            + "\n";
     return List.of(
         new PluginSetupAction(
             "install-kmp-lsp",
             "Install KMP LSP (kmp-lsp)",
-            command.toString(),
+            command,
             "Installs kmp-lsp, a Rust/tree-sitter language server for Kotlin, Java and Swift, plus "
                 + "its native jar-indexer sidecar, into the rootfs. Also installs ripgrep and "
                 + "fd-find (with the fd -> fdfind symlink kmp-lsp expects) so cross-file search and "
-                + "file discovery work. Re-running the action on the same version only refreshes "
-                + "the launcher, and points the server at the Android SDK and the Gradle cache that "
-                + "the AndroidBuilder plugin installs into."));
-  }
-
-  /** One asset, one heredoc, one chmod. The delimiter cannot occur in a shell script. */
-  private boolean writeAsset(StringBuilder command, String asset, String name) {
-    String body = readAsset(context, asset);
-    if (body.isBlank()) {
-      context.getLogger().error("Missing asset: " + asset);
-      return false;
-    }
-    command
-        .append("cat > ")
-        .append(INSTALL_DIR)
-        .append('/')
-        .append(name)
-        .append(" <<'KMP_ASSET_EOF'\n")
-        .append(body)
-        .append("\nKMP_ASSET_EOF\n")
-        .append("chmod +x ")
-        .append(INSTALL_DIR)
-        .append('/')
-        .append(name)
-        .append('\n');
-    return true;
+                + "file discovery work. Re-running the action on the same version only refreshes the "
+                + "launcher."));
   }
 
   @Override

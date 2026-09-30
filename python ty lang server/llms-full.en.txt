@@ -1,0 +1,1608 @@
+# Ghost IDE Plugin Docs — English
+
+Developer documentation for building Ghost IDE plugins — the three-module API (plugin-api, ide-api, ide-ui-api), extension/service system, LSP integration, UI screens and the .gpl package format.
+
+- Repository: https://github.com/HanzoDev1375/GhostIdes
+- Version: plugin-api 0.1.0
+- Pages: 38
+- Generated from the real module source (no build step).
+
+# Table of contents
+
+## Getting Started
+- Introduction — `intro`
+- Architecture — `architecture`
+- Quickstart — `quickstart`
+
+## Core Concepts
+- GhostPlugin — `ghost-plugin` (plugin-api)
+- PluginContext — `plugin-context` (plugin-api)
+- PluginDescriptor — `plugin-descriptor` (plugin-api)
+- PluginDependency — `plugin-dependency` (plugin-api)
+- PluginLogger — `plugin-logger` (plugin-api)
+- Disposable — `disposable` (plugin-api)
+- PluginSetupAction — `setup-actions` (plugin-api)
+- PluginStorage — `plugin-storage` (plugin-api)
+
+## Extensions
+- ExtensionPoint — `extension-point` (plugin-api)
+- ExtensionRegistry — `extension-registry` (plugin-api)
+- ConfigurableExtension — `configurable-extension` (plugin-api)
+- PluginCommand — `plugin-command` (plugin-api)
+
+## Services
+- ServiceKey — `service-key` (plugin-api)
+- ServiceRegistry — `service-registry` (plugin-api)
+- GlobalRegistry — `global-registry` (plugin-api)
+
+## LSP Integration
+- Overview — `lsp-overview` (ide-api)
+- LspServerProvider — `lsp-server-provider` (ide-api)
+- LspServerDefinition — `lsp-server-definition` (ide-api)
+- LspServerConnection — `lsp-server-connection` (ide-api)
+
+## UI Integration
+- Overview — `ui-overview` (ide-ui-api)
+- IdeHostServices — `ide-host-services` (ide-ui-api)
+- EditorHost — `editor-host` (ide-ui-api)
+- FileManagerHost — `file-manager-host` (ide-ui-api)
+- CodeRunnerHost — `code-runner-host` (ide-ui-api)
+- EditorPanel — `editor-panel` (ide-ui-api)
+- EditorActionHandler — `editor-action-handler` (ide-ui-api)
+- UiFeedbackHost — `ui-feedback-host` (ide-ui-api)
+- IdeEvents / FileEvent — `ide-events` (ide-ui-api)
+- PluginScreen — `plugin-screen` (ide-ui-api)
+- FileIconContributor — `file-icon-contributor` (ide-ui-api)
+
+## Packaging (.gpl)
+- .gpl Format — `gpl-format` (gpl runtime)
+- Building a Plugin — `build-plugin` (gpl runtime)
+- Loading Lifecycle — `loading-lifecycle` (gpl runtime)
+- Installing Plugins — `installing` (gpl runtime)
+
+## Full Example
+- Hello Ghost — `hello-world` (gpl runtime)
+
+
+# Introduction
+> Group: Getting Started · File: README.md
+
+Ghost IDE ships with a first-class plugin layer — the very same API its own built-in features are built on.
+
+A Ghost IDE plugin is a Java class that implements `GhostPlugin`, is packaged inside a `.gpl` bundle, and is loaded at runtime with a DexClassLoader. Once loaded, `activate(PluginContext)` is called, and from there the plugin reaches the extension and service registries.
+
+The API is split across three independent modules, so a plugin only depends on what it actually needs:
+
+| Module | Kind | Depends on | Purpose |
+| --- | --- | --- | --- |
+| `plugin-api` | Plain Java library | none | Core plugin, extension and service model |
+| `ide-api` | Plain Java library | `plugin-api` + `lsp4j` | Add a language server (LSP) to the editor |
+| `ide-ui-api` | Android library | `plugin-api` + `androidx.appcompat` | Add a UI screen and reach host services |
+
+> **[INFO]** All three modules compile with **Java 17**. `plugin-api` deliberately has zero Android dependency, so plain plugin logic can be compiled and tested without the Android SDK.
+
+## What makes up a plugin?
+
+- **Entry class** — a `GhostPlugin` implementation with a no-arg constructor.
+- **Manifest** — an `assets/plugin.json` file with an id, version and entry class name.
+- **`.gpl` bundle** — the final install artifact: a zip containing the manifest and `classes.dex`.
+
+Head to Quickstart for the short version, or jump straight to the Hello Ghost example to see a complete plugin from scratch to install.
+
+
+---
+
+# Architecture
+> Group: Getting Started · File: ARCHITECTURE.md
+
+The module map, the extension/service registries, and where plugin code ends and host code begins.
+
+## Module map
+
+- **plugin-api** — The plugin model itself: PluginContext, ExtensionPoint/Registry, ServiceKey/Registry, GlobalRegistry.
+- **ide-api** — Depends on plugin-api. The LSP_SERVER_PROVIDER extension point for adding a language server.
+- **ide-ui-api** — Depends on plugin-api. The PLUGIN_SCREEN / EDITOR_PANEL / EDITOR_ACTION_HANDLER extension points plus the EditorHost, FileManagerHost and CodeRunnerHost services.
+
+The `:app` module (the app itself) depends on all three, and is the only place where the real registry implementations (`DefaultExtensionRegistry`, `DefaultServiceRegistry`) and the plugin loader (`GplPluginLoader`) actually live. Plugin code never talks to `:app`’s internal classes directly — only to the `plugin-api`/`ide-api`/`ide-ui-api` interfaces.
+
+## Two shared registries
+
+`GlobalRegistry` is a static, process-wide holder that exposes two registries:
+
+| Registry | Scope | Why |
+| --- | --- | --- |
+| `GlobalRegistry.extensions()` | One instance shared by every plugin | Modules like `:editor` need to see every registered provider from any plugin. |
+| `GlobalRegistry.services()` | A shared base; each plugin gets a **copy** | Each plugin needs its own Android `Context` without leaking it to other plugins. |
+
+> **[WARN]** Because extensions live in one *shared* registry, cleanup on unload depends entirely on correctly setting `ownerPluginId` at registration time. See Extension Registry for details.
+
+## A request’s path
+
+1. The host app reads a `.gpl` file from the install folder and calls `GplPluginLoader.load()`.
+2. The loader reads the manifest, loads the entry class with a dedicated class loader, and builds a `PluginContext`.
+3. `activate(context)` is called; the plugin registers capabilities through `context.getExtensions()` and `context.getServices()`.
+4. The rest of the app (e.g. `:editor` when opening a file) uses `ExtensionRegistry.extensions(point)` to find active providers.
+
+
+---
+
+# Quickstart
+> Group: Getting Started · File: QUICKSTART.md
+
+The shortest path from nothing to a plugin installed on Ghost IDE.
+
+1. **Add a dependency** — depend on `plugin-api` (and `ide-api` or `ide-ui-api` if needed) in your plugin module’s `build.gradle`.
+2. **Implement `GhostPlugin`** — a class with a no-arg constructor that overrides `activate(PluginContext)`.
+3. **Register your capability** — through `context.getExtensions().register(...)`, with `ownerPluginId` set to your own id.
+4. **Write a manifest** — `assets/plugin.json` with `id`, `name`, `version`, `entryClass`.
+5. **Package it** — put the manifest and `classes.dex` into a zip with a `.gpl` extension.
+6. **Install it** — copy the `.gpl` file into the device’s plugin install folder.
+
+```gradle — build.gradle
+dependencies {
+  // plugin-api, ide-api and ide-ui-api are NOT on any public repository.
+  // Download them from GitHub Actions ("ghostide-plugin-sdk" artifact)
+  // or from a Release, then point to the local jar/aar files:
+  compileOnly files('libs/plugin-api.jar')
+  compileOnly files('libs/ide-api.jar')
+  compileOnly files('libs/ide-ui-api.aar')
+}
+```
+
+> **[INFO]** The `ir.hanzodev1375.ghostide:...` group is **not published anywhere** — the host app ships these APIs itself. Grab the compiled files from the **ghostide-plugin-sdk** artifact of [GitHub Actions](https://github.com/HanzoDev1375/GhostIdes/actions) or from a [Release](https://github.com/HanzoDev1375/GhostIdes/releases) of the Ghost IDE repo.
+
+> **[TIP]** To see all six steps with real, complete code, go to the Hello Ghost example — it walks through this exact path end to end.
+
+
+---
+
+# GhostPlugin
+> Group: Core Concepts · File: GhostPlugin.java · Module: plugin-api
+
+The entry point of every Ghost IDE plugin.
+
+At runtime, the class named by `entryClass` in the manifest is constructed with a no-arg constructor, then `activate(PluginContext)` is called. The plugin should register its capabilities through `context.getExtensions()`, and must register the returned `Disposable` with `PluginContext.registerDisposable(Disposable)` so cleanup on unload is deterministic.
+
+```java — GhostPlugin.java
+public interface GhostPlugin {
+
+  default List<PluginSetupAction> getSetupActions() {
+    return Collections.emptyList();
+  }
+
+  void activate(PluginContext context);
+
+  default void deactivate() {}
+}
+```
+
+| Method | Required | Description |
+| --- | --- | --- |
+| `activate(PluginContext)` | Yes | Called once after loading; the place to register extensions and services. |
+| `deactivate()` | No, empty by default | Called right before unload; the place to wind down anything started in activate. |
+| `getSetupActions()` | No, empty list by default | Environment setup commands (e.g. installing a language server), only run with explicit user confirmation in the terminal. |
+
+> **[WARN]** If the `Disposable` returned from `register(...)` is never passed to `registerDisposable`, nothing frees it for you on unload.
+
+
+---
+
+# PluginContext
+> Group: Core Concepts · File: PluginContext.java · Module: plugin-api
+
+Everything a plugin needs inside activate() to introduce itself.
+
+This interface is deliberately free of any Android framework dependency, which is what keeps `plugin-api` a plain JVM dependency — plugin logic can be compiled and tested without the Android SDK.
+
+```java — PluginContext.java
+public interface PluginContext {
+
+  PluginDescriptor getDescriptor();
+
+  MutableExtensionRegistry getExtensions();
+
+  ServiceRegistry getServices();
+
+  PluginLogger getLogger();
+
+  Disposable registerDisposable(Disposable disposable);
+}
+```
+
+| Method | Returns | Description |
+| --- | --- | --- |
+| `getDescriptor()` | `PluginDescriptor` | The current plugin’s identity (id, name, version, ...). |
+| `getExtensions()` | `MutableExtensionRegistry` | Used to register a capability at an `ExtensionPoint`; shared across every plugin. |
+| `getServices()` | `ServiceRegistry` | Read-only access to the services available to this plugin — its own copy. |
+| `getLogger()` | `PluginLogger` | A logger automatically tagged with this plugin’s id. |
+| `registerDisposable(Disposable)` | `Disposable` | For deterministic cleanup on unload — always call this. |
+
+> **[INFO]** `getServices()` returns the read-only `ServiceRegistry` type, not `MutableServiceRegistry`. Plugins may only *read* host services, not register new services for others.
+
+
+---
+
+# PluginDescriptor
+> Group: Core Concepts · File: PluginDescriptor.java · Module: plugin-api
+
+The immutable, parsed identity of an installed plugin.
+
+Instances are immutable and only built through `Builder`. Equality (`equals`) is based on the `id` + `version` pair.
+
+| Field | Type | Requirement |
+| --- | --- | --- |
+| `id` | `String` | Must match the pattern `[A-Za-z0-9_.-]+`. |
+| `name` | `String` | Must not be blank. |
+| `version` | `String` | Must not be blank. |
+| `entryClass` | `String` | Fully-qualified name of the class implementing `GhostPlugin`. |
+| `description`, `author`, `source` | `String` | Optional; default is an empty string. |
+| `classPath` | `List<String>` | Optional; default is an empty list. |
+| `dependencies` | `List<PluginDependency>` | Optional; default is an empty list. |
+| `capabilities` | `Set<String>` | Optional; default is an empty set. |
+| `enabledByDefault` | `boolean` | Optional; default `true`. |
+
+```java — PluginDescriptor.java
+PluginDescriptor descriptor = PluginDescriptor
+    .builder("com.example.rust-tools", "Rust Tools", "1.0.0", "com.example.RustPlugin")
+    .description("rust-analyzer integration for Ghost IDE")
+    .author("you")
+    .capabilities(Set.of("lsp"))
+    .build();
+```
+
+> **[INFO]** In practice, building a `PluginDescriptor` is the host’s job — `GplPluginLoader` builds one from `plugin.json` for you. You typically only ever read it through `context.getDescriptor()`.
+
+
+---
+
+# PluginDependency
+> Group: Core Concepts · File: PluginDependency.java · Module: plugin-api
+
+A plugin’s declared dependency on another plugin’s id.
+
+A simple `record` checked before a plugin is activated. `id` must not be blank.
+
+```java — PluginDependency.java
+public record PluginDependency(String id, String minVersion, boolean optional) {
+
+  public static PluginDependency required(String id) {
+    return new PluginDependency(id, null, false);
+  }
+
+  public static PluginDependency optional(String id) {
+    return new PluginDependency(id, null, true);
+  }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `id` | The id of the required plugin. |
+| `minVersion` | The lowest acceptable version, or `null` meaning any version is acceptable. |
+| `optional` | When `true`, this dependency being missing does not block activation. |
+
+Typical use inside `PluginDescriptor.Builder.dependencies(...)`:
+
+```java — PluginDescriptor.java
+.dependencies(List.of(
+    PluginDependency.required("ir.hanzodev1375.ghostide.core"),
+    PluginDependency.optional("com.example.icons-pack")
+))
+```
+
+
+---
+
+# PluginLogger
+> Group: Core Concepts · File: PluginLogger.java · Module: plugin-api
+
+The logging interface the host exposes to a plugin through PluginContext.
+
+```java — PluginLogger.java
+public interface PluginLogger {
+
+  void debug(String message);
+
+  void info(String message);
+
+  void warn(String message, Throwable throwable);
+
+  void error(String message, Throwable throwable);
+
+  default void warn(String message) {
+    warn(message, null);
+  }
+
+  default void error(String message) {
+    error(message, null);
+  }
+}
+```
+
+In the current host implementation, every message is sent to Android Logcat tagged `gpl:<plugin id>` — meaning each plugin’s logs are automatically distinguishable from everyone else’s.
+
+```java — RustPlugin.java
+context.getLogger().info("rust-analyzer connection started");
+```
+
+
+---
+
+# Disposable
+> Group: Core Concepts · File: Disposable.java · Module: plugin-api
+
+A single unit of cleanup, owned by a specific registration.
+
+Almost every registration in this API — extension or service — returns a `Disposable`. It’s the plugin’s responsibility to hold onto it via `PluginContext.registerDisposable(Disposable)`, so the runtime can release it on unload.
+
+```java — Disposable.java
+@FunctionalInterface
+public interface Disposable {
+
+  Disposable NONE = () -> {};
+
+  void dispose();
+}
+```
+
+```java — HelloGhostPlugin.java
+Disposable registration = context.getExtensions().register(
+    PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new HelloScreen(),
+    context.getDescriptor().getId(),
+    0);
+
+context.registerDisposable(registration);
+```
+
+> **[TIP]** Since `Disposable` is a functional interface, a lambda can be one too — handy for closing a resource manually: `context.registerDisposable(() -> myResource.close());`
+
+
+---
+
+# PluginSetupAction
+> Group: Core Concepts · File: PluginSetupAction.java · Module: plugin-api
+
+An environment setup command owned by the whole plugin — not by a specific extension point.
+
+Designed for things like installing a language server inside the proot Debian environment. The host runs these commands **only** through an interactive terminal handoff, with explicit user confirmation — never silently.
+
+```java — PluginSetupAction.java
+public record PluginSetupAction(String id, String label, String command, String description) {
+
+  public PluginSetupAction(String id, String label, String command) {
+    this(id, label, command, "");
+  }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `id` | A stable id for this action, scoped within the plugin itself. |
+| `label` | A short, user-facing label. |
+| `command` | The shell command text, passed verbatim to a login shell. |
+| `description` | A longer explanation shown before the user confirms. |
+
+```java — RustPlugin.java
+@Override
+public List<PluginSetupAction> getSetupActions() {
+  return List.of(new PluginSetupAction(
+      "install-rust-analyzer",
+      "Install rust-analyzer",
+      "rustup component add rust-analyzer",
+      "Installs rust-analyzer via rustup inside the terminal environment."));
+}
+```
+
+
+---
+
+# PluginStorage
+> Group: Core Concepts · File: PluginStorage.java · Module: plugin-api
+
+Persistent key-value storage scoped to your own plugin — survives restarts and reloads.
+
+Published by the host under `CoreServices.PLUGIN_STORAGE`. Every plugin receives its own isolated instance (namespaced by its descriptor id), so you can never read or overwrite another plugin’s data. Because it lives in `plugin-api`, even Android-free LSP plugins can use it.
+
+```java — PluginStorage.java
+public interface PluginStorage {
+
+  String getString(String key, String defValue);
+  void putString(String key, String value);
+
+  boolean getBoolean(String key, boolean defValue);
+  void putBoolean(String key, boolean value);
+
+  int getInt(String key, int defValue);
+  void putInt(String key, int value);
+
+  long getLong(String key, long defValue);
+  void putLong(String key, long value);
+
+  float getFloat(String key, float defValue);
+  void putFloat(String key, float value);
+
+  void remove(String key);
+  boolean contains(String key);
+  void clear();
+}
+```
+
+```java — MyPlugin.java
+PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+
+int runs = storage.getInt("runCount", 0);
+storage.putInt("runCount", runs + 1);
+storage.putString("lastPath", "/sdcard/Project/main.py");
+```
+
+> **[TIP]** Keep values small — this store is not meant for large blobs. For bigger payloads write files inside your plugin’s private directory instead.
+
+
+---
+
+# ExtensionPoint
+> Group: Extensions · File: ExtensionPoint.java · Module: plugin-api
+
+The contract a group of registered capabilities must implement.
+
+A simple `record` holding a unique id and the `Class` type every registration must implement. The platform ships with seven extension points today:
+
+| Extension point | Type | Module |
+| --- | --- | --- |
+| `EditorExtensionPoints.LSP_SERVER_PROVIDER` | `LspServerProvider` | `ide-api` |
+| `PluginUiExtensionPoints.PLUGIN_SCREEN` | `PluginScreen` | `ide-ui-api` |
+| `PluginUiExtensionPoints.EDITOR_PANEL` | `EditorPanel` | `ide-ui-api` |
+| `PluginUiExtensionPoints.EDITOR_ACTION_HANDLER` | `EditorActionHandler` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR` | `FileIconContributor` | `ide-ui-api` |
+| `IdeEvents.FILE_EVENT` | `FileEventListener` | `ide-ui-api` |
+| `CoreExtensionPoints.PLUGIN_COMMAND` | `PluginCommand` | `plugin-api` |
+
+```java — ExtensionPoint.java
+public record ExtensionPoint<T>(String id, Class<T> type) {
+
+  public ExtensionPoint {
+    if (id == null || id.isBlank()) {
+      throw new IllegalArgumentException("Extension point id must not be blank");
+    }
+    if (type == null) {
+      throw new IllegalArgumentException("Extension point type must not be null");
+    }
+  }
+}
+```
+
+For details on each, see LspServerProvider, PluginScreen, EditorPanel or EditorActionHandler.
+
+
+---
+
+# ExtensionRegistry
+> Group: Extensions · File: ExtensionRegistry.java · Module: plugin-api
+
+Where capabilities registered at an ExtensionPoint are written and read, ordered by priority.
+
+`ExtensionRegistry` is read-only. `MutableExtensionRegistry`, returned by `PluginContext.getExtensions()`, adds registration and cleanup on top.
+
+```java — ExtensionRegistry.java
+public interface ExtensionRegistry {
+
+  <T> List<ExtensionRegistration<T>> registrations(ExtensionPoint<T> point);
+
+  default <T> List<T> extensions(ExtensionPoint<T> point) {
+    return registrations(point).stream()
+        .map(ExtensionRegistration::extension)
+        .collect(Collectors.toList());
+  }
+}
+```
+
+```java — MutableExtensionRegistry.java
+public interface MutableExtensionRegistry extends ExtensionRegistry {
+
+  <T> Disposable register(ExtensionPoint<T> point, T extension, String ownerPluginId, int priority);
+
+  default <T> Disposable register(ExtensionPoint<T> point, T extension) {
+    return register(point, extension, PluginIds.CORE, 0);
+  }
+
+  void unregisterOwner(String ownerPluginId);
+}
+```
+
+> **[WARN]** Always use the four-argument `register(point, extension, ownerPluginId, priority)` overload and set `ownerPluginId` to `context.getDescriptor().getId()`. The two-argument overload attributes the registration to `PluginIds.CORE` — so when your plugin unloads, `unregisterOwner(yourId)` will never find and clean it up.
+
+```java — HelloGhostPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new HelloScreen(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+## DefaultExtensionRegistry
+
+The in-memory implementation, backed by a `CopyOnWriteArrayList` and safe for concurrent access. On registration, if the extension object doesn’t implement the type declared by `ExtensionPoint.type()`, it throws `IllegalArgumentException`.
+
+`registrations(point)` sorts results by **descending** priority, breaking ties with a stable sort on `ownerPluginId` — so you get the same ordering every time.
+
+
+---
+
+# ConfigurableExtension
+> Group: Extensions · File: ConfigurableExtension.java · Module: plugin-api
+
+Stable identity and user-facing metadata for one extension contribution — the base of every typed contract.
+
+Every typed extension contract (currently just `LspServerProvider`) extends this interface.
+
+```java — ConfigurableExtension.java
+public interface ConfigurableExtension {
+
+  String getId();
+
+  default String getDisplayName() {
+    return getId();
+  }
+
+  default String getDescription() {
+    return "";
+  }
+
+  default boolean isEnabledByDefault() {
+    return true;
+  }
+
+  default boolean isCanDisable() {
+    return true;
+  }
+}
+```
+
+| Method | Default |
+| --- | --- |
+| `getId()` | Required — no default. |
+| `getDisplayName()` | Equal to `getId()`. |
+| `getDescription()` | Empty string. |
+| `isEnabledByDefault()` | `true`. |
+| `isCanDisable()` | `true`. |
+
+
+---
+
+# PluginCommand
+> Group: Extensions · File: PluginCommand.java · Module: plugin-api
+
+A named, user-invokable action your plugin contributes — the building block for a command palette.
+
+Register implementations at `CoreExtensionPoints.PLUGIN_COMMAND` so the host can list and invoke them. Ids must be unique and reverse-domain namespaced, e.g. `com.example.myplugin.format`.
+
+```java — PluginCommand.java
+public interface PluginCommand {
+
+  String getId();      // unique, reverse-domain
+  String getTitle();   // short user-facing label
+
+  default String getDescription() {
+    return "";
+  }
+
+  void execute();
+}
+```
+
+```java — FormatCommand.java
+public final class FormatCommand implements PluginCommand {
+
+  @Override public String getId() { return "com.example.myplugin.format"; }
+
+  @Override public String getTitle() { return "Format project"; }
+
+  @Override public void execute() {
+    // may be called off the main thread — hop before touching UI
+  }
+}
+```
+
+```java — MyPlugin.java
+context.registerDisposable(
+    context.getExtensions().register(
+        CoreExtensionPoints.PLUGIN_COMMAND,
+        new FormatCommand(),
+        context.getDescriptor().getId(),
+        0));
+```
+
+> **[TIP]** `execute()` may be invoked from any thread. Move to the main thread yourself before touching the editor or any view.
+
+
+---
+
+# ServiceKey
+> Group: Services · File: ServiceKey.java · Module: plugin-api
+
+The identity of a service the host makes available.
+
+```java — ServiceKey.java
+public record ServiceKey<T>(String name, Class<T> type) {
+
+  public ServiceKey {
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Service key name must not be blank");
+    }
+    if (type == null) {
+      throw new IllegalArgumentException("Service key type must not be null");
+    }
+  }
+}
+```
+
+The `ide-ui-api` module publishes six ready-made keys — `IdeHostServices.EDITOR_HOST`, `FILE_MANAGER_HOST`, `CODE_RUNNER_HOST`, `PLUGIN_ANDROID_CONTEXT`, `PROOT_PROCESS_LAUNCHER` and `UI_FEEDBACK`. See IdeHostServices for details.
+
+
+---
+
+# ServiceRegistry
+> Group: Services · File: ServiceRegistry.java · Module: plugin-api
+
+Read-only lookup of the services the host has made available to a plugin.
+
+```java — ServiceRegistry.java
+public interface ServiceRegistry {
+
+  <T> T get(ServiceKey<T> key);
+
+  default <T> T require(ServiceKey<T> key) {
+    T service = get(key);
+    if (service == null) {
+      throw new IllegalStateException("Required service '" + key.name() + "' is not registered");
+    }
+    return service;
+  }
+}
+```
+
+```java — HelloGhostPlugin.java
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+String openPath = editor.getOpenFile().getAbsolutePath();
+```
+
+## MutableServiceRegistry and DefaultServiceRegistry
+
+`MutableServiceRegistry` adds `register`, `unregister` and `copy()`. `DefaultServiceRegistry` is the in-memory implementation, backed by a `ConcurrentHashMap`.
+
+> **[INFO]** `copy()` is exactly the mechanism that keeps every plugin isolated from every other: the host builds an independent copy of `GlobalRegistry.services()` and registers that plugin’s own `PLUGIN_ANDROID_CONTEXT` only inside that copy.
+
+
+---
+
+# GlobalRegistry
+> Group: Services · File: GlobalRegistry.java · Module: plugin-api
+
+The static, process-wide holder for the shared extension and service registries.
+
+```java — GlobalRegistry.java
+public final class GlobalRegistry {
+
+  public static MutableExtensionRegistry extensions() {
+    return EXTENSIONS;
+  }
+
+  public static MutableServiceRegistry services() {
+    return SERVICES;
+  }
+}
+```
+
+It lives in `plugin-api` so both `:editor` and `:app` can reach it without depending on each other — `:editor` to read registered providers, `:app` to write built-in and plugin-contributed registrations.
+
+> **[WARN]** Plugin code should essentially never call `GlobalRegistry` directly. Always go through `context.getExtensions()` and `context.getServices()` — those are the ones the host has wired up correctly, with the proper isolation.
+
+
+---
+
+# ide-api module overview
+> Group: LSP Integration · File: ide-api/README.md · Module: ide-api
+
+The extension point that lets the editor learn about a new language server from a plugin.
+
+`ide-api` builds on `plugin-api` and `org.eclipse.lsp4j`, adding exactly one extension point: `EditorExtensionPoints.LSP_SERVER_PROVIDER`. If the language you want to support isn’t already built into the app, this is where you plug in.
+
+> **[INFO]** The editor already ships with servers such as Clangd, OmniSharp (C#), HTML, CSS, Emmet, Go, JSON, Markdown, PHP, Pylsp (Python), Ruby (Solargraph), Sass, TypeScript and Vue — all running inside the proot Debian environment. `LSP_SERVER_PROVIDER` is for languages that list doesn’t cover.
+
+To introduce a new server you need three things: an `LspServerProvider` that decides which files it covers, an `LspServerDefinition` describing the server, and an `LspServerConnection` that actually manages the server’s process and I/O streams.
+
+
+---
+
+# LspServerProvider
+> Group: LSP Integration · File: LspServerProvider.java · Module: ide-api
+
+Introduces a language server to the editor.
+
+Register an instance of this interface at the `EditorExtensionPoints.LSP_SERVER_PROVIDER` extension point.
+
+```java — LspServerProvider.java
+public interface LspServerProvider extends ConfigurableExtension {
+
+  default int getPriority() {
+    return 0;
+  }
+
+  boolean supports(LspServerRequest request);
+
+  LspServerDefinition createDefinition(LspServerRequest request);
+}
+```
+
+| Method | Description |
+| --- | --- |
+| `supports(request)` | Decides, from the `LspServerRequest` (project root + file), whether this provider is responsible for this file. |
+| `createDefinition(request)` | Once `supports` returns true, builds and returns the full `LspServerDefinition`. |
+| `getPriority()` | When several providers cover the same file, the highest priority wins. |
+
+```java — RustLspProvider.java
+public final class RustLspProvider implements LspServerProvider {
+
+  @Override
+  public String getId() {
+    return "com.example.rust-analyzer";
+  }
+
+  @Override
+  public boolean supports(LspServerRequest request) {
+    return "rs".equalsIgnoreCase(request.extension());
+  }
+
+  @Override
+  public LspServerDefinition createDefinition(LspServerRequest request) {
+    return LspServerDefinition
+        .builder(getId(), Set.of("rs"), "rust-analyzer", RustConnection::new)
+        .build();
+  }
+}
+```
+
+```java — RustPlugin.java
+context.getExtensions().register(
+    EditorExtensionPoints.LSP_SERVER_PROVIDER,
+    new RustLspProvider(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+
+---
+
+# LspServerDefinition
+> Group: LSP Integration · File: LspServerDefinition.java · Module: ide-api
+
+Everything the editor needs to route files to a language server and shape the connection.
+
+Immutable, and only built through `Builder`. The app keeps one shared connection per id/project combination.
+
+| Builder field | Type | Default |
+| --- | --- | --- |
+| `grammarScopeName(String)` | String | — |
+| `expectedCapabilities(ServerCapabilities)` | lsp4j `ServerCapabilities` | — |
+| `initializationOptions(Object)` | Object | — |
+| `configuration(Object)` | Object | — |
+| `enableInlayHints(boolean)` | boolean | `true` |
+| `enableSignatureHelp(boolean)` | boolean | `true` |
+| `initializationTimeoutMillis(int)` | int | `10000` |
+| `traceIncomingMessages(boolean)` | boolean | `false` |
+| `textMateGrammarLink(String)` | String | — |
+
+```java — RustLspProvider.java
+LspServerDefinition definition = LspServerDefinition
+    .builder("com.example.rust-analyzer", Set.of("rs"), "rust-analyzer", RustConnection::new)
+    .grammarScopeName("source.rust")
+    .initializationTimeoutMillis(15_000)
+    .enableInlayHints(true)
+    .build();
+```
+
+> **[WARN]** If `fileExtensions` is empty, `displayName` is blank, or `initializationTimeoutMillis` is zero or negative, the constructor throws `IllegalArgumentException` immediately.
+
+
+---
+
+# LspServerConnection
+> Group: LSP Integration · File: LspServerConnection.java · Module: ide-api
+
+The actual connection to a language server — the raw LSP protocol I/O streams.
+
+```java — LspServerConnection.java
+public interface LspServerConnection extends AutoCloseable {
+
+  void start() throws IOException;
+
+  OutputStream getOutputStream();
+
+  InputStream getInputStream();
+
+  boolean isClosed();
+
+  @Override
+  void close();
+}
+```
+
+> **[WARN]** Implementations should only actually start the process/connection inside `start()` — never in the constructor. Any diagnostic output from the server must go to stderr, not to `getOutputStream()`, or the LSP protocol’s stdio framing gets corrupted.
+
+```java — LspServerConnectionFactory.java
+@FunctionalInterface
+public interface LspServerConnectionFactory {
+  LspServerConnection create(LspServerRequest request);
+}
+```
+
+```java — LspServerRequest.java
+public record LspServerRequest(File projectRoot, File file) {
+
+  public String extension() {
+    String name = file.getName();
+    int dot = name.lastIndexOf('.');
+    if (dot < 0 || dot == name.length() - 1) {
+      return "";
+    }
+    return name.substring(dot + 1).toLowerCase(Locale.ROOT);
+  }
+}
+```
+
+
+---
+
+# ide-ui-api module overview
+> Group: UI Integration · File: ide-ui-api/README.md · Module: ide-ui-api
+
+The extension point and services for adding UI and reaching the host.
+
+`ide-ui-api` is an Android library (namespace: `ir.hanzodev1375.ghostide.ide.ui.api`, `minSdk 26`, `compileSdk 36`) that builds on `plugin-api` and `androidx.appcompat`.
+
+> **[INFO]** Android doesn’t let dynamically loaded code declare a new `<activity>` in the host’s manifest. That’s why a plugin’s “screen” is actually a `Fragment`, not an Activity — the same technique Android plugin frameworks commonly use. The host app has a single screen-hosting Activity that displays this Fragment.
+
+To add a screen, see the PluginScreen interface. To slide a panel inside the running editor, see EditorPanel. To reach the open editor or file manager, see EditorHost and FileManagerHost. To run code or a shell command, see CodeRunnerHost. To intercept your language server’s commands locally, see EditorActionHandler.
+
+
+---
+
+# IdeHostServices
+> Group: UI Integration · File: IdeHostServices.java · Module: ide-ui-api
+
+The service keys the host publishes for a plugin to look up via services().
+
+```java — IdeHostServices.java
+public final class IdeHostServices {
+
+  public static final ServiceKey<EditorHost> EDITOR_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.editorHost", EditorHost.class);
+
+  public static final ServiceKey<FileManagerHost> FILE_MANAGER_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.fileManagerHost", FileManagerHost.class);
+
+  public static final ServiceKey<CodeRunnerHost> CODE_RUNNER_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.codeRunnerHost", CodeRunnerHost.class);
+
+  public static final ServiceKey<Context> PLUGIN_ANDROID_CONTEXT =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.pluginAndroidContext", Context.class);
+
+  public static final ServiceKey<ProotProcessLauncher> PROOT_PROCESS_LAUNCHER =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.prootProcessLauncher", ProotProcessLauncher.class);
+}
+```
+
+## PLUGIN_ANDROID_CONTEXT
+
+A `Context` scoped to the plugin itself, not to the host Activity. To inflate a `PluginScreen`’s layout you must go through this Context, not the host Activity’s default inflater — otherwise the plugin’s own `R.layout` ids won’t resolve.
+
+```java — HelloScreenFragment.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_screen, container, false);
+```
+
+## CODE_RUNNER_HOST
+
+The service a plugin asks for when it wants to run code or a shell command — see CodeRunnerHost.
+
+
+---
+
+# EditorHost
+> Group: UI Integration · File: EditorHost.java · Module: ide-ui-api
+
+The service published under IdeHostServices.EDITOR_HOST.
+
+Describes only the capabilities a plugin needs from the editor screen — it never exposes the real `EditorActivity`/`IdeEditor` classes, so `:app` stays the only module that knows about them.
+
+```java — EditorHost.java
+public interface EditorHost {
+
+  File getProjectRoot();
+
+  File getOpenFile();
+
+  String getEditorText();
+
+  void setEditorText(String text);
+
+  void openFile(File file);
+
+  Context getContext();
+
+  // Optional: the raw editor widget, or null when no file is open
+  Object getEditor();
+}
+```
+
+```java — HelloGhostPlugin.java
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+editor.setEditorText(editor.getEditorText() + "\n// added by HelloGhost");
+```
+
+## getEditor()
+
+The plain methods above are enough for most plugins. `getEditor()` is the escape hatch: it returns the real editor widget behind the current tab — the host’s `IdeEditor` — as an `Object`, or `null` when no file is open. `IdeEditor` lives in the host editor module, not in this API, so add that module as a `compileOnly` dependency to cast:
+
+```java — HelloGhostPlugin.java
+Object raw = editor.getEditor();
+if (raw instanceof IdeEditor ide) {   // add ':editor' as compileOnly to cast
+  String path = ide.getCurrentFilePath();
+  ide.getLspEditor();
+}
+```
+
+
+---
+
+# FileManagerHost
+> Group: UI Integration · File: FileManagerHost.java · Module: ide-ui-api
+
+The service published under IdeHostServices.FILE_MANAGER_HOST.
+
+```java — FileManagerHost.java
+public interface FileManagerHost {
+
+  File getRootDirectory();
+
+  File getSelectedFile();
+
+  void refresh();
+
+  void openFile(File file);
+
+  Context getContext();
+}
+```
+
+```java — HelloGhostPlugin.java
+FileManagerHost fileManager = context.getServices().require(IdeHostServices.FILE_MANAGER_HOST);
+fileManager.refresh();
+```
+
+
+---
+
+# CodeRunnerHost
+> Group: UI Integration · File: CodeRunnerHost.java · Module: ide-ui-api
+
+Runs a shell command or a source file in the IDE terminal — exactly like pressing the editor’s run (FAB) button.
+
+Registered by the host under `IdeHostServices.CODE_RUNNER_HOST`. Use it whenever your plugin needs to run code or a shell command — the command is handed to the IDE terminal, which opens either as a bottom sheet or as a full screen.
+
+```java — CodeRunnerHost.java
+public interface CodeRunnerHost {
+
+  void runShell(String command, boolean asBottomSheet);
+
+  void runCurrentFile(boolean asBottomSheet);
+
+  void runFile(String filePath, boolean asBottomSheet);
+
+  boolean isSupported(String filePath);
+
+  ExecResult exec(String command, Consumer<String> onOutputLine);
+
+  record ExecResult(int exitCode, String output) {
+    public boolean success() { return exitCode == 0; }
+  }
+}
+```
+
+| Method | Description |
+| --- | --- |
+| `runShell(command, asBottomSheet)` | Runs any shell command in the terminal. |
+| `runCurrentFile(asBottomSheet)` | Runs the file that is currently open in the editor, like the FAB. |
+| `runFile(filePath, asBottomSheet)` | Runs a specific file by path. |
+| `isSupported(filePath)` | `true` if the runner knows how to execute that file type. |
+| `exec(command, onOutputLine)` | Headless run with no UI — returns `ExecResult`. Blocking: call from a background thread. |
+
+The `asBottomSheet` argument decides how the terminal is shown: `true` opens it as a bottom sheet, `false` as a full screen.
+
+```java — HelloGhostPlugin.java
+CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+
+// run any command in the terminal
+runner.runShell("python3 main.py", true);
+
+// run the file currently open in the editor
+runner.runCurrentFile();
+
+// run a specific file
+runner.runFile("/sdcard/Project/main.py", false);
+
+// check before running
+if (runner.isSupported("/sdcard/Project/main.py")) {
+  runner.runFile("/sdcard/Project/main.py", true);
+}
+```
+
+> **[TIP]** `runCurrentFile()` decides the path through the registered `EditorPanel`s: the first non-blank `EditorPanel.getLastPath()` wins, otherwise it falls back to the file open in the editor. See EditorPanel.
+
+## exec() — headless with output capture
+
+When you need the command’s output programmatically instead of showing the terminal, use `exec()`. It runs via `sh -c` with no UI and blocks until the process exits — always call it from a background thread. The optional `Consumer<String>` receives each merged stdout/stderr line as it arrives.
+
+```java — GitStatusTask.java
+CodeRunnerHost.ExecResult result =
+    runner.exec("git -C /sdcard/Project status --porcelain", null);
+
+if (result.success()) {
+  String listing = result.output();   // parse it however you like
+} else {
+  ui.toast("git failed: " + result.exitCode());
+}
+```
+
+> **[WARN]** `exec()` runs in the app’s own shell environment, which is not necessarily identical to the interactive terminal session. Binaries living inside the proot rootfs should go through ProotProcessLauncher instead.
+
+
+---
+
+# EditorPanel
+> Group: UI Integration · File: EditorPanel.java · Module: ide-ui-api
+
+A UI panel a plugin slides into the running editor screen — the VS Code “webview / side panel” equivalent.
+
+Register an implementation at `PluginUiExtensionPoints.EDITOR_PANEL`. The host creates the panel’s `View` once when it is first shown and keeps it for the rest of the Activity’s lifetime, so build your view lazily and keep its state inside it.
+
+```java — EditorPanel.java
+public interface EditorPanel {
+
+  String getId();
+
+  String getTitle();
+
+  View createView();
+
+  // Optional: which file/path this panel is about
+  default String getLastPath() {
+    return null;
+  }
+}
+```
+
+Inflate layouts with the plugin’s own scoped context, or your `R.layout` ids will not resolve:
+
+```java — MyPanel.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+View view = LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_panel, root, false);
+```
+
+## getLastPath()
+
+Returns the path your panel is currently about — for example a file the panel’s user picked. The host consults every panel’s `getLastPath()` when running the current file (`CodeRunnerHost.runCurrentFile()`); if you return `null`, the host falls back to the file open in the editor.
+
+> **[TIP]** To show a panel with a different window style, override `getState()` / call `setState(PluginStateMod)` — side sheet, dialog, bottom sheet and more are all supported.
+
+
+---
+
+# EditorActionHandler
+> Group: UI Integration · File: EditorActionHandler.java · Module: ide-ui-api
+
+Lets a plugin intercept its own LSP command actions locally instead of forwarding them back to the language server.
+
+Commands the editor receives from LSP code actions are normally forwarded back to the server via `workspace/executeCommand`. Registering an `EditorActionHandler` at `PluginUiExtensionPoints.EDITOR_ACTION_HANDLER` lets your plugin handle its own commands locally — where the raw editor widget is available.
+
+```java — EditorActionHandler.java
+public interface EditorActionHandler {
+
+  String getCommandId();
+
+  boolean execute(Object editor, String command, List<Object> arguments);
+}
+```
+
+| Method | Description |
+| --- | --- |
+| `getCommandId()` | The command id this handler owns — the editor only calls you for commands with this exact id. |
+| `execute(editor, command, arguments)` | Runs the command. Return `true` if you handled it; `false` lets the editor forward it to the server as before. |
+
+The `editor` argument is the raw `IdeEditor` widget behind the action (an `Object` because `IdeEditor` lives in the host editor module, not in this API), or `null` when no editor is attached. Add the host editor module as a `compileOnly` dependency to cast:
+
+```java — MyActionHandler.java
+public final class MyActionHandler implements EditorActionHandler {
+
+  @Override
+  public String getCommandId() {
+    return "com.example.myplugin.run";
+  }
+
+  @Override
+  public boolean execute(Object editor, String command, List<Object> arguments) {
+    if (editor instanceof IdeEditor ide) {   // add ':editor' as compileOnly to cast
+      ide.getCurrentFilePath();
+    }
+    return true;
+  }
+}
+```
+
+```java — RustPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.EDITOR_ACTION_HANDLER,
+    new MyActionHandler(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+> **[WARN]** `execute` may run on a background thread, so hop back to the UI thread before touching the editor.
+
+
+---
+
+# UiFeedbackHost
+> Group: UI Integration · File: UiFeedbackHost.java · Module: ide-ui-api
+
+Shows toasts and simple dialogs (input, confirm) on behalf of your plugin — no Activity required.
+
+Published by the host under `IdeHostServices.UI_FEEDBACK`. All methods are safe to call from any thread — the host hops to the main thread internally. Dialog callbacks fire with `null`/`false` when no Activity is available to host the dialog, so always handle those cases.
+
+```java — UiFeedbackHost.java
+public interface UiFeedbackHost {
+
+  default void toast(String message) { toast(message, false); }
+  void toast(String message, boolean longDuration);
+
+  void promptInput(String title, String prefill, InputCallback callback);
+
+  void confirm(String title, String message, ConfirmCallback callback);
+
+  @FunctionalInterface interface InputCallback {
+    void onInput(String text);   // null = cancelled
+  }
+
+  @FunctionalInterface interface ConfirmCallback {
+    void onResult(boolean confirmed);
+  }
+}
+```
+
+```java — MyPlugin.java
+UiFeedbackHost ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+
+ui.toast("Indexed 42 files");
+
+ui.confirm("Format all?", "This rewrites 12 files.", confirmed -> {
+  if (confirmed) formatAll();
+});
+
+ui.promptInput("Project name", "my-app", name -> {
+  if (name == null) return; // cancelled
+  createProject(name);
+});
+```
+
+> **[TIP]** Prefer this service over holding a `Context` yourself: it always targets whatever screen the user is currently looking at.
+
+
+---
+
+# IdeEvents / FileEvent
+> Group: UI Integration · File: IdeEvents.java · Module: ide-ui-api
+
+Subscribes to file lifecycle changes everywhere in the IDE — opened, saved, closed, deleted, renamed.
+
+Register a `FileEventListener` at `IdeEvents.FILE_EVENT`. Your listener is unregistered automatically when your plugin unloads. Listeners may be called from any thread (saves and deletes happen on background threads) — hop to the main thread before touching UI.
+
+| Event type | Meaning |
+| --- | --- |
+| `OPENED` | A file was opened in a new editor tab (not merely re-focused). |
+| `SAVED` | The editor wrote a file’s content to disk. |
+| `CLOSED` | An editor tab showing this file was closed. |
+| `DELETED` | A file or directory was deleted from disk. |
+| `RENAMED` | A file or directory was renamed/moved; `path()` is the new location, `previousPath()` the old one. |
+
+```java — MyPlugin.java
+context.registerDisposable(
+    context.getExtensions().register(
+        IdeEvents.FILE_EVENT,
+        event -> {
+          switch (event.type()) {
+            case SAVED -> lint(event.path());
+            case RENAMED -> updateIndex(event.previousPath(), event.path());
+            case OPENED, CLOSED, DELETED -> {}
+          }
+        },
+        context.getDescriptor().getId(),
+        0));
+```
+
+Paths are absolute filesystem paths. The static helper `IdeEvents.post(FileEvent)` is what the host itself calls internally to dispatch events to all listeners.
+
+> **[TIP]** Typical uses: auto-formatting on save, invalidating an index on delete/rename, session restore on open.
+
+
+---
+
+# PluginScreen
+> Group: UI Integration · File: PluginScreen.java · Module: ide-ui-api
+
+A complete screen contributed by a plugin.
+
+```java — PluginScreen.java
+public interface PluginScreen {
+
+  String getId();
+
+  String getTitle();
+
+  Fragment createFragment();
+}
+```
+
+Register an instance at the `PluginUiExtensionPoints.PLUGIN_SCREEN` extension point. The Fragment’s layout and resources come from the plugin’s own `.gpl` bundle, not from the host app’s resources.
+
+```java — PluginUiExtensionPoints.java
+public final class PluginUiExtensionPoints {
+
+  public static final ExtensionPoint<PluginScreen> PLUGIN_SCREEN =
+      new ExtensionPoint<>("ir.hanzodev1375.ghostide.ui.pluginScreen", PluginScreen.class);
+
+  public static final ExtensionPoint<EditorPanel> EDITOR_PANEL =
+      new ExtensionPoint<>("ir.hanzodev1375.ghostide.ui.editorPanel", EditorPanel.class);
+
+  public static final ExtensionPoint<EditorActionHandler> EDITOR_ACTION_HANDLER =
+      new ExtensionPoint<>(
+          "ir.hanzodev1375.ghostide.ui.editorActionHandler", EditorActionHandler.class);
+}
+```
+
+For a complete implementation — including the Fragment itself — see the Hello Ghost example.
+
+
+---
+
+# FileIconContributor
+> Group: UI Integration · File: FileIconContributor.java · Module: ide-ui-api
+
+Overrides the built-in file/folder icons for the paths a plugin decides — including whole icon packs.
+
+Register a `FileIconContributor` at `PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR`. It is consulted for every icon shown in the file manager, editor tabs, history and bookmarks, **before** the built-in `file_icons.json` set. Return `null` for paths you do not handle so the next contributor — or the built-in set — takes over.
+
+```java — FileIconContributor.java
+public interface FileIconContributor {
+
+  String getIcon(String filePath);
+}
+```
+
+| Return value | Meaning |
+| --- | --- |
+| `file://...`, `content://...` | A full URI. Use it for artwork shipped inside your `.gpl`; extract it to private storage during `activate()` because Glide cannot open plugin assets through `android_asset`. |
+| `file_type_kotlin` | A bare icon name; resolved as `vscode_icons/<name>.svg` inside the host assets. |
+| `null` / blank | You do not handle this path — fall through to the next contributor, then the built-in set. |
+
+## JsonFileIconContributor
+
+For bulk mappings, ship a JSON file in your plugin assets and register the ready-made `JsonFileIconContributor`. The JSON is **partial**: declare only the sections you want to override, and everything else falls through. Extension keys may be written as `hsi`, `.hsi` or `*.hsi` — all three are equivalent.
+
+```json — assets/myicons.json
+{
+  "asset_dir": "myicons",
+  "extensions": {
+    "hsi": "file_type_hsi",
+    "ghost": "file_type_ghost"
+  },
+  "filenames": {
+    "makefile": "file_type_makefile",
+    "ghostide.json": "file_type_ghost"
+  },
+  "folders": {
+    "components": "folder_type_components",
+    "node_modules": "folder_type_node"
+  },
+  "defaults": {
+    "file": "default_file",
+    "folder": "default_folder",
+    "root_folder": "default_root_folder"
+  }
+}
+```
+
+The VS Code spelling of the section names is accepted too: `fileExtensions` → `extensions`, `fileNames` → `filenames`, `folderNames` / `folderNamesExpanded` → `folders`. A minimal pack needs nothing but the mapping:
+
+```json — assets/myicons.json
+{
+  "extensions": {
+    "hsi": "iconhsi"
+  }
+}
+```
+
+```java — MyPlugin.java
+public void activate(PluginContext context) {
+  Context pluginContext =
+      context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR,
+          new JsonFileIconContributor(pluginContext, "myicons.json")));
+}
+```
+
+`asset_dir` is optional; names that point at an SVG inside it are extracted once into the plugin’s private storage and served as `file://` URIs, while unknown names fall back to the built-in `vscode_icons` set. `defaults` supports `file`, `folder` and `root_folder`.
+
+## Priority between icon packs
+
+Several icon plugins can be active at once. The **newest installed** plugin is queried first — its priority is derived from the `.gpl` install time and survives restarts. The first non-null answer wins per path, so a newer pack overrides older packs on the keys it declares and falls back to them — and finally to the built-in set — everywhere else. Unloading a plugin removes its contributions automatically.
+
+> **[TIP]** To reuse the built-in artwork, point a mapping at any existing icon name (for example `file_type_kotlin`). Ship your own SVGs under `asset_dir` only for icons the built-in set does not have.
+
+
+---
+
+# .gpl format
+> Group: Packaging (.gpl) · File: plugin.json · Module: gpl runtime
+
+The layout of a Ghost IDE plugin install file.
+
+A `.gpl` file is structurally a zip — much like a stripped-down APK — and two things inside it are required:
+
+| Path in the zip | Contents |
+| --- | --- |
+| `assets/plugin.json` | The plugin manifest. |
+| `classes.dex` (or `classes2.dex`, ...) | The plugin’s compiled bytecode. |
+
+## plugin.json fields
+
+| Field | Type | Requirement |
+| --- | --- | --- |
+| `id` | string | Required — matches `PluginDescriptor`’s contract; a reverse-domain id. |
+| `name` | string | Required. |
+| `version` | string | Required. |
+| `entryClass` | string | Required — the fully-qualified name of the class implementing `GhostPlugin`, with a public no-arg constructor. |
+| `description` | string | Optional; default is an empty string. |
+| `minHostVersion` | integer | Optional; default `0`. The lowest host app versionCode that supports this plugin. |
+| `icon` | string | Optional; a PNG/JPG file name inside `assets/` (same folder as `plugin.json` itself). If missing, the plugin has no icon. |
+
+```json — assets/plugin.json
+{
+  "id": "com.example.hello-ghost",
+  "name": "Hello Ghost",
+  "version": "1.0.0",
+  "entryClass": "com.example.helloghost.HelloGhostPlugin",
+  "description": "Adds a sample screen to Ghost IDE.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+> **[WARN]** If `assets/plugin.json` is missing from the zip, or the JSON is invalid, loading fails and the plugin never activates.
+
+
+---
+
+# Building a plugin
+> Group: Packaging (.gpl) · File: BUILD.md · Module: gpl runtime
+
+A suggested way to produce a bundle that GplPluginLoader expects.
+
+The runtime doesn’t enforce any particular build tool — it only cares about the final artifact: a zip with a `.gpl` extension that contains `assets/plugin.json` and at least one valid `classes*.dex`. The path below is a simple, common pattern:
+
+1. Compile the plugin module against `plugin-api` (and `ide-api`/`ide-ui-api` if needed) using `compileOnly` — the host app supplies these at runtime, so they shouldn’t be bundled inside the `.gpl` as well.
+2. Convert the resulting `.class` files to one or more `classes.dex` files with the Android dexer (`d8`).
+3. Put `assets/plugin.json` alongside `classes.dex` in a single zip.
+4. Rename the zip file with a `.gpl` extension.
+
+```bash — package.sh
+d8 --output build/dex build/classes/*.class
+
+cd build/dex
+zip -r ../hello-ghost.gpl classes.dex ../../assets/plugin.json -j
+mv ../../assets/plugin.json assets/plugin.json 2>/dev/null || true
+```
+
+> **[TIP]** To compile against the APIs you’ll need the compiled `plugin-api.jar` / `ide-api.jar` / `ide-ui-api.aar` — grab them from the **ghostide-plugin-sdk** artifact of [GitHub Actions](https://github.com/HanzoDev1375/GhostIdes/actions) or from a [Release](https://github.com/HanzoDev1375/GhostIdes/releases).
+
+> **[TIP]** The simplest way to guarantee the right layout is to assemble a temporary staging folder with the same structure before zipping: `classes.dex` at the root and `assets/plugin.json` in a nested `assets/` folder — exactly what `GplManifestReader` looks for at `assets/plugin.json`.
+
+
+---
+
+# Loading lifecycle
+> Group: Packaging (.gpl) · File: GplPluginLoader.java · Module: gpl runtime
+
+Exactly what happens from installing a .gpl file to it being active — and on removal.
+
+This part is internal to the host app, not part of the public API surface — but understanding it helps clarify exactly what’s running underneath your `activate(context)`.
+
+## Loading
+
+1. `GplManifestReader` reads the manifest from `assets/plugin.json`.
+2. If a plugin with the same id is already loaded, that same instance is returned with no extra work.
+3. On Android 14 (API 34) and above, every `classes*.dex` entry is read straight into memory and loaded with `InMemoryDexClassLoader` — no filesystem extraction. Below API 34, the dex files are extracted to disk and loaded with `DexClassLoader`.
+4. A plugin-scoped `Context` is built that resolves resources (`R.layout` and the rest) from the `.gpl` file itself — via a reflection call to `AssetManager.addAssetPath`, the same technique Android plugin frameworks like RePlugin and VirtualAPK use.
+5. The `entryClass` is loaded, constructed with its no-arg constructor, and verified to implement `GhostPlugin`.
+6. A `PluginDescriptor` is built from the manifest.
+7. A plugin-scoped copy of `GlobalRegistry.services()` is taken, and `PLUGIN_ANDROID_CONTEXT` is registered only inside that copy.
+8. `activate(context)` is called.
+
+> **[WARN]** If the `addAssetPath` reflection call fails for any reason (say, a future Android version closes off this unofficial API), loading falls back to the host app’s own resources instead of failing outright — the plugin still comes up, but without its own layouts and drawables.
+
+## Unloading
+
+1. `plugin.deactivate()` is called.
+2. Every `Disposable` registered via `registerDisposable` is released in reverse registration order (LIFO).
+3. `GlobalRegistry.extensions().unregisterOwner(pluginId)` sweeps out any registration still attributed to that id, as an extra safety net.
+
+
+---
+
+# Installing plugins
+> Group: Packaging (.gpl) · File: GplInstalledPlugins.java · Module: gpl runtime
+
+Where installed .gpl files live on the device, and how they’re scanned at startup.
+
+Every installed `.gpl` file is kept inside the host app’s `filesDir/gpl_plugins/` folder. Any file with a `.gpl` extension in that folder counts as “installed”.
+
+```java — GplInstalledPlugins.java
+public static File installDir(Context context) {
+  File dir = new File(context.getApplicationContext().getFilesDir(), "gpl_plugins");
+  if (!dir.exists()) {
+    dir.mkdirs();
+  }
+  return dir;
+}
+```
+
+At startup, `loadAll(context, loader)` scans every file in that folder and calls `loader.load(file)` for any id that isn’t already loaded.
+
+> **[TIP]** A broken plugin or invalid manifest doesn’t stop the whole scan — that one is skipped, and the rest of the plugins still come up normally.
+
+## Where do plugins come from?
+
+Plugins are not published to any separate store. Ready-made `.gpl` bundles are shared from the Ghost IDE repository itself — download them from the **Actions** tab of the relevant workflow run, or from the file attachments of a **Release**:
+
+```text — GitHub
+https://github.com/HanzoDev1375/GhostIdes
+
+Releases   -> attach a .gpl file to a release, users grab it from there
+Actions    -> every workflow run keeps its artifacts for 90 days, including .gpl bundles
+```
+
+> **[INFO]** The `app-debug` workflow artifact is the APK itself, `ghostide-plugin-sdk` holds the jars/AAR you compile plugins against, and any `.gpl` bundles a plugin author wants to share show up as release attachments or workflow artifacts as well.
+
+
+---
+
+# Full example: Hello Ghost
+> Group: Full Example · File: HelloGhostPlugin.java · Module: gpl runtime
+
+A small but complete plugin — from implementation to manifest to packaging — that ties everything above together.
+
+This plugin adds a simple screen to Ghost IDE that shows the text of the currently open file. We need three files: the entry class, the screen itself (a Fragment), and the manifest.
+
+## 1. Entry class
+
+```java — HelloGhostPlugin.java
+package com.example.helloghost;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.Disposable;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class HelloGhostPlugin implements GhostPlugin {
+
+  @Override
+  public void activate(PluginContext context) {
+    Disposable registration = context.getExtensions().register(
+        PluginUiExtensionPoints.PLUGIN_SCREEN,
+        new HelloScreen(),
+        context.getDescriptor().getId(),
+        0);
+
+    context.registerDisposable(registration);
+    context.getLogger().info("Hello Ghost activated");
+  }
+
+  @Override
+  public void deactivate() {
+    // nothing beyond what the Disposable already handles
+  }
+}
+```
+
+## 2. The screen
+
+`HelloScreen` implements `PluginScreen` and builds a `Fragment`. To keep the example free of any extra layout resource, the `TextView` is built programmatically.
+
+```java — HelloScreen.java
+package com.example.helloghost;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginScreen;
+
+public final class HelloScreen implements PluginScreen {
+
+  @Override
+  public String getId() {
+    return "com.example.hello-ghost.screen";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Hello Ghost";
+  }
+
+  @Override
+  public Fragment createFragment() {
+    return new HelloFragment();
+  }
+
+  public static final class HelloFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(
+        @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle state) {
+      TextView view = new TextView(requireContext());
+      view.setPadding(32, 32, 32, 32);
+      view.setTextSize(15f);
+      view.setText("This screen comes from a Ghost IDE plugin.");
+      return view;
+    }
+  }
+}
+```
+
+## 3. Manifest
+
+```json — assets/plugin.json
+{
+  "id": "com.example.hello-ghost",
+  "name": "Hello Ghost",
+  "version": "1.0.0",
+  "entryClass": "com.example.helloghost.HelloGhostPlugin",
+  "description": "Adds a sample screen to Ghost IDE.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+## 4. Package and install
+
+1. Compile `HelloGhostPlugin.java` and `HelloScreen.java` against `plugin-api` + `ide-ui-api`.
+2. Convert the output to `classes.dex` with `d8`.
+3. Put `classes.dex` alongside `assets/plugin.json` in a zip and rename it with a `.gpl` extension — following the .gpl format.
+4. Copy `hello-ghost.gpl` into the device’s `filesDir/gpl_plugins/` — following Installing plugins.
+5. Restart the app; “Hello Ghost” should be available as an active plugin screen.
+
+> **[TIP]** The same pattern, swapping `PluginUiExtensionPoints.PLUGIN_SCREEN` for `EditorExtensionPoints.LSP_SERVER_PROVIDER`, is exactly the path a language server plugin follows — see LspServerProvider.
+
