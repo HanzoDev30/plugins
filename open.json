@@ -21,6 +21,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/arduino/ArduinoLspGhostPlugin"
   },
   {
+    "name": "astro",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astro.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astrolsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/astro/test"
+  },
+  {
     "name": "beardedicon",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/icon.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
@@ -54,6 +61,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/csslsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/css/CssLspGhostPlugin"
+  },
+  {
+    "name": "glsllsp",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/glsllsp/glsllsp.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/glsllsp/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/glsllsp/glsllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/glsllsp/test"
   },
   {
     "name": "go",
@@ -175,6 +189,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/powershell/PowerShellLspGhostPlugin"
   },
   {
+    "name": "python ty lang server",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/ty.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/tylsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/python ty lang server/test"
+  },
+  {
     "name": "python",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/python.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python/doc.json",
@@ -210,6 +231,20 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/shell/ShellLspGhostPlugin"
   },
   {
+    "name": "tailwindcss",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwind.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwindcsslsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/tailwindcss/test"
+  },
+  {
+    "name": "toml",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/toml/tomlicon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/toml/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/toml/tomllsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/toml/TomlLspGhostPlugin"
+  },
+  {
     "name": "ts",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/ts.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/ts/doc.json",
@@ -236,33 +271,5 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
-  },
-  {
-    "name": "tailwindcss",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwind.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwindcsslsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/tailwindcss/test"
-  },
-  {
-    "name": "python ty lang server",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/ty.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/python ty lang server/tylsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/python ty lang server/test"
-  },
-  {
-    "name": "astro",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astro.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astrolsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/astro/test"
-  },
-  {
-    "name": "pythondebug",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/pydbg.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/pydbg.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/pythondebug/PyDbgGhostPlugin"
   }
 ]
