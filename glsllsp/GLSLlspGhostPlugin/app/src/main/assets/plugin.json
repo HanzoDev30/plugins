@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.glsllsp",
+  "name": "GLSL LSP",
+  "version": "1.1.0",
+  "entryClass": "ir.ghostide.glsllsp.GlslLspPlugin",
+  "description": "Adds GLSL support: completion with every builtin type and function, hover docs, go-to-definition, diagnostics, #include resolution and formatting from glsl_analyzer in the sandboxed Linux rootfs, plus a bundled TextMate grammar (source.glsl) so every shader stage is coloured immediately, before - or entirely without - the server. The run button compiles the open shader with glslangValidator. Serves .glsl, .glsles, .vert, .frag, .geom, .comp, .tesc and .tese.",
+  "minHostVersion": 0,
+  "icon": "glsllsp.png"
+}

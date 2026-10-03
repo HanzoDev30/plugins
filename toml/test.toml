@@ -1,0 +1,30 @@
+# TOML sample: exercises every construct the grammar colours.
+title = "Ghost IDE"
+enabled = true
+ratio = 0.75
+count = 42
+negative = -17
+pi = 3.14159
+
+[owner]
+name = "Ghost"
+dob = 2026-10-03T08:30:00Z
+
+[database]
+server = "localhost"
+ports = [ 8000, 8001, 8002 ]
+temp_targets = { cpu = 79.5, case = 72.0 }
+
+[servers.alpha]
+ip = "10.0.0.1"
+role = "frontend"
+
+[[products]]
+name = "Hammer"
+sku = 738594937
+
+[[products]]
+name = "Nail"
+sku = 284758393
+
+[empty]

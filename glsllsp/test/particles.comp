@@ -1,0 +1,71 @@
+#version 460 core
+#extension GL_GOOGLE_include_directive : require
+
+#include "include/common.glsl"
+
+#define MAX_PARTICLES 65536
+#define GRAVITY vec3(0.0, -9.81, 0.0)
+
+struct Particle
+{
+    vec3 position;
+    vec3 velocity;
+    float life;
+    float size;
+};
+
+layout(std430, binding = 0) buffer ParticleBuffer
+{
+    Particle particles[];
+};
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+uniform float deltaTime;
+uniform float spawnRate;
+uniform float particleLife;
+uniform int frameIndex;
+
+float hash(uint seed)
+{
+    return float(seed) * 0.000001;
+}
+
+uint indexToSeed(uint index, uint salt)
+{
+    return index * 747796405u + 2891336453u + salt * 277803737u;
+}
+
+void respawn(uint index, uint salt)
+{
+    Particle particle;
+    float angle = hash(indexToSeed(index, salt)) * TAU;
+    float speed = 1.0 + hash(indexToSeed(index, salt + 1u)) * 3.0;
+
+    particle.position = vec3(0.0);
+    particle.velocity = vec3(cos(angle), abs(sin(angle)), sin(angle)) * speed;
+    particle.life = particleLife;
+    particle.size = 0.02 + hash(indexToSeed(index, salt + 2u)) * 0.03;
+
+    particles[index] = particle;
+}
+
+void main()
+{
+    uint index = gl_GlobalInvocationID.x;
+    if (index >= uint(MAX_PARTICLES)) {
+        return;
+    }
+
+    Particle particle = particles[index];
+    particle.velocity += GRAVITY * deltaTime;
+    particle.position += particle.velocity * deltaTime;
+    particle.life -= deltaTime;
+
+    if (particle.life <= 0.0 || hash(indexToSeed(index, uint(frameIndex))) < spawnRate * deltaTime) {
+        respawn(index, uint(frameIndex));
+        return;
+    }
+
+    particles[index] = particle;
+}

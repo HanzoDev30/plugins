@@ -257,5 +257,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astrolsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/astro/test"
+  },
+  {
+    "name": "pythondebug",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/pydbg.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/pythondebug/pydbg.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/pythondebug/PyDbgGhostPlugin"
   }
 ]

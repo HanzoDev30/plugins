@@ -1,0 +1,16 @@
+# Gradle / Android build output
+build/
+.gradle/
+local.properties
+captures/
+.cxx/
+
+# Godot import cache and editor state
+.godot/
+
+# IDE scratch
+.idea/
+*.iml
+*.apk
+.DS_Store
+Thumbs.db

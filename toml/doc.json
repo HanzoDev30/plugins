@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "tomlicon.png",
+  "note": "## TOML Language Server\n - Bundled TextMate grammar (`source.toml`): `.toml` files are coloured the moment they open, no server needed\n - Completion, hover, diagnostics, document symbols and formatting from Taplo\n - Works with Cargo.toml, pyproject.toml, config.toml and every other TOML file\n - Installs the official static `taplo` release (LSP build) inside the rootfs\n - Capabilities: completion, hover, diagnostics, symbols, folding, links, rename, semantic tokens, formatting"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "ir.ghostide.tomllsp",
+  "name": "TOML LSP",
+  "version": "1.1.2",
+  "entryClass": "ir.ghostide.tomllsp.TomlLspPlugin",
+  "description": "Adds real TOML language support: completion, hover, diagnostics, document symbols, folding, links, rename, semantic tokens and formatting from the Taplo language server running inside the sandboxed Linux rootfs. Ships a bundled TextMate grammar (source.toml) so .toml files are coloured the moment they open, before - or entirely without - the server. Works with Cargo.toml, pyproject.toml, config.toml and every other TOML file.",
+  "minHostVersion": 0,
+  "icon": "tomlicon.png"
+}

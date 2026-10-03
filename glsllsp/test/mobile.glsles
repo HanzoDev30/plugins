@@ -1,0 +1,20 @@
+#version 300 es
+
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec2 inTexCoord;
+
+out vec2 fragTexCoord;
+
+uniform mat4 mvp;
+uniform float time;
+
+void main()
+{
+    float angle = time * 0.5;
+    mat2 rotation = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+
+    vec3 position = vec3(rotation * inPosition.xy, inPosition.z);
+    fragTexCoord = inPosition.xy * 0.5 + 0.5;
+
+    gl_Position = mvp * vec4(position, 1.0);
+}

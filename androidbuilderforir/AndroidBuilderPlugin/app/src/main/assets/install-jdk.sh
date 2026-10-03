@@ -56,9 +56,37 @@ ab_rewrite_apt_sources() {
   sed -n 's/^deb /  /p' "$file" || true
 }
 
+# Also fix any extra list files under sources.list.d that carry the same broken -security URL.
+ab_rewrite_sources_d() {
+  base="${1%/}"
+  [ -d /etc/apt/sources.list.d ] || return 0
+  for f in /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+    [ -f "$f" ] || continue
+    grep -q -- '-security' "$f" 2>/dev/null || continue
+    cp -f "$f" "$f.androidbuilder.bak" 2>/dev/null || true
+    sed -i -E "s#(https?://[^ ]*/)debian(/[^ ]*)?([[:space:]]+[^[:space:]]*-security)#\1debian-security\3#g" "$f" \
+      || warn "could not rewrite $f"
+    say "rewrote $f"
+  done
+}
+
 java_major() {
   java -version 2>&1 | sed -nE 's/.*version "([0-9]+).*/\1/p' | head -n1
 }
+
+# ── 0. repair any broken security URLs before anything apt-related runs ────────
+# The very first line the user hit was a 404 on bookworm-security because an earlier run
+# rewrote the URL to <mirror>/dists/bookworm-security instead of <mirror>-security. Fix it
+# up front so even apt-get update below runs cleanly, regardless of which mirror is chosen.
+if [ -f /etc/apt/sources.list ]; then
+  if grep -qE '(^|[[:space:]])deb .*bookworm-security' /etc/apt/sources.list 2>/dev/null \
+     && ! grep -qE 'debian-security.*bookworm-security' /etc/apt/sources.list 2>/dev/null; then
+    say "repairing broken bookworm-security URL in /etc/apt/sources.list"
+    cp -f /etc/apt/sources.list /etc/apt/sources.list.androidbuilder.bak 2>/dev/null || true
+    sed -i -E 's#(https?://[^ ]+/debian)([[:space:]]+bookworm-security)#\1-security\2#g' /etc/apt/sources.list \
+      || warn "sed repair failed; continuing anyway"
+  fi
+fi
 
 # ── 1. decide whether anything has to be installed ──────────────────────────────
 NEED_INSTALL=1
@@ -104,8 +132,15 @@ if [ "$NEED_INSTALL" = 1 ]; then
       cp /etc/apt/sources.list "/etc/apt/sources.list.androidbuilder.bak"
       ab_rewrite_apt_sources "$APT_MIRROR"
     fi
+    ab_rewrite_sources_d "$APT_MIRROR"
   fi
-  apt-get update
+
+  # apt update may still fail on a stale nodesource/other repo; do not abort the JDK install
+  # because of an unrelated repository. Try to update, warn on failure, and continue.
+  if ! apt-get update; then
+    warn "apt-get update returned a non-zero status; continuing with what is cached"
+  fi
+
   apt-get install -y --no-install-recommends "$JDK_PACKAGE"
   hash -r
 fi
