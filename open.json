@@ -285,5 +285,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angularlsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/angular/test"
+  },
+  {
+    "name": "bootstrap",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstrap.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstraplsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/bootstrap/test"
   }
 ]
