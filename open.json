@@ -292,5 +292,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstraplsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/bootstrap/test"
+  },
+  {
+    "name": "csspeek",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/csspeek/test"
   }
 ]
