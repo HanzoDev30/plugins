@@ -1,0 +1,7 @@
+id,name,city,score,note
+1,Ali,Tehran,18.5,"likes ""CSV"", obviously"
+2,سارا,Shiraz,17,"multi
+line note"
+3,Reza,Tabriz,,
+4,Maryam,Isfahan,19.25,ok
+6,user,Hsi,200,100,mod

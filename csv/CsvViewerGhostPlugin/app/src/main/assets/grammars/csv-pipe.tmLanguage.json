@@ -1,0 +1,213 @@
+{
+  "name": "CSV (pipe)",
+  "scopeName": "source.csv.pipe",
+  "fileTypes": [
+    "csv"
+  ],
+  "patterns": [
+    {
+      "include": "#header"
+    },
+    {
+      "include": "#row"
+    },
+    {
+      "include": "#fallback"
+    }
+  ],
+  "repository": {
+    "header": {
+      "match": "\\A((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))([^\\r\\n]*))?)?)?)?)?)?)?)?)?)?)?",
+      "captures": {
+        "1": {
+          "name": "markup.heading.csv"
+        },
+        "2": {
+          "name": "punctuation.separator.csv"
+        },
+        "3": {
+          "name": "markup.heading.csv"
+        },
+        "4": {
+          "name": "punctuation.separator.csv"
+        },
+        "5": {
+          "name": "markup.heading.csv"
+        },
+        "6": {
+          "name": "punctuation.separator.csv"
+        },
+        "7": {
+          "name": "markup.heading.csv"
+        },
+        "8": {
+          "name": "punctuation.separator.csv"
+        },
+        "9": {
+          "name": "markup.heading.csv"
+        },
+        "10": {
+          "name": "punctuation.separator.csv"
+        },
+        "11": {
+          "name": "markup.heading.csv"
+        },
+        "12": {
+          "name": "punctuation.separator.csv"
+        },
+        "13": {
+          "name": "markup.heading.csv"
+        },
+        "14": {
+          "name": "punctuation.separator.csv"
+        },
+        "15": {
+          "name": "markup.heading.csv"
+        },
+        "16": {
+          "name": "punctuation.separator.csv"
+        },
+        "17": {
+          "name": "markup.heading.csv"
+        },
+        "18": {
+          "name": "punctuation.separator.csv"
+        },
+        "19": {
+          "name": "markup.heading.csv"
+        },
+        "20": {
+          "name": "punctuation.separator.csv"
+        },
+        "21": {
+          "name": "markup.heading.csv"
+        },
+        "22": {
+          "name": "punctuation.separator.csv"
+        },
+        "23": {
+          "name": "markup.heading.csv"
+        },
+        "24": {
+          "name": "meta.tail.csv",
+          "patterns": [
+            {
+              "include": "#fallback"
+            }
+          ]
+        }
+      }
+    },
+    "row": {
+      "match": "^((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))(?:(\\|)((?:\"(?:[^\"]|\"\")*\"|[^|\"\\r\\n]*))([^\\r\\n]*))?)?)?)?)?)?)?)?)?)?)?",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.csv1"
+        },
+        "2": {
+          "name": "punctuation.separator.csv"
+        },
+        "3": {
+          "name": "string.unquoted.csv2"
+        },
+        "4": {
+          "name": "punctuation.separator.csv"
+        },
+        "5": {
+          "name": "keyword.control.csv3"
+        },
+        "6": {
+          "name": "punctuation.separator.csv"
+        },
+        "7": {
+          "name": "constant.character.csv4"
+        },
+        "8": {
+          "name": "punctuation.separator.csv"
+        },
+        "9": {
+          "name": "support.type.csv5"
+        },
+        "10": {
+          "name": "punctuation.separator.csv"
+        },
+        "11": {
+          "name": "variable.parameter.csv6"
+        },
+        "12": {
+          "name": "punctuation.separator.csv"
+        },
+        "13": {
+          "name": "entity.name.type.csv7"
+        },
+        "14": {
+          "name": "punctuation.separator.csv"
+        },
+        "15": {
+          "name": "constant.other.csv8"
+        },
+        "16": {
+          "name": "punctuation.separator.csv"
+        },
+        "17": {
+          "name": "storage.type.csv9"
+        },
+        "18": {
+          "name": "punctuation.separator.csv"
+        },
+        "19": {
+          "name": "support.function.csv10"
+        },
+        "20": {
+          "name": "punctuation.separator.csv"
+        },
+        "21": {
+          "name": "entity.name.tag.csv11"
+        },
+        "22": {
+          "name": "punctuation.separator.csv"
+        },
+        "23": {
+          "name": "variable.other.csv12"
+        },
+        "24": {
+          "name": "meta.tail.csv",
+          "patterns": [
+            {
+              "include": "#fallback"
+            }
+          ]
+        }
+      }
+    },
+    "fallback": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.csv",
+          "begin": "\"",
+          "end": "\"(?!\")",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.csv"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.csv"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\"\"",
+              "name": "constant.character.escape.csv"
+            }
+          ]
+        },
+        {
+          "match": "\\|",
+          "name": "punctuation.separator.csv"
+        }
+      ]
+    }
+  }
+}

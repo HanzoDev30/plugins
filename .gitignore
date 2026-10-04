@@ -1,6 +1,6 @@
 # Gradle / Android build output
-build/
-.gradle/
+**/build/
+**/.gradle/
 local.properties
 captures/
 .cxx/

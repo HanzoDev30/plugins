@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.csv",
+  "name": "CSV Viewer",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.csv.CsvPlugin",
+  "description": "CSV/TSV table viewer panel (sort, search, header toggle, delimiter auto-detect) plus rainbow-column TextMate grammars (source.csv, source.csv.semicolon, source.tsv, source.csv.pipe) applied to .csv/.tsv files.",
+  "minHostVersion": 0,
+  "icon": "csv.png"
+}

@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "csv.png",
+  "note": "## CSV Viewer \n - Table viewer for .csv/.tsv (sort, search, header toggle, delimiter auto-detect)\n - Rainbow-column TextMate grammars"
+}
