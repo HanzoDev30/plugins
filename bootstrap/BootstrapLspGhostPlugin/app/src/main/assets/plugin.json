@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.bootstrap",
+  "name": "Bootstrap Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.bootstrap.BootstrapPlugin",
+  "description": "Bootstrap class-name completion and hover (from bootstrap.css) for class=\"...\" in .html/.htm files. Priority 500. Runs the stock html server and the Emmet server (@olrtg/emmet-language-server) behind a small proxy so normal HTML and Emmet features keep working. Skips Angular workspaces (the Angular plugin handles those).",
+  "minHostVersion": 0,
+  "icon": "bootstrap.png"
+}

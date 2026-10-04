@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "bootstrap.png",
+  "note": "## Bootstrap Lsp \n - Bootstrap class completion + hover, Emmet and HTML server in one (priority 500)"
+}

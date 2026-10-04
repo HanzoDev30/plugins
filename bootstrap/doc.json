@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "bootstrap.png",
+  "note": "## Bootstrap Lsp \n - Bootstrap class completion and hover in HTML (priority 500)"
+}
