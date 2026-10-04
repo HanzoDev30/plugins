@@ -271,5 +271,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
+  },
+  {
+    "name": "csv",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csv.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csvviewer.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/csv/test"
   }
 ]
