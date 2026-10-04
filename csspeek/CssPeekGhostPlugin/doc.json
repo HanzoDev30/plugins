@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "csspeek.png",
+  "note": "## CSS Peek \n - Go to definition + hover for class/id in HTML (links, @import, inline style, scss/less)\n - Keeps HTML, Emmet and Bootstrap completion (priority 600)"
+}

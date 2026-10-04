@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.csspeek",
+  "name": "CSS Peek",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.csspeek.CssPeekPlugin",
+  "description": "CSS Peek for .html/.htm: go to definition and hover on class=\"...\" and id=\"...\" jump to the rule in linked stylesheets (@import followed), inline <style>, or any css/scss/less in the project. Also keeps the normal HTML and Emmet servers and Bootstrap class completion working behind one proxy (priority 600). Skips Angular workspaces.",
+  "minHostVersion": 0,
+  "icon": "csspeek.png"
+}
