@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "angular.png",
+  "note": "## Angular Lsp \n - Template completion, diagnostics, hover and go-to-definition (priority 400)"
+}

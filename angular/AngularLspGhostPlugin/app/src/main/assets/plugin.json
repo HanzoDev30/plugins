@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.angular",
+  "name": "Angular Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.angular.AngularPlugin",
+  "description": "Angular Language Service (@angular/language-server) launched through the proot rootfs. Priority 400. Active for .html and .ts files inside Angular workspaces (angular.json): template completion, diagnostics, hover, go-to-definition.",
+  "minHostVersion": 0,
+  "icon": "angular.png"
+}
