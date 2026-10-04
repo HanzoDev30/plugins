@@ -278,5 +278,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csvviewer.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/csv/test"
+  },
+  {
+    "name": "angular",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angular.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angularlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/angular/test"
   }
 ]
