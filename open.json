@@ -14,6 +14,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/androidbuilderforir/AndroidBuilderPlugin"
   },
   {
+    "name": "angular",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angular.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angularlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/angular/test"
+  },
+  {
     "name": "arduino",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/arduino.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/arduino/doc.json",
@@ -33,6 +40,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/beardedicon/bearded.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/beardedicon/bearded-icon"
+  },
+  {
+    "name": "bootstrap",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstrap.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstraplsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/bootstrap/test"
   },
   {
     "name": "clang",
@@ -61,6 +75,20 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/css/csslsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/css/CssLspGhostPlugin"
+  },
+  {
+    "name": "csspeek",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/csspeek/test"
+  },
+  {
+    "name": "csv",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csv.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csvviewer.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/csv/test"
   },
   {
     "name": "glsllsp",
@@ -271,33 +299,5 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
-  },
-  {
-    "name": "csv",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csv.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csvviewer.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/csv/test"
-  },
-  {
-    "name": "angular",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angular.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/angular/angularlsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/angular/test"
-  },
-  {
-    "name": "bootstrap",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstrap.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/bootstrap/bootstraplsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/bootstrap/test"
-  },
-  {
-    "name": "csspeek",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csspeek/csspeek.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/csspeek/test"
   }
 ]
