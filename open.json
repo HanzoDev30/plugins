@@ -306,5 +306,19 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/autotagrename.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/autorenametag/AutoRenameTagGhostPlugin"
+  },
+  {
+    "name": "docker",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/docker.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/dockerlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/docker/DockerLspGhostPlugin"
+  },
+  {
+    "name": "svelte",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/svelte.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/sveltelsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/svelte/SvelteLspGhostPlugin"
   }
 ]
