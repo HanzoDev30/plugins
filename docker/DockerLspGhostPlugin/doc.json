@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "docker.png",
+  "note": "## Docker \n - Dockerfile and Docker Compose language servers (completion, diagnostics, hover, formatting)"
+}

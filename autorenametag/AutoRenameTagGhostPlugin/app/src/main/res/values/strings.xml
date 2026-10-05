@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugin_title">Auto Rename Tag</string>
+  <string name="header_behaviour">Linked editing</string>
+  <string name="pref_enabled_title">Rename paired tags</string>
+  <string name="pref_enabled_desc">Typing inside a tag name keeps its matching closing or opening tag in sync</string>
+  <string name="pref_scope_title">Markup files</string>
+  <string name="pref_scope_desc">Tap to switch between HTML, HTML + XML, and templates</string>
+  <string name="scope_html">HTML</string>
+  <string name="scope_markup">HTML + XML</string>
+  <string name="scope_templates">HTML + XML + templates</string>
+  <string name="note_about">Comments, CDATA, script and style bodies, void elements and self-closing tags are left untouched. Renames are part of the editor undo history.</string>
+</resources>

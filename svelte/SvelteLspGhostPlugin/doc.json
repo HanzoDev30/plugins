@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "svelte.png",
+  "note": "## Svelte \n - Svelte language server (svelte-language-server): completion, diagnostics, hover, go-to-definition and a bundled TextMate grammar for .svelte files (TypeScript in <script>, CSS/SCSS in <style>)"
+}

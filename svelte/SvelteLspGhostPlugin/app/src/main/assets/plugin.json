@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.svelte",
+  "name": "Svelte Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.svelte.SveltePlugin",
+  "description": "Svelte language server (svelte-language-server): completion, diagnostics, hover, go-to-definition and a bundled TextMate grammar for .svelte files (TypeScript in <script>, CSS/SCSS in <style>). Priority 350.",
+  "minHostVersion": 0,
+  "icon": "svelte.png"
+}

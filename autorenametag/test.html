@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Auto Rename Tag — test</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+    <script>
+      var fake = "</div> not a tag";
+      if (1 < 2 && 3 > 2) {
+        console.log(fake);
+      }
+    </script>
+  </head>
+
+  <body>
+    <section id="wrapper" class="box">
+      <h1>Rename <code>section</code> and watch <code>&lt;/section&gt;</code> follow.</h1>
+
+      <main class="row">
+        <div class="cell">nested div</div>
+        <div class="cell">nested div</div>
+      </main>
+
+      <ol>
+        <li>one</li>
+        <li>two</li>
+      </ol>
+
+      <img src="logo.png" alt="" />
+      <input type="text" disabled />
+
+      <p>Autoclose pairs are skipped: <br /> and <hr> stay untouched.</p>
+
+      <span data-keep="yes">custom elements work too</span>
+    </section>
+  </body>
+</html>

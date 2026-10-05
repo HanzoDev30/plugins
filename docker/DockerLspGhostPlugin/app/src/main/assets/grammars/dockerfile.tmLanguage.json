@@ -1,0 +1,208 @@
+{
+  "name": "Dockerfile",
+  "scopeName": "source.dockerfile",
+  "fileTypes": [
+    "Dockerfile",
+    "dockerfile",
+    "Containerfile"
+  ],
+  "patterns": [
+    {
+      "include": "#directive"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#from"
+    },
+    {
+      "include": "#onbuild"
+    },
+    {
+      "include": "#instruction"
+    }
+  ],
+  "repository": {
+    "directive": {
+      "match": "^\\s*(#)\\s*(syntax|escape|check)\\s*(=)\\s*(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.dockerfile"
+        },
+        "2": {
+          "name": "keyword.other.directive.dockerfile"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.dockerfile"
+        },
+        "4": {
+          "name": "string.unquoted.dockerfile"
+        }
+      }
+    },
+    "comment": {
+      "match": "^\\s*(#).*$",
+      "name": "comment.line.number-sign.dockerfile",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.dockerfile"
+        }
+      }
+    },
+    "continuation": {
+      "match": "\\\\\\s*$",
+      "name": "punctuation.separator.continuation.dockerfile"
+    },
+    "from": {
+      "begin": "^\\s*(?i:(FROM))\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.dockerfile"
+        }
+      },
+      "end": "(?<!\\\\)$",
+      "patterns": [
+        {
+          "match": "\\b(?i:AS)\\b",
+          "name": "keyword.control.as.dockerfile"
+        },
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#string-double"
+        },
+        {
+          "include": "#string-single"
+        },
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#flag"
+        },
+        {
+          "include": "#operator"
+        },
+        {
+          "include": "#number"
+        }
+      ]
+    },
+    "onbuild": {
+      "match": "^\\s*(?i:(ONBUILD))\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.control.onbuild.dockerfile"
+        }
+      }
+    },
+    "instruction": {
+      "begin": "^\\s*(?i:(ADD|ARG|CMD|COPY|ENTRYPOINT|ENV|EXPOSE|HEALTHCHECK|LABEL|MAINTAINER|RUN|SHELL|STOPSIGNAL|USER|VOLUME|WORKDIR))\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.dockerfile"
+        }
+      },
+      "end": "(?<!\\\\)$",
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "include": "#continuation"
+        },
+        {
+          "include": "#string-double"
+        },
+        {
+          "include": "#string-single"
+        },
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#flag"
+        },
+        {
+          "include": "#operator"
+        },
+        {
+          "include": "#number"
+        }
+      ]
+    },
+    "string-double": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.dockerfile",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.dockerfile"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.dockerfile"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\\\.",
+          "name": "constant.character.escape.dockerfile"
+        },
+        {
+          "include": "#variable"
+        }
+      ]
+    },
+    "string-single": {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.single.dockerfile",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.dockerfile"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.dockerfile"
+        }
+      }
+    },
+    "variable": {
+      "match": "\\$(?:\\{[A-Za-z_][\\w]*(?::?[-+?=][^}]*)?\\}|[A-Za-z_][\\w]*|[0-9@*#?$!-])",
+      "name": "variable.other.dockerfile"
+    },
+    "flag": {
+      "match": "(?<=\\s)(--)([\\w-]+)(?:(=)([^\\s]*))?",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.flag.dockerfile"
+        },
+        "2": {
+          "name": "entity.other.attribute-name.dockerfile"
+        },
+        "3": {
+          "name": "keyword.operator.assignment.dockerfile"
+        },
+        "4": {
+          "name": "string.unquoted.dockerfile"
+        }
+      }
+    },
+    "operator": {
+      "match": "&&|\\|\\||[;|<>]|\\\\(?=\\s)",
+      "name": "keyword.operator.dockerfile"
+    },
+    "number": {
+      "match": "(?<![\\w.-])\\d+(?:\\.\\d+)*(?![\\w.-])",
+      "name": "constant.numeric.dockerfile"
+    }
+  }
+}

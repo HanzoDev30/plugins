@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.docker",
+  "name": "Docker Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.docker.DockerPlugin",
+  "description": "Dockerfile and Docker Compose language servers (completion, diagnostics, hover, formatting). Compose files are matched by name (compose.yml, docker-compose.yaml, *.override.yml ...). Priority 450.",
+  "minHostVersion": 0,
+  "icon": "docker.png"
+}

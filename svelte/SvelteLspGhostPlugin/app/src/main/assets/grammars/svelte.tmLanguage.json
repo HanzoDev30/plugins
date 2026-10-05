@@ -1,0 +1,371 @@
+{
+  "name": "Svelte",
+  "scopeName": "source.svelte",
+  "fileTypes": [
+    "svelte"
+  ],
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#style-scss"
+    },
+    {
+      "include": "#style-less"
+    },
+    {
+      "include": "#style"
+    },
+    {
+      "include": "#script"
+    },
+    {
+      "include": "#block"
+    },
+    {
+      "include": "#expression"
+    },
+    {
+      "include": "#tag-close"
+    },
+    {
+      "include": "#tag-open-component"
+    },
+    {
+      "include": "#tag-open"
+    },
+    {
+      "include": "#entity"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "begin": "<!--",
+      "end": "-->",
+      "name": "comment.block.html.svelte"
+    },
+    "script": {
+      "begin": "(<)(script)\\b((?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.script.svelte"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "end": "(</)(script)\\s*(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.script.svelte"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "contentName": "source.ts",
+      "patterns": [
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "style": {
+      "begin": "(<)(style)\\b((?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "end": "(</)(style)\\s*(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "contentName": "source.css",
+      "patterns": [
+        {
+          "include": "source.css"
+        }
+      ]
+    },
+    "style-scss": {
+      "begin": "(<)(style)\\b((?=(?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*\\blang\\s*=\\s*[\\\"']?(?:scss|sass)[\\\"']?)(?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "end": "(</)(style)\\s*(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "contentName": "source.css.scss",
+      "patterns": [
+        {
+          "include": "source.css.scss"
+        }
+      ]
+    },
+    "style-less": {
+      "begin": "(<)(style)\\b((?=(?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*\\blang\\s*=\\s*[\\\"']?less[\\\"']?)(?:[^>\\\"']|\\\"[^\\\"]*\\\"|'[^']*')*)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "end": "(</)(style)\\s*(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.style.svelte"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "contentName": "source.css.less",
+      "patterns": [
+        {
+          "include": "source.css.less"
+        }
+      ]
+    },
+    "block": {
+      "begin": "(\\{)\\s*(#|:|/|@)\\s*(if|each|await|key|snippet|else if|else|then|catch|html|const|debug|render|attach)\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.svelte"
+        },
+        "2": {
+          "name": "punctuation.definition.keyword.svelte"
+        },
+        "3": {
+          "name": "keyword.control.svelte"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.end.svelte"
+        }
+      },
+      "name": "meta.block.svelte",
+      "patterns": [
+        {
+          "match": "(?<=\\s)as(?=\\s)",
+          "name": "keyword.control.as.svelte"
+        },
+        {
+          "include": "source.ts#expression"
+        }
+      ]
+    },
+    "expression": {
+      "begin": "\\{",
+      "end": "\\}",
+      "name": "meta.embedded.expression.svelte",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.svelte"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.svelte"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.ts#expression"
+        }
+      ]
+    },
+    "tag-close": {
+      "match": "(</)([A-Za-z][\\w:.-]*)\\s*(>)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.svelte"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      }
+    },
+    "tag-open-component": {
+      "begin": "(<)([A-Z][\\w.]*|svelte:[\\w-]+)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "support.class.component.svelte"
+        }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "name": "meta.tag.component.svelte",
+      "patterns": [
+        {
+          "include": "#attributes"
+        }
+      ]
+    },
+    "tag-open": {
+      "begin": "(<)([a-z][\\w-]*)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.svelte"
+        },
+        "2": {
+          "name": "entity.name.tag.svelte"
+        }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.svelte"
+        }
+      },
+      "name": "meta.tag.svelte",
+      "patterns": [
+        {
+          "include": "#attributes"
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "match": "\\b(on|bind|class|style|use|transition|in|out|animate|let)(:)([\\w-]+)((?:\\|\\w+)*)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.directive.svelte"
+            },
+            "2": {
+              "name": "punctuation.separator.directive.svelte"
+            },
+            "3": {
+              "name": "entity.other.attribute-name.directive.svelte"
+            },
+            "4": {
+              "name": "keyword.other.modifier.svelte"
+            }
+          }
+        },
+        {
+          "match": "[A-Za-z_:@][\\w:.@-]*",
+          "name": "entity.other.attribute-name.svelte"
+        },
+        {
+          "match": "=",
+          "name": "punctuation.separator.key-value.svelte"
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.svelte",
+          "patterns": [
+            {
+              "include": "#expression"
+            }
+          ]
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "name": "string.quoted.single.svelte",
+          "patterns": [
+            {
+              "include": "#expression"
+            }
+          ]
+        },
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "entity": {
+      "match": "&(?:[A-Za-z][A-Za-z0-9]*|#\\d+|#[xX][0-9A-Fa-f]+);",
+      "name": "constant.character.entity.svelte"
+    }
+  }
+}

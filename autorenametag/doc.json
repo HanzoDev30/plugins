@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "## Auto Rename Tag (Linked Editing)\n - Type inside a tag name and the matching closing or opening tag is renamed with you\n - Works on HTML, XHTML, SVG, XML, and template files (.vue, .svelte, .astro, .hbs, .twig, .jsp, .php, .cshtml, ...)\n - Same behaviour as VS Code's Auto Rename Tag / `editor.linkedEditing`\n - Aware of HTML structure: comments, CDATA, doctypes, `script`/`style`/`textarea` bodies, void elements and self-closing tags are never touched\n - Nested tags of the same name pair with the correct level, tag matching is case-insensitive like HTML\n - Every rename goes through the editor undo history\n - Settings screen lets you switch the file scope between HTML, HTML + XML, and templates"
+}

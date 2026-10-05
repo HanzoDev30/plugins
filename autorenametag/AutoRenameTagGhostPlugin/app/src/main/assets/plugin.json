@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.autorenametag",
+  "name": "Auto Rename Tag",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.autorenametag.AutoRenameTagPlugin",
+  "description": "Keeps the matching closing or opening tag in sync while you type (linked editing).",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
