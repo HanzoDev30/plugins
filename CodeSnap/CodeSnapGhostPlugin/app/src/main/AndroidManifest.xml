@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Not a real app: only used to get a dex. No activity, no permissions. -->
+    <application
+        android:allowBackup="false"
+        android:label="CodeSnap" />
+
+</manifest>

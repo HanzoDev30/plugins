@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.codesnap",
+  "name": "Code Snap",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.codesnap.CodeSnapPlugin",
+  "description": "Turn selected code into a beautiful syntax-highlighted image. 110+ languages via highlight.js, saved to Pictures/CodeSnap.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}

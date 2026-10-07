@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; padding: 0; background: #21252b; }
+  #card { padding: 18px 20px; min-height: 100vh; box-sizing: border-box; }
+  #head { display: flex; align-items: center; margin-bottom: 12px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 7px; flex: none; }
+  .dot.r { background: #ff5f56; }
+  .dot.y { background: #ffbd2e; }
+  .dot.g { background: #27c93f; }
+  #title { color: rgba(255,255,255,.45); font-family: monospace; font-size: 11px; letter-spacing: .5px; margin-left: 6px; }
+  pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+  code.hljs {
+    display: block;
+    padding: 0;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    tab-size: 4;
+  }
+</style>
+</head>
+<body>
+<div id="card">
+  <div id="head">
+    <span class="dot r"></span>
+    <span class="dot y"></span>
+    <span class="dot g"></span>
+    <span id="title">CodeSnap</span>
+  </div>
+  <pre><code id="code" class="hljs"></code></pre>
+</div>
+<script src="highlight.min.js"></script>
+<script src="languages.min.js"></script>
+<script>
+(function () {
+  var last = null;
+  var themeLink = null;
+
+  function doSnap(a) {
+    var el = document.getElementById('code');
+    var t = document.getElementById('title');
+    if (t) t.textContent = a.name ? a.name : 'CodeSnap';
+    el.className = 'hljs';
+    el.removeAttribute('data-language');
+    el.textContent = a.code;
+    try {
+      if (a.lang && hljs.getLanguage(a.lang)) {
+        el.className = 'language-' + a.lang + ' hljs';
+        el.setAttribute('data-language', a.lang);
+        el.innerHTML = hljs.highlight(a.code, { language: a.lang, ignoreIllegals: true }).value;
+      } else {
+        var r = hljs.highlightAuto(a.code);
+        if (r && r.value) {
+          el.innerHTML = r.value;
+          if (r.language) el.setAttribute('data-language', r.language);
+        }
+      }
+    } catch (e) { el.textContent = a.code; }
+    return Math.ceil(document.body.scrollHeight * (window.devicePixelRatio || 1));
+  }
+
+  window.snap = function (code, lang, name) {
+    last = { code: code, lang: lang, name: name };
+    return doSnap(last);
+  };
+
+  var themeLoading = false;
+
+  window.setTheme = function (name) {
+    if (!themeLink) {
+      themeLink = document.createElement('link');
+      themeLink.rel = 'stylesheet';
+      document.head.appendChild(themeLink);
+    }
+    if (themeLink.getAttribute('data-name') === name) return;
+    themeLink.setAttribute('data-name', name);
+    themeLoading = true;
+    themeLink.onload = function () {
+      themeLoading = false;
+      applyBg();
+      if (last) doSnap(last);
+    };
+    themeLink.onerror = function () { themeLoading = false; };
+    themeLink.href = 'styles/' + name + '.min.css';
+  };
+
+  function applyBg() {
+    try {
+      var el = document.getElementById('code');
+      var bg = getComputedStyle(el).backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+        document.body.style.background = bg;
+        document.getElementById('card').style.background = bg;
+      }
+    } catch (e) {}
+    applyTitleColor();
+  }
+
+  // ---- همگام‌سازی رنگ تیتر با تم (از رنگ متن hljs-deletion، بدون بک‌گراند) ----
+  var titleProbe = null;
+  function applyTitleColor() {
+    try {
+      if (!titleProbe) {
+        titleProbe = document.createElement('span');
+        titleProbe.className = 'hljs hljs-deletion';
+        titleProbe.textContent = 'x';
+        titleProbe.style.position = 'absolute';
+        titleProbe.style.left = '-9999px';
+        titleProbe.style.top = '0';
+        titleProbe.style.pointerEvents = 'none';
+        titleProbe.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(titleProbe);
+      }
+      var c = getComputedStyle(titleProbe).color;
+      if (c && c !== 'rgba(0, 0, 0, 0)') {
+        var t = document.getElementById('title');
+        if (t) t.style.color = c;
+      }
+    } catch (e) {}
+  }
+
+  // ---- full-card PNG, rendered inside the page (independent of the WebView's on-screen size)
+  var INH = ['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height',
+             'letter-spacing', 'white-space', 'word-break', 'overflow-wrap', 'tab-size', 'text-align'];
+  var OWN = ['display', 'box-sizing', 'background-color', 'border-radius',
+             'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+             'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+             'align-items', 'flex-shrink', 'flex-grow', 'text-decoration-line', 'vertical-align'];
+  var OWN_DEF = {
+    'display': 'inline', 'box-sizing': 'content-box', 'background-color': 'rgba(0, 0, 0, 0)',
+    'border-radius': '0px', 'margin-top': '0px', 'margin-right': '0px', 'margin-bottom': '0px',
+    'margin-left': '0px', 'padding-top': '0px', 'padding-right': '0px', 'padding-bottom': '0px',
+    'padding-left': '0px', 'align-items': 'normal', 'flex-shrink': '1', 'flex-grow': '0',
+    'text-decoration-line': 'none', 'vertical-align': 'baseline'
+  };
+
+  function styleOf(cs, el, parentCS, isRoot) {
+    var out = '', i, p, v;
+    for (i = 0; i < INH.length; i++) {
+      p = INH[i]; v = cs.getPropertyValue(p);
+      if (v && (isRoot || !parentCS || parentCS.getPropertyValue(p) !== v)) out += p + ':' + v + ';';
+    }
+    var plain = el.tagName === 'SPAN';
+    for (i = 0; i < OWN.length; i++) {
+      p = OWN[i]; v = cs.getPropertyValue(p);
+      if (!v || (plain && v === OWN_DEF[p])) continue;
+      out += p + ':' + v + ';';
+    }
+    if (cs.display === 'inline-block') out += 'width:' + cs.width + ';height:' + cs.height + ';';
+    return out;
+  }
+
+  function inlineTree(src, dst, parentCS, isRoot) {
+    var cs = getComputedStyle(src);
+    dst.setAttribute('style', styleOf(cs, src, parentCS, isRoot));
+    for (var k = 0; k < src.children.length; k++) inlineTree(src.children[k], dst.children[k], cs, false);
+  }
+
+  function whenReady(cb, tries) {
+    if (themeLoading && tries < 40) {
+      setTimeout(function () { whenReady(cb, tries + 1); }, 50);
+      return;
+    }
+    cb();
+  }
+
+  function fail(e) {
+    var msg = String((e && e.message) || e);
+    if (window.CodeSnapBridge) window.CodeSnapBridge.onError(msg);
+  }
+
+  window.captureImage = function () {
+    whenReady(function () {
+      try {
+        var card = document.getElementById('card');
+        card.style.minHeight = '0';
+        var rect = card.getBoundingClientRect();
+        var w = Math.ceil(rect.width), h = Math.ceil(rect.height);
+        var clone = card.cloneNode(true);
+        inlineTree(card, clone, getComputedStyle(document.body), true);
+        card.style.minHeight = '';
+        clone.style.width = w + 'px';
+        clone.style.height = h + 'px';
+
+        var xml = new XMLSerializer().serializeToString(clone)
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '');
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+                  '<foreignObject x="0" y="0" width="' + w + '" height="' + h + '">' + xml +
+                  '</foreignObject></svg>';
+
+        var blobUrl = null, src;
+        if (svg.length < 1500000) {
+          src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        } else {
+          blobUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
+          src = blobUrl;
+        }
+
+        var dpr = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+        if (h * dpr > 16000) dpr = 16000 / h;
+
+        var img = new Image();
+        img.onload = function () {
+          try {
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            var ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            ctx.drawImage(img, 0, 0, w, h);
+            var url = canvas.toDataURL('image/png');
+            if (blobUrl) URL.revokeObjectURL(blobUrl);
+            window.CodeSnapBridge.onImage(url.substring(url.indexOf(',') + 1));
+          } catch (e) { fail(e); }
+        };
+        img.onerror = function () { fail('could not rasterise card'); };
+        img.src = src;
+      } catch (e) {
+        try { document.getElementById('card').style.minHeight = ''; } catch (x) {}
+        fail(e);
+      }
+    }, 0);
+  };
+
+  window.detected = function () {
+    return document.getElementById('code').getAttribute('data-language') || '';
+  };
+})();
+</script>
+</body>
+</html>

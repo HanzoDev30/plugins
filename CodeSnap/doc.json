@@ -1,0 +1,6 @@
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "## Code Snap \n - Select a piece of code in the editor, open the **Code Snap** panel and tap `Snap` \n - The selection is highlighted with **highlight.js (180+ languages)** inside a WebView and saved as a PNG to `Pictures/CodeSnap` \n - `Lang` overrides the auto language detected from the file extension, `Theme` switches one-dark / github-dark, `Share` opens the system share sheet \n - Everything runs offline: the highlight.js bundle and the theme CSS are packed inside the plugin"
+}
+
