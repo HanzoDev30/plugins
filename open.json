@@ -323,7 +323,7 @@
   },
   {
     "name": "codesnap",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/codesnap.png",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/icon.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/codesnap.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/CodeSnap/CodeSnapGhostPlugin"
