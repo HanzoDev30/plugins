@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "## Node Packages\n - A panel next to the editor: search a package on the npm registry and tap **Install**\n - No terminal — the install runs inside the proot Debian with live output in the log box\n - Curated list of recommended libraries (Essentials, Frontend, Backend, Dev Tooling, Testing) filtered as you type\n - Installs into the open project when one is open, otherwise installs globally\n - Missing Node.js/npm is installed automatically before the first package\n - Buttons for clearing the log, and a free-form install box for any npm package\n - Colours come from the IDE theme through `M3Theme`, so it follows light/dark and every colour scheme\n - Built with Material 3 and RecyclerView for a light, fast list"
+}

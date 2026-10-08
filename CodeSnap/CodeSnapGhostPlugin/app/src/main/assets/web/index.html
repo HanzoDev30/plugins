@@ -21,6 +21,7 @@
     line-height: 1.55;
     tab-size: 4;
   }
+  .rb { font-weight: 600; }
 </style>
 </head>
 <body>
@@ -39,6 +40,67 @@
 (function () {
   var last = null;
   var themeLink = null;
+
+  // ============ براکت‌های رنگین‌کمانی ============
+  var RB_COLORS = ['#FFD700', '#DA70D6', '#87CEEB', '#98FB98', '#FFA07A', '#DDA0DD'];
+  var RB_SKIP = /\bhljs-(string|comment|regexp|quote|doctag|meta-string|template-variable|subst)\b/;
+
+  function rbAncestorClasses(node, root) {
+    var out = '';
+    var p = node.parentNode;
+    while (p && p !== root) {
+      var c = p.className;
+      if (typeof c === 'string') out += ' ' + c;
+      p = p.parentNode;
+    }
+    return out;
+  }
+
+  function rainbowBrackets(container) {
+    var opens  = { '(': 1, '[': 1, '{': 1 };
+    var closes = { ')': 1, ']': 1, '}': 1 };
+    var match  = { ')': '(', ']': '[', '}': '{' };
+    var stack  = [];
+
+    var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+
+    for (var k = 0; k < nodes.length; k++) {
+      var node = nodes[k];
+      var text = node.nodeValue;
+
+      if (!/[\(\)\[\]\{\}]/.test(text)) continue;
+      if (RB_SKIP.test(rbAncestorClasses(node, container))) continue;
+
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < text.length; i++) {
+        var ch = text.charAt(i);
+        var color = null;
+
+        if (opens[ch]) {
+          color = RB_COLORS[stack.length % RB_COLORS.length];
+          stack.push(ch);
+        } else if (closes[ch]) {
+          var idx = stack.lastIndexOf(match[ch]);
+          if (idx >= 0) stack.length = idx;
+          color = RB_COLORS[stack.length % RB_COLORS.length];
+        }
+
+        if (color === null) {
+          frag.appendChild(document.createTextNode(ch));
+        } else {
+          var span = document.createElement('span');
+          span.className = 'rb';
+          span.style.color = color;
+          span.textContent = ch;
+          frag.appendChild(span);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    }
+  }
+  // ==============================================
 
   function doSnap(a) {
     var el = document.getElementById('code');
@@ -60,6 +122,9 @@
         }
       }
     } catch (e) { el.textContent = a.code; }
+
+    rainbowBrackets(el);
+
     return Math.ceil(document.body.scrollHeight * (window.devicePixelRatio || 1));
   }
 
@@ -100,7 +165,7 @@
     applyTitleColor();
   }
 
-  // ---- همگام‌سازی رنگ تیتر با تم (از رنگ متن hljs-deletion، بدون بک‌گراند) ----
+  // ---- همگام‌سازی رنگ تیتر با تم (از رنگ متن hljs-deletion) ----
   var titleProbe = null;
   function applyTitleColor() {
     try {
@@ -123,7 +188,7 @@
     } catch (e) {}
   }
 
-  // ---- full-card PNG, rendered inside the page (independent of the WebView's on-screen size)
+  // ---- full-card PNG ----
   var INH = ['color', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height',
              'letter-spacing', 'white-space', 'word-break', 'overflow-wrap', 'tab-size', 'text-align'];
   var OWN = ['display', 'box-sizing', 'background-color', 'border-radius',

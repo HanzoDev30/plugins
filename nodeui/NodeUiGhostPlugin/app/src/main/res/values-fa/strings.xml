@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- نام محصول: ترجمه نمی‌شود -->
+    <string name="nodeui_app_name" translatable="false">Node Packages</string>
+
+    <string name="nodeui_subtitle">نصب کتابخانه‌های Node.js بدون ترمینال — داخل همان Debian</string>
+
+    <!-- ورودی‌ها -->
+    <string name="nodeui_hint_search">نام پکیج را بنویس، مثلا express یا vite</string>
+
+    <!-- عنوان بخش‌ها -->
+    <string name="nodeui_section_catalog">کتابخانه‌های پیشنهادی</string>
+    <string name="nodeui_section_output">خروجی</string>
+
+    <!-- دکمه‌ها -->
+    <string name="nodeui_action_search">جستجو</string>
+    <string name="nodeui_action_install_direct">نصب مستقیم</string>
+    <string name="nodeui_action_install">نصب</string>
+    <string name="nodeui_action_clear_output">پاک کردن خروجی</string>
+
+    <!-- گزینه‌های نصب -->
+    <string name="nodeui_check_global">سراسری</string>
+    <string name="nodeui_check_dev">توسعه</string>
+    <string name="nodeui_check_exact">دقیق</string>
+
+    <!-- مشخصات پکیج -->
+    <string name="nodeui_label_version">نسخه %1$s</string>
+    <string name="nodeui_label_author">نویسنده: %1$s</string>
+
+    <!-- عنوان عملیات (در لاگ و توست) -->
+    <string name="nodeui_title_install">نصب %1$s</string>
+
+    <!-- وضعیت -->
+    <string name="nodeui_status_no_debian">Debian نصب نیست</string>
+    <string name="nodeui_status_no_node">Node.js نصب نیست</string>
+    <string name="nodeui_status_ready">آماده</string>
+    <string name="nodeui_status_running">در حال اجرا</string>
+    <string name="nodeui_status_success">انجام شد</string>
+    <string name="nodeui_status_failure">ناموفق</string>
+
+    <!-- نتیجه جستجو -->
+    <string name="nodeui_searching">در حال جستجو…</string>
+    <string name="nodeui_search_fail_hint">می‌توانی با «نصب مستقیم» آن را نصب کنی.</string>
+    <string name="nodeui_no_results">کتابخانه‌ای پیدا نشد</string>
+
+    <!-- خطوط لاگ؛ نشانهٔ اول رنگ لاگ را تعیین می‌کند و باید اول بماند -->
+    <string name="nodeui_log_intro">دنبال پکیج بگرد یا از فهرست پایین یکی را انتخاب کن.</string>
+    <string name="nodeui_log_target">[JS] مقصد نصب: %1$s</string>
+    <string name="nodeui_log_no_project">[JS] پروژه‌ی Node.js پیدا نشد. یک فایل .js/.ts باز کن یا پوشه‌ای که package.json دارد، یا تیک Global را بزن.</string>
+    <string name="nodeui_toast_no_project">پروژه‌ی Node.js پیدا نشد</string>
+    <string name="nodeui_log_command">$ %1$s</string>
+    <string name="nodeui_log_done">✔ %1$s انجام شد</string>
+    <string name="nodeui_log_failed">✘ %1$s ناموفق بود، کد %2$d</string>
+    <!-- گیومه تا فاصلهٔ آخر حذف نشود؛ نشانهٔ رنگ لاگ هم هست -->
+    <string name="nodeui_log_error_prefix">"Error: "</string>
+
+    <!-- توست‌ها -->
+    <string name="nodeui_toast_type_package_name">اول نام پکیج را بنویس</string>
+    <string name="nodeui_toast_empty_package_name">نام پکیج خالی است</string>
+    <string name="nodeui_toast_debian_not_booted">هنوز Debian بالا نیامده</string>
+    <string name="nodeui_toast_busy">یک عملیات دیگر در حال اجراست</string>
+    <string name="nodeui_toast_success">انجام شد: %1$s</string>
+    <string name="nodeui_toast_failure">ناموفق: %1$s</string>
+
+    <!-- خطاهای شبکه / npm -->
+    <string name="nodeui_error_type_package_name">اول نام پکیج را بنویس</string>
+    <string name="nodeui_error_no_project">پکیجی به نام \'%1$s\' در npm نیست</string>
+    <string name="nodeui_error_http_status">npm پاسخ HTTP %1$d داد</string>
+    <string name="nodeui_error_network">به npm دسترسی نشد: %1$s</string>
+    <!-- گیومه تا فاصلهٔ آخر حذف نشود، مسیر بعد از آن می‌آید -->
+    <string name="nodeui_error_no_rootfs">"Debian rootfs not found: "</string>
+
+    <!-- گروه‌های کاتالوگ -->
+    <string name="nodeui_group_frontend">فرانت‌اند</string>
+    <string name="nodeui_group_backend">بک‌اند و API</string>
+    <string name="nodeui_group_tooling">ابزارهای توسعه</string>
+
+    <!-- کاتالوگ: فرانت‌اند -->
+    <string name="nodeui_pkg_react_summary">کتابخانهٔ ساخت رابط کاربری</string>
+    <string name="nodeui_pkg_vue_summary">فریمورک پیشروندهٔ جاوااسکریپت</string>
+    <string name="nodeui_pkg_next_summary">فریمورک React برای اپ‌های production</string>
+    <string name="nodeui_pkg_vite_summary">ابزار بیلد فرانت‌اند نسل بعد</string>
+    <string name="nodeui_pkg_tailwindcss_summary">فریمورک CSS ابزارمحور</string>
+
+    <!-- کاتالوگ: بک‌اند و API -->
+    <string name="nodeui_pkg_express_summary">فریمورک وب مینیمال برای Node</string>
+    <string name="nodeui_pkg_axios_summary">کلاینت HTTP مبتنی بر Promise</string>
+
+    <!-- کاتالوگ: ابزارهای توسعه -->
+    <string name="nodeui_pkg_typescript_summary">زیرمجموعهٔ تایپ‌دار جاوااسکریپت</string>
+    <string name="nodeui_pkg_eslint_summary">لینتر قابل افزونه برای جاوااسکریپت</string>
+    <string name="nodeui_pkg_prettier_summary">فرمت‌کنندهٔ کد</string>
+
+</resources>

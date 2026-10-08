@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Product name: never translated. -->
+    <string name="nodeui_app_name" translatable="false">Node Packages</string>
+
+    <string name="nodeui_subtitle">Install Node.js libraries without a terminal — inside the same Debian</string>
+
+    <!-- Input fields -->
+    <string name="nodeui_hint_search">Type a package name, e.g. express or vite</string>
+
+    <!-- Section headers -->
+    <string name="nodeui_section_catalog">Recommended libraries</string>
+    <string name="nodeui_section_output">Output</string>
+
+    <!-- Buttons -->
+    <string name="nodeui_action_search">Search</string>
+    <string name="nodeui_action_install_direct">Install directly</string>
+    <string name="nodeui_action_install">Install</string>
+    <string name="nodeui_action_clear_output">Clear output</string>
+
+    <!-- Install options -->
+    <string name="nodeui_check_global">Global</string>
+    <string name="nodeui_check_dev">Dev</string>
+    <string name="nodeui_check_exact">Exact</string>
+
+    <!-- Package metadata -->
+    <string name="nodeui_label_version">Version %1$s</string>
+    <string name="nodeui_label_author">Author: %1$s</string>
+
+    <!-- Operation titles (used in the log and the toast) -->
+    <string name="nodeui_title_install">Install %1$s</string>
+
+    <!-- Status label -->
+    <string name="nodeui_status_no_debian">Debian is not installed</string>
+    <string name="nodeui_status_no_node">Node.js is not installed</string>
+    <string name="nodeui_status_ready">Ready</string>
+    <string name="nodeui_status_running">Running</string>
+    <string name="nodeui_status_success">Succeeded</string>
+    <string name="nodeui_status_failure">Failed</string>
+
+    <!-- Search result -->
+    <string name="nodeui_searching">Searching…</string>
+    <string name="nodeui_search_fail_hint">You can still install it with “Install directly”.</string>
+    <string name="nodeui_no_results">No matching library</string>
+
+    <!-- Log lines; the leading glyph drives the log colouring, so it must stay first -->
+    <string name="nodeui_log_intro">Search for a package or pick one from the list below.</string>
+    <string name="nodeui_log_target">[JS] Install target: %1$s</string>
+    <string name="nodeui_log_no_project">[JS] No Node.js project found. Open a .js/.ts file or a folder with package.json, or use the Global checkbox.</string>
+    <string name="nodeui_toast_no_project">No Node.js project found</string>
+    <string name="nodeui_log_command">$ %1$s</string>
+    <string name="nodeui_log_done">✔ %1$s finished</string>
+    <string name="nodeui_log_failed">✘ %1$s failed with code %2$d</string>
+    <!-- Quoted so the trailing space survives resource trimming; also the log colour marker -->
+    <string name="nodeui_log_error_prefix">"Error: "</string>
+
+    <!-- Toasts -->
+    <string name="nodeui_toast_type_package_name">Type a package name first</string>
+    <string name="nodeui_toast_empty_package_name">Package name is empty</string>
+    <string name="nodeui_toast_debian_not_booted">Debian has not booted yet</string>
+    <string name="nodeui_toast_busy">Another operation is already running</string>
+    <string name="nodeui_toast_success">Done: %1$s</string>
+    <string name="nodeui_toast_failure">Failed: %1$s</string>
+
+    <!-- Network / npm errors -->
+    <string name="nodeui_error_type_package_name">Type a package name first</string>
+    <string name="nodeui_error_no_project">No package named \'%1$s\' on npm</string>
+    <string name="nodeui_error_http_status">npm answered HTTP %1$d</string>
+    <string name="nodeui_error_network">Could not reach npm: %1$s</string>
+    <!-- Quoted so the trailing space survives, the path is appended after it -->
+    <string name="nodeui_error_no_rootfs">"Debian rootfs not found: "</string>
+
+    <!-- Catalog groups -->
+    <string name="nodeui_group_frontend">Frontend</string>
+    <string name="nodeui_group_backend">Backend &amp; API</string>
+    <string name="nodeui_group_tooling">Dev Tooling</string>
+
+    <!-- Catalog: Frontend -->
+    <string name="nodeui_pkg_react_summary">Library for building user interfaces</string>
+    <string name="nodeui_pkg_vue_summary">Progressive JavaScript framework</string>
+    <string name="nodeui_pkg_next_summary">React framework for production apps</string>
+    <string name="nodeui_pkg_vite_summary">Next-generation frontend build tool</string>
+    <string name="nodeui_pkg_tailwindcss_summary">Utility-first CSS framework</string>
+
+    <!-- Catalog: Backend &amp; API -->
+    <string name="nodeui_pkg_express_summary">Minimalist web framework for Node</string>
+    <string name="nodeui_pkg_axios_summary">Promise-based HTTP client</string>
+
+    <!-- Catalog: Dev Tooling -->
+    <string name="nodeui_pkg_typescript_summary">Typed superset of JavaScript</string>
+    <string name="nodeui_pkg_eslint_summary">Pluggable linter for JavaScript</string>
+    <string name="nodeui_pkg_prettier_summary">Opinionated code formatter</string>
+
+</resources>

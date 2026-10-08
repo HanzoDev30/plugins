@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev30.nodeui",
+  "name": "Node Packages",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev30.nodeui.NodeUiPlugin",
+  "description": "A panel next to the editor that installs Node.js packages without opening a terminal: search the npm registry live, pick a library from the curated recommended list, and the install runs inside the proot Debian with live output.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}
