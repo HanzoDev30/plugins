@@ -1,5 +1,5 @@
 {
-  "devname": "Ghost",
-  "icon": "icon.png",
-  "note": "## Git Clone\n - A panel next to the editor: paste a repository URL and tap **Clone**\n - Real Git clone with JGit, running inside the app — live progress bar and phase label\n - Material 3 filter chips: Submodules, Shallow, Single branch, No tags, Bare repository\n - Optional branch name for a single-branch / pinned clone\n - Optional access token for private HTTPS remotes\n - Target folder is derived from the project root when left empty\n - Smooth animated progress and a colour-coded output log\n - Colours come from the IDE theme through `M3Theme`, so it follows light/dark and every colour scheme\n - Built with Material 3 (ChipGroup + LinearProgressIndicator) for a light, fast layout"
-}
+   "devname": "Ghost",
+   "icon": "icon.png",
+   "note": "## Git Clone\n - Requires a new version of the app at least 1.1.6beta1 due to new apis - A panel next to the editor: paste a repository URL and tap **Clone**\n - Real Git clone with JGit, running inside the app — live progress bar and phase label\n - Material 3 filter chips: Submodules, Shallow, Single branch, No tags, Bare repository\n - Optional branch name for a single-branch / pinned clone\n - Optional access token for private HTTPS  remotes\n - Target folder is derived from the project root when left empty\n - Smooth animated progress and a color-coded output log\n - Colors come from the IDE theme through `M3Theme`, so it follows light/dark and every color scheme\n - Built with Material 3 (ChipGroup + LinearProgressIndicator) for a light, fast layout"
+ }

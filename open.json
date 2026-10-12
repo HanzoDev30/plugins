@@ -341,5 +341,26 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/nodeui.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/nodeui/NodeUiGhostPlugin"
+  },
+  {
+    "name": "LivePreview",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/app-debug.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/LivePreview/LivePreviewGhostPlugin"
+  },
+  {
+    "name": "SvgToPng",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/svgtopng.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/SvgToPng/SvgToPngGhostPlugin"
+  },
+  {
+    "name": "gitclone",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/gitclone.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/gitclone/GitCloneGhostPlugin"
   }
 ]
