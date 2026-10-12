@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_title">Export SVG to PNG</string>
+    <string name="output_size">Output size (px)</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="keep_ratio">Keep aspect ratio</string>
+    <string name="export_png">Export PNG</string>
+    <string name="cancel">Cancel</string>
+</resources>

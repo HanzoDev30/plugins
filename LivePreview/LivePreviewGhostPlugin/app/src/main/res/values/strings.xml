@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_group_name">Live Preview</string>
+
+    <string name="setting_javascript">JavaScript</string>
+    <string name="setting_javascript_desc">Let previewed pages run JavaScript</string>
+
+    <string name="setting_dom_storage">DOM storage</string>
+    <string name="setting_dom_storage_desc">Enable localStorage and sessionStorage</string>
+
+    <string name="setting_no_cache">Disable cache</string>
+    <string name="setting_no_cache_desc">Always load fresh files while previewing</string>
+
+    <string name="setting_wide_viewport">Desktop viewport</string>
+    <string name="setting_wide_viewport_desc">Use a wide viewport instead of a mobile one</string>
+
+    <string name="setting_zoom">Enable zoom</string>
+    <string name="setting_zoom_desc">Allow pinch-to-zoom in the preview</string>
+
+    <string name="setting_zoom_buttons">Show zoom buttons</string>
+    <string name="setting_zoom_buttons_desc">Display on-screen zoom controls</string>
+
+    <string name="setting_autoplay">Autoplay media</string>
+    <string name="setting_autoplay_desc">Start audio and video without a tap</string>
+
+    <string name="setting_clear_cache">Clear preview cache</string>
+    <string name="setting_clear_cache_desc">Remove cached pages and resources</string>
+</resources>

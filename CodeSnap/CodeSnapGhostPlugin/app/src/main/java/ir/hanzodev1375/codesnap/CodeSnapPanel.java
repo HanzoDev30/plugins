@@ -31,6 +31,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.Base64;
 import android.webkit.JavascriptInterface;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -111,7 +112,7 @@ public class CodeSnapPanel implements EditorPanel {
 
   CodeSnapPanel(Context context, PluginContext pluginContextApi) {
     this.pluginContext =
-        new ContextThemeWrapper(context, android.R.style.ThemeOverlay_Material_Dark_ActionBar);
+        new ContextThemeWrapper(context, 0);
     this.pluginContextApi = pluginContextApi;
     setState(PluginStateMod.BOTTOMSHEETDIALOG);
   }
@@ -241,10 +242,10 @@ public class CodeSnapPanel implements EditorPanel {
           public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
     themeSpinner.setOnItemSelectedListener(
-        new android.widget.AdapterView.OnItemSelectedListener() {
+        new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(
-              android.widget.AdapterView<?> parent, View view, int position, long id) {
+              AdapterView<?> parent, View view, int position, long id) {
             themeIndex = position;
             if (web != null) {
               web.evaluateJavascript(

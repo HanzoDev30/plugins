@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="gitclone_subtitle">کلون مخزن با JGit — پیشرفت زنده، بدون ترمینال</string>
+
+    <string name="gitclone_hint_url">آدرس مخزن، مثلا https://github.com/user/repo.git</string>
+    <string name="gitclone_hint_target">پوشه‌ی مقصد (خالی = کنار پروژه)</string>
+    <string name="gitclone_hint_branch">شاخه (اختیاری)</string>
+    <string name="gitclone_hint_token">توکن دسترسی (اختیاری)</string>
+
+    <string name="gitclone_chip_submodules">ساب‌ماژول‌ها</string>
+    <string name="gitclone_chip_shallow">کلون سطحی</string>
+    <string name="gitclone_chip_single">فقط یک شاخه</string>
+    <string name="gitclone_chip_notags">بدون تگ‌ها</string>
+    <string name="gitclone_chip_bare">مخزن Bare</string>
+
+    <string name="gitclone_label_url">آدرس مخزن</string>
+    <string name="gitclone_label_target">مقصد</string>
+    <string name="gitclone_label_options">گزینه‌ها</string>
+
+    <string name="gitclone_section_output">خروجی</string>
+
+    <string name="gitclone_action_clone">کلون</string>
+    <string name="gitclone_action_cancel">لغو</string>
+    <string name="gitclone_action_clear_output">پاک‌کردن خروجی</string>
+
+    <string name="gitclone_status_idle">آماده</string>
+    <string name="gitclone_status_running">در حال کلون…</string>
+    <string name="gitclone_status_success">موفق</string>
+    <string name="gitclone_status_failure">ناموفق</string>
+    <string name="gitclone_status_cancelled">لغو شد</string>
+
+    <string name="gitclone_progress_idle">آماده</string>
+    <string name="gitclone_progress_phase">%1$s  %2$d%%</string>
+    <string name="gitclone_progress_done">تمام</string>
+
+    <string name="gitclone_log_intro">آدرس مخزن را بگذار، گزینه‌ها را انتخاب کن و کلون را بزن.</string>
+    <string name="gitclone_log_target">$ مقصد: %1$s</string>
+    <string name="gitclone_log_command">$ git clone %1$s</string>
+    <string name="gitclone_log_done">✔ در %1$s کلون شد</string>
+    <string name="gitclone_log_failed">✘ کلون ناموفق: %1$s</string>
+    <string name="gitclone_log_cancelled">✘ کلون لغو شد</string>
+    <string name="gitclone_log_error_prefix">"خطا: "</string>
+
+    <string name="gitclone_toast_no_url">اول آدرس مخزن را بگذار</string>
+    <string name="gitclone_toast_busy">یک کلون در حال اجراست</string>
+    <string name="gitclone_toast_success">در %1$s کلون شد</string>
+    <string name="gitclone_toast_failure">کلون ناموفق بود</string>
+
+    <string name="gitclone_error_exists">مقصد وجود دارد و خالی نیست: %1$s</string>
+
+</resources>

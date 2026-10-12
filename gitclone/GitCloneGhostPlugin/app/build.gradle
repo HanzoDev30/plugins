@@ -1,0 +1,44 @@
+plugins {
+  id 'com.android.application'
+}
+
+android {
+  namespace 'ir.hanzodev30.gitclone'
+  compileSdk 36
+
+  defaultConfig {
+    applicationId 'ir.hanzodev30.gitclone'
+    minSdk 26
+    targetSdk 36
+    versionCode 1
+    versionName '1.0.0'
+    multiDexEnabled true
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  packaging {
+    resources {
+      excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE*', 'META-INF/NOTICE*', 'META-INF/*.kotlin_module']
+    }
+  }
+}
+
+dependencies {
+  compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+  implementation 'androidx.appcompat:appcompat:1.8.0-alpha01'
+  implementation 'androidx.activity:activity:1.9.3'
+  implementation 'androidx.multidex:multidex:2.0.1'
+  implementation 'com.google.android.material:material:1.14.0'
+  compileOnly 'org.eclipse.jgit:org.eclipse.jgit:6.7.0.202309050840-r'
+  compileOnly 'org.slf4j:slf4j-api:1.7.36'
+}

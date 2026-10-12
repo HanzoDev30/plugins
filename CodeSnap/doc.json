@@ -1,1 +1,5 @@
-/
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "## Code Snap \n - Choose your own code then generate a nice screenshot"
+}

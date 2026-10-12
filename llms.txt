@@ -1,0 +1,22 @@
+# Ghost IDE Plugin Docs
+
+سایت مستندات پلاگین نویسی Ghost IDE — API سه بخشی (plugin-api، ide-api، ide-ui-api)، سیستم اکستنشن/سرویس، یکپارچه سازی LSP، رابط کاربری و بسته بندی .gpl.
+Developer documentation for building Ghost IDE plugins — the three-module API (plugin-api, ide-api, ide-ui-api), extension/service system, LSP integration, UI screens and the .gpl package format.
+
+> Ghost IDE is a Java/Android IDE. Plugins are plain Java classes implementing the `GhostPlugin` interface, packaged as `.gpl` files, loaded at runtime with DexClassLoader.
+
+## Full documentation
+
+- [Ghost IDE Plugin Docs — فارسی (همه ی صفحات، یک فایل)](llms-full.fa.txt)
+- [Ghost IDE Plugin Docs — English (all pages, single file)](llms-full.en.txt)
+- [README](README.md)
+
+## Source & deploy
+
+- Repository: https://github.com/HanzoDev1375/GhostIdes
+- GitHub Pages: this site (root of the repo)
+
+## How to fetch fast
+
+- One webfetch of `llms-full.fa.txt` or `llms-full.en.txt` returns the entire documentation — no JS rendering needed.
+- `llms.txt` (this file) is a short index LLMs can read first.

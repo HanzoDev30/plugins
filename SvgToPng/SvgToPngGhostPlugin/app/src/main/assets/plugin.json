@@ -1,0 +1,10 @@
+{
+  "id": "ir.hanzodev1375.svgtopng",
+  "name": "SVG to PNG",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.svgtopng.SvgToPngPlugin",
+  "description": "Tap an SVG in the file manager to preview it and export a PNG at the size you choose.",
+  "author": "HanzoDev",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}

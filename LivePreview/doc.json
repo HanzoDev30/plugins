@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "## Live Preview \n -Requires version 1.1.6 beta1 or later; otherwise, the app will crash\n - Open an `.html` file,  then open the **Live Preview** panel and tap `File` \n - Your project folder is served in a WebView, so relative CSS/JS/images/modules work \n - `Auto` reloads the page when you save a file, `Log` shows console output, JS errors and missing files (404)"
+}

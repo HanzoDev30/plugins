@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev30.gitclone",
+  "name": "Git Clone",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev30.gitclone.GitClonePlugin",
+  "description": "Clones Git repositories with JGit right from the file manager screen: live progress, branch selection, and chips for submodules, shallow clone, single-branch, no-tags and bare repositories.",
+  "minHostVersion": 0,
+  "icon": "icon.png"
+}

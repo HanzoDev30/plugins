@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.livepreview",
+  "name": "Live Preview",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.livepreview.LivePreviewPlugin",
+  "description": "Live HTML/CSS/JS preview panel. Serves your project folder in a WebView and reloads on save.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Product name: never translated. -->
+    <string name="gitclone_app_name" translatable="false">Git Clone</string>
+
+    <string name="gitclone_subtitle">Clone a repository with JGit — live progress, no terminal</string>
+
+    <!-- Input fields -->
+    <string name="gitclone_hint_url">Repository URL, e.g. https://github.com/user/repo.git</string>
+    <string name="gitclone_hint_target">Target folder (empty = next to the project)</string>
+    <string name="gitclone_hint_branch">Branch (optional)</string>
+    <string name="gitclone_hint_token">Access token (optional)</string>
+
+    <!-- Option chips -->
+    <string name="gitclone_chip_submodules">Submodules</string>
+    <string name="gitclone_chip_shallow">Shallow</string>
+    <string name="gitclone_chip_single">Single branch</string>
+    <string name="gitclone_chip_notags">No tags</string>
+    <string name="gitclone_chip_bare">Bare repository</string>
+
+    <!-- Field labels -->
+    <string name="gitclone_label_url">Repository URL</string>
+    <string name="gitclone_label_target">Destination</string>
+    <string name="gitclone_label_options">Options</string>
+
+    <!-- Section headers -->
+    <string name="gitclone_section_output">Output</string>
+
+    <!-- Buttons -->
+    <string name="gitclone_action_clone">Clone</string>
+    <string name="gitclone_action_cancel">Cancel</string>
+    <string name="gitclone_action_clear_output">Clear output</string>
+
+    <!-- Status label -->
+    <string name="gitclone_status_idle">Idle</string>
+    <string name="gitclone_status_running">Cloning…</string>
+    <string name="gitclone_status_success">Succeeded</string>
+    <string name="gitclone_status_failure">Failed</string>
+    <string name="gitclone_status_cancelled">Cancelled</string>
+
+    <!-- Progress -->
+    <string name="gitclone_progress_idle">Ready</string>
+    <string name="gitclone_progress_phase">%1$s  %2$d%%</string>
+    <string name="gitclone_progress_done">Done</string>
+
+    <!-- Log lines; the leading glyph drives the log colouring, so it must stay first -->
+    <string name="gitclone_log_intro">Paste a repository URL, pick your options, then tap Clone.</string>
+    <string name="gitclone_log_target">$ target: %1$s</string>
+    <string name="gitclone_log_command">$ git clone %1$s</string>
+    <string name="gitclone_log_done">✔ cloned into %1$s</string>
+    <string name="gitclone_log_failed">✘ clone failed: %1$s</string>
+    <string name="gitclone_log_cancelled">✘ clone cancelled</string>
+    <!-- Quoted so the trailing space survives resource trimming; also the log colour marker -->
+    <string name="gitclone_log_error_prefix">"Error: "</string>
+
+    <!-- Toasts -->
+    <string name="gitclone_toast_no_url">Paste a repository URL first</string>
+    <string name="gitclone_toast_busy">A clone is already running</string>
+    <string name="gitclone_toast_success">Cloned into %1$s</string>
+    <string name="gitclone_toast_failure">Clone failed</string>
+
+    <!-- Errors -->
+    <string name="gitclone_error_exists">Target already exists and is not empty: %1$s</string>
+
+</resources>
