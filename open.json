@@ -1,5 +1,26 @@
 [
   {
+    "name": "CodeSnap",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/codesnap.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/CodeSnap/CodeSnapGhostPlugin"
+  },
+  {
+    "name": "LivePreview",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/app-debug.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/LivePreview/LivePreviewGhostPlugin"
+  },
+  {
+    "name": "SvgToPng",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/svgtopng.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/SvgToPng/SvgToPngGhostPlugin"
+  },
+  {
     "name": "VolumeCursor",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/icon.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/VolumeCursor/doc.json",
@@ -33,6 +54,13 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/astro/astrolsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/astro/test"
+  },
+  {
+    "name": "autorenametag",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/autotagrename.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/autorenametag/AutoRenameTagGhostPlugin"
   },
   {
     "name": "beardedicon",
@@ -89,6 +117,20 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/csv/csvviewer.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/csv/test"
+  },
+  {
+    "name": "docker",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/docker.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/dockerlsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/docker/DockerLspGhostPlugin"
+  },
+  {
+    "name": "gitclone",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/gitclone.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/gitclone/GitCloneGhostPlugin"
   },
   {
     "name": "glsllsp",
@@ -182,6 +224,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/mochaicon/mocha-icon"
   },
   {
+    "name": "nodeui",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/nodeui.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/nodeui/NodeUiGhostPlugin"
+  },
+  {
     "name": "opencodeai",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/ai.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/opencodeai/doc.json",
@@ -259,6 +308,13 @@
     "source": "https://github.com/HanzoDev30/plugins/tree/main/shell/ShellLspGhostPlugin"
   },
   {
+    "name": "svelte",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/svelte.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/sveltelsp.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/svelte/SvelteLspGhostPlugin"
+  },
+  {
     "name": "tailwindcss",
     "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/tailwind.png",
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/tailwindcss/doc.json",
@@ -299,68 +355,5 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
-  },
-  {
-    "name": "autorenametag",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/autorenametag/autotagrename.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/autorenametag/AutoRenameTagGhostPlugin"
-  },
-  {
-    "name": "docker",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/docker.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/docker/dockerlsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/docker/DockerLspGhostPlugin"
-  },
-  {
-    "name": "svelte",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/svelte.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/svelte/sveltelsp.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/svelte/SvelteLspGhostPlugin"
-  },
-  {
-    "name": "codesnap",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/codesnap.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/CodeSnap/CodeSnapGhostPlugin"
-  },
-  {
-    "name": "CodeSnap",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/CodeSnap/codesnap.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/CodeSnap/CodeSnapGhostPlugin"
-  },
-  {
-    "name": "nodeui",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/nodeui/nodeui.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/nodeui/NodeUiGhostPlugin"
-  },
-  {
-    "name": "LivePreview",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/LivePreview/app-debug.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/LivePreview/LivePreviewGhostPlugin"
-  },
-  {
-    "name": "SvgToPng",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/SvgToPng/svgtopng.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/SvgToPng/SvgToPngGhostPlugin"
-  },
-  {
-    "name": "gitclone",
-    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/icon.png",
-    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/doc.json",
-    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/gitclone/gitclone.gpl",
-    "source": "https://github.com/HanzoDev30/plugins/tree/main/gitclone/GitCloneGhostPlugin"
   }
 ]
