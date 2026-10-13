@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'GhostJadx'
+
+// bridge : tiny pure-Java contract shared by app and engine (no Android, no jadx)
+// engine : jadx-core + dex input, built as an APK only to get dex + resources (never installed)
+// app    : the real Ghost IDE plugin (UI), packs the engine into its assets -> .gpl
+include ':bridge'
+include ':engine'
+include ':app'

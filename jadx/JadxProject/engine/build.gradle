@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+}
+
+// This module is NEVER installed. It is built as an APK only because that is the easiest way to
+// get jadx + all its dependencies dexed WITH their resource files (clst/core.jcst, res-map.txt...).
+// jadx-core reads those resources through its class loader, and the loader Ghost IDE uses for .gpl
+// files cannot serve resources. The plugin therefore embeds this APK in its assets and loads it with
+// its own DexClassLoader.
+def jadxVersion = project.findProperty('jadxVersion') ?: '1.5.1'
+
+android {
+    namespace 'ir.hanzodev1375.jadx.engine'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'ir.hanzodev1375.jadx.engine'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+
+    packaging {
+        resources {
+            excludes += [
+                '/META-INF/{AL2.0,LGPL2.1}',
+                'META-INF/DEPENDENCIES',
+                'META-INF/LICENSE*',
+                'META-INF/NOTICE*',
+                'META-INF/INDEX.LIST',
+                'META-INF/*.kotlin_module',
+                'META-INF/versions/**',
+                'META-INF/maven/**',
+                'META-INF/proguard/**',
+                '**/module-info.class'
+            ]
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // Contract shared with the plugin. compileOnly: the plugin's class loader provides it at runtime.
+    compileOnly project(':bridge')
+
+    implementation "io.github.skylot:jadx-core:${jadxVersion}"
+    implementation "io.github.skylot:jadx-dex-input:${jadxVersion}"
+}

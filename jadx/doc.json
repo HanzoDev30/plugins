@@ -1,0 +1,5 @@
+{
+   "devname": "Ghost",
+   "icon": "icon.png",
+   "note": "# jadx for Ghost ide \n - an appreciative plugin for Java code reverse engineering \n - the ability to understand multiple dex \n - the ability to search among bytecodes and decompile a single file \n - the appearance is compatible with the ide"
+ }

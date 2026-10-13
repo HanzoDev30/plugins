@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.jadx-decompiler",
+  "name": "JADX Decompiler",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.jadx.JadxDecompilerPlugin",
+  "description": "Finds .dex files in a folder and decompiles them to Java with jadx.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}

@@ -1,0 +1,89 @@
+plugins {
+    id 'com.android.application'
+}
+
+// ---------------------------------------------------------------------------------------------
+// The Ghost IDE plugin. Built as an application module ONLY to get classes.dex + resources.arsc +
+// assets; the finished .gpl is simply this APK renamed (see :app:packageGpl).
+//
+//  * plugin-api / ide-ui-api / M3Theme / components are provided by the host app at runtime, so
+//    they are compileOnly (never packed into the .gpl).
+//  * jadx itself is NOT here: it lives in :engine and ends up as assets/jadx-engine.apk inside the
+//    .gpl (loaded by its own class loader, see EngineHolder).
+// ---------------------------------------------------------------------------------------------
+
+def engineApkDir = project(':engine').layout.buildDirectory.dir('outputs/apk/debug')
+def engineAssetsDir = layout.buildDirectory.dir('generated/engineAssets').get().asFile
+
+android {
+    namespace 'ir.hanzodev1375.jadx'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'ir.hanzodev1375.jadx.plugin'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig false
+    }
+
+    sourceSets {
+        main {
+            assets.srcDir engineAssetsDir
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // tiny shared contract (JadxEngine, JadxSession, ...): packed into the plugin dex
+    implementation project(':bridge')
+
+    // host-provided: plugin-api jar, ide-ui-api aar, thememanager aar (M3Theme), components aar (DialogCompat)
+    compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    // DialogCompat extends MaterialAlertDialogBuilder; the host app ships both at runtime
+    compileOnly 'androidx.appcompat:appcompat:1.6.1'
+    compileOnly 'com.google.android.material:material:1.12.0'
+}
+
+// Build the engine APK first and drop it into this module's assets as jadx-engine.apk
+def copyEngine = tasks.register('copyEngineApk', Copy) {
+    dependsOn ':engine:assembleDebug'
+    from(engineApkDir) {
+        include '*.apk'
+        rename { 'jadx-engine.apk' }
+    }
+    into engineAssetsDir
+}
+
+tasks.configureEach { t ->
+    if (t.name.startsWith('merge') && t.name.endsWith('Assets')) {
+        t.dependsOn(copyEngine)
+    }
+}
+
+// ./gradlew :app:packageGpl  ->  build/gpl/jadx-decompiler.gpl
+tasks.register('packageGpl', Copy) {
+    group = 'ghost'
+    description = 'Builds the plugin APK (with the jadx engine inside) and renames it to .gpl'
+    dependsOn 'assembleDebug'
+    from(layout.buildDirectory.dir('outputs/apk/debug')) {
+        include '*.apk'
+    }
+    into rootProject.layout.buildDirectory.dir('gpl')
+    rename { 'jadx-decompiler.gpl' }
+}
