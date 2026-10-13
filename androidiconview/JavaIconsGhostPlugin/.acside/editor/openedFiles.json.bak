@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/apk/JavaIconsGhostPlugin/app/src/main/java/ir/hanzodev1375/javaicons/JavaIconsPlugin.java",
+      "selection": {
+        "end": {
+          "column": 23,
+          "index": 2108,
+          "line": 56
+        },
+        "start": {
+          "column": 23,
+          "index": 2108,
+          "line": 56
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/apk/JavaIconsGhostPlugin/app/src/main/java/ir/hanzodev1375/javaicons/JavaIconsPlugin.java"
+}

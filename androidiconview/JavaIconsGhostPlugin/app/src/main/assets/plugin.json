@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.javaicons",
+  "name": "Res Icons",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.javaicons.JavaIconsPlugin",
+  "description": "Shows project res assets inline in Java/XML: drawable & mipmap previews (VectorMaster), color swatches for R.color/@color and strings for R.string/@string localized by device language.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
