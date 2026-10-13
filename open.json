@@ -355,5 +355,19 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/yaml/yamllsp.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/yaml/YamlLspGhostPlugin"
+  },
+  {
+    "name": "androidiconview",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidiconview/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidiconview/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/androidiconview/Androidresourceviewer.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/androidiconview/JavaIconsGhostPlugin"
+  },
+  {
+    "name": "htmliconviews",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/htmliconviews/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/htmliconviews/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/htmliconviews/htmliconviewer.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/htmliconviews/HtmlIconView"
   }
 ]
