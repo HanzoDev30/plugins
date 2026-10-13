@@ -1,83 +1,24 @@
 #!/usr/bin/env bash
 # AndroidBuilder for ir - OpenJDK 17 inside the proot Debian; ./gradlew cannot start without it.
 #
-# The JDK itself comes from apt, so the only question is which archive apt should talk to. Debian's
-# own servers are asked first: on a network that cannot reach them they answer 403/404 (or not at
-# all), and then one of the regional mirrors is picked - the first that answers, not a hard coded
-# one, since a mirror that is blocked here may be perfectly fine elsewhere.
+# The JDK comes straight from apt, which talks to Debian's own archive (deb.debian.org).
+# No regional mirror swapping: the user's Debian setup is fast and reliable as it is.
 set -e
 
 JDK_PACKAGE="${ANDROIDBUILDER_JDK_PACKAGE:-openjdk-17-jdk-headless}"
-APT_MIRROR="${ANDROIDBUILDER_APT_MIRROR:-}"
-DEBIAN_PROBE="${ANDROIDBUILDER_DEBIAN_PROBE:-https://deb.debian.org/debian/dists/bookworm/Release}"
-MIRROR_CANDIDATES="${ANDROIDBUILDER_APT_MIRRORS:-https://mirrors.aliyun.com/debian https://mirrors.cloud.tencent.com/debian}"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 say()  { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[1;33mWARNING: %s\033[0m\n' "$*"; }
 die()  { printf '\033[1;31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
 
-# shellcheck source=net-route.sh
-[ -f "$SCRIPT_DIR/net-route.sh" ] && . "$SCRIPT_DIR/net-route.sh"
-
-# ── apt sources rewrite ───────────────────────────────────────────────────────
-# The security suite does NOT live under the regular archive root: deb.debian.org serves
-# bookworm-security from /debian-security, and every regional mirror follows the same split
-# (mirrors.aliyun.com/debian-security, mirrors.cloud.tencent.com/debian-security, ...).
-# So a mirror swap has to move the "-security" suites to <mirror>-security as well. Rewriting
-# every debian URL to the plain mirror base silently repoints them at
-# <mirror>/dists/bookworm-security, which is a 404, and then apt-get update fails as a whole
-# and not a single package can be installed.
-ab_rewrite_apt_sources() {
-  base="${1%/}"
-  file=/etc/apt/sources.list
-  tmp="$file.androidbuilder.tmp"
-  awk -v base="$base" '
-    # comments and blank lines are copied through untouched
-    /^[[:space:]]*#/ || /^[[:space:]]*$/ { print; next }
-    {
-      is_security = ($0 ~ /-security/)
-      line = $0
-      n = split(line, tok, /[[:space:]]+/)
-      for (i = 1; i <= n; i++) {
-        if (tok[i] ~ /^(https?|ftp):\/\//) {
-          uri = tok[i]
-          sub(/\/+$/, "", uri)
-          tok[i] = is_security ? base "-security" : base
-          break
-        }
-      }
-      out = ""
-      for (i = 1; i <= n; i++) out = out (out == "" ? "" : " ") tok[i]
-      if (out != "") print out
-    }
-  ' "$file" > "$tmp" && mv "$tmp" "$file" || { rm -f "$tmp"; return 1; }
-  say "apt sources now:"
-  sed -n 's/^deb /  /p' "$file" || true
-}
-
-# Also fix any extra list files under sources.list.d that carry the same broken -security URL.
-ab_rewrite_sources_d() {
-  base="${1%/}"
-  [ -d /etc/apt/sources.list.d ] || return 0
-  for f in /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
-    [ -f "$f" ] || continue
-    grep -q -- '-security' "$f" 2>/dev/null || continue
-    cp -f "$f" "$f.androidbuilder.bak" 2>/dev/null || true
-    sed -i -E "s#(https?://[^ ]*/)debian(/[^ ]*)?([[:space:]]+[^[:space:]]*-security)#\1debian-security\3#g" "$f" \
-      || warn "could not rewrite $f"
-    say "rewrote $f"
-  done
-}
-
 java_major() {
   java -version 2>&1 | sed -nE 's/.*version "([0-9]+).*/\1/p' | head -n1
 }
 
-# ── 0. repair any broken security URLs before anything apt-related runs ────────
-# The very first line the user hit was a 404 on bookworm-security because an earlier run
-# rewrote the URL to <mirror>/dists/bookworm-security instead of <mirror>-security. Fix it
-# up front so even apt-get update below runs cleanly, regardless of which mirror is chosen.
+# ── 0. repair a broken security URL before anything apt-related runs ───────────
+# bookworm-security lives under /debian-security, not /debian. If a previous mirror
+# rewrite (or an old reference) left <archive>/debian bookworm-security behind, apt
+# 404s on it and the whole update fails. Normalize it before updating.
 if [ -f /etc/apt/sources.list ]; then
   if grep -qE '(^|[[:space:]])deb .*bookworm-security' /etc/apt/sources.list 2>/dev/null \
      && ! grep -qE 'debian-security.*bookworm-security' /etc/apt/sources.list 2>/dev/null; then

@@ -146,6 +146,7 @@ write_property 'org.gradle.vfs.watch' false
 if [ "${ANDROIDBUILDER_FIX_WRAPPER_TIMEOUT:-1}" != "0" ]; then
   WRAPPER_N=0
   for props in $(find /sdcard "$HOME" -maxdepth 8 -name gradle-wrapper.properties -type f 2>/dev/null); do
+    [ -f "$props" ] || continue
     grep -q '^networkTimeout=' "$props" && sed -i 's/^networkTimeout=.*/networkTimeout=120000/' "$props" \
       || printf '\nnetworkTimeout=120000\n' >> "$props"
     WRAPPER_N=$((WRAPPER_N + 1))
