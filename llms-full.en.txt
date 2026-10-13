@@ -4,7 +4,7 @@ Developer documentation for building Ghost IDE plugins — the three-module API 
 
 - Repository: https://github.com/HanzoDev1375/GhostIdes
 - Version: plugin-api 0.1.0
-- Pages: 38
+- Pages: 55
 - Generated from the real module source (no build step).
 
 # Table of contents
@@ -48,11 +48,14 @@ Developer documentation for building Ghost IDE plugins — the three-module API 
 - FileManagerHost — `file-manager-host` (ide-ui-api)
 - CodeRunnerHost — `code-runner-host` (ide-ui-api)
 - EditorPanel — `editor-panel` (ide-ui-api)
+- FilePanel — `file-panel` (ide-ui-api)
 - EditorActionHandler — `editor-action-handler` (ide-ui-api)
 - UiFeedbackHost — `ui-feedback-host` (ide-ui-api)
 - IdeEvents / FileEvent — `ide-events` (ide-ui-api)
 - PluginScreen — `plugin-screen` (ide-ui-api)
 - FileIconContributor — `file-icon-contributor` (ide-ui-api)
+- Toolbar Icon — `toolbar-icon` (ide-ui-api)
+- FileClickHandler — `file-click-handler` (ide-ui-api)
 
 ## Packaging (.gpl)
 - .gpl Format — `gpl-format` (gpl runtime)
@@ -62,6 +65,22 @@ Developer documentation for building Ghost IDE plugins — the three-module API 
 
 ## Full Example
 - Hello Ghost — `hello-world` (gpl runtime)
+
+## Samples
+- Sample project layout — `sample-overview`
+- Full entry class — `sample-entry` (plugin-api)
+- Plugin settings in the IDE settings screen — `sample-settings` (plugin-api)
+- UI screen (PluginScreen) — `sample-screen` (ide-ui-api)
+- Editor panel (EditorPanel) — `sample-panel` (ide-ui-api)
+- Command (PluginCommand) — `sample-command` (plugin-api)
+- Storage (PluginStorage) — `sample-storage` (plugin-api)
+- Listening to file events — `sample-events` (ide-ui-api)
+- Custom file icons — `sample-icons` (ide-ui-api)
+- Toolbar icon (one-tap action) — `sample-toolbar` (ide-ui-api)
+- Taking over a file click (SVG → PNG) — `sample-file-click` (ide-ui-api)
+- Adding a language server — `sample-lsp` (ide-api)
+- Feedback and host services — `sample-feedback` (ide-ui-api)
+- Building and packaging .gpl — `sample-build`
 
 
 # Introduction
@@ -101,7 +120,7 @@ The module map, the extension/service registries, and where plugin code ends and
 
 - **plugin-api** — The plugin model itself: PluginContext, ExtensionPoint/Registry, ServiceKey/Registry, GlobalRegistry.
 - **ide-api** — Depends on plugin-api. The LSP_SERVER_PROVIDER extension point for adding a language server.
-- **ide-ui-api** — Depends on plugin-api. The PLUGIN_SCREEN / EDITOR_PANEL / EDITOR_ACTION_HANDLER extension points plus the EditorHost, FileManagerHost and CodeRunnerHost services.
+- **ide-ui-api** — Depends on plugin-api. The PLUGIN_SCREEN / EDITOR_PANEL / FILE_PANEL / EDITOR_ACTION_HANDLER / FILE_ICON_CONTRIBUTOR / TOOLBAR_ICON / FILE_CLICK_HANDLER extension points plus the EditorHost, FileManagerHost, CodeRunnerHost and PanelHostService services.
 
 The `:app` module (the app itself) depends on all three, and is the only place where the real registry implementations (`DefaultExtensionRegistry`, `DefaultServiceRegistry`) and the plugin loader (`GplPluginLoader`) actually live. Plugin code never talks to `:app`’s internal classes directly — only to the `plugin-api`/`ide-api`/`ide-ui-api` interfaces.
 
@@ -446,15 +465,18 @@ storage.putString("lastPath", "/sdcard/Project/main.py");
 
 The contract a group of registered capabilities must implement.
 
-A simple `record` holding a unique id and the `Class` type every registration must implement. The platform ships with seven extension points today:
+A simple `record` holding a unique id and the `Class` type every registration must implement. The platform ships with these extension points today:
 
 | Extension point | Type | Module |
 | --- | --- | --- |
 | `EditorExtensionPoints.LSP_SERVER_PROVIDER` | `LspServerProvider` | `ide-api` |
 | `PluginUiExtensionPoints.PLUGIN_SCREEN` | `PluginScreen` | `ide-ui-api` |
 | `PluginUiExtensionPoints.EDITOR_PANEL` | `EditorPanel` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_PANEL` | `FilePanel` | `ide-ui-api` |
 | `PluginUiExtensionPoints.EDITOR_ACTION_HANDLER` | `EditorActionHandler` | `ide-ui-api` |
 | `PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR` | `FileIconContributor` | `ide-ui-api` |
+| `PluginUiExtensionPoints.TOOLBAR_ICON` | `PluginToolbarIcon` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_CLICK_HANDLER` | `FileClickHandler` | `ide-ui-api` |
 | `IdeEvents.FILE_EVENT` | `FileEventListener` | `ide-ui-api` |
 | `CoreExtensionPoints.PLUGIN_COMMAND` | `PluginCommand` | `plugin-api` |
 
@@ -472,7 +494,7 @@ public record ExtensionPoint<T>(String id, Class<T> type) {
 }
 ```
 
-For details on each, see LspServerProvider, PluginScreen, EditorPanel or EditorActionHandler.
+For details on each, see LspServerProvider, PluginScreen, EditorPanel, FilePanel, EditorActionHandler, FileIconContributor, Toolbar Icon or FileClickHandler.
 
 
 ---
@@ -863,7 +885,7 @@ The extension point and services for adding UI and reaching the host.
 
 > **[INFO]** Android doesn’t let dynamically loaded code declare a new `<activity>` in the host’s manifest. That’s why a plugin’s “screen” is actually a `Fragment`, not an Activity — the same technique Android plugin frameworks commonly use. The host app has a single screen-hosting Activity that displays this Fragment.
 
-To add a screen, see the PluginScreen interface. To slide a panel inside the running editor, see EditorPanel. To reach the open editor or file manager, see EditorHost and FileManagerHost. To run code or a shell command, see CodeRunnerHost. To intercept your language server’s commands locally, see EditorActionHandler.
+To add a screen, see the PluginScreen interface. To slide a panel inside the running editor, see EditorPanel; to slide one inside the file manager, see FilePanel. To reach the open editor or file manager, see EditorHost and FileManagerHost. To run code or a shell command, see CodeRunnerHost. To intercept your language server’s commands locally, see EditorActionHandler. To pin an action to a toolbar or to take over a file tap with your own format, see Toolbar Icon and FileClickHandler.
 
 
 ---
@@ -1099,6 +1121,53 @@ View view = LayoutInflater.from(pluginContext)
 Returns the path your panel is currently about — for example a file the panel’s user picked. The host consults every panel’s `getLastPath()` when running the current file (`CodeRunnerHost.runCurrentFile()`); if you return `null`, the host falls back to the file open in the editor.
 
 > **[TIP]** To show a panel with a different window style, override `getState()` / call `setState(PluginStateMod)` — side sheet, dialog, bottom sheet and more are all supported.
+
+
+---
+
+# FilePanel
+> Group: UI Integration · File: FilePanel.java · Module: ide-ui-api
+
+A UI panel a plugin slides into the running file manager — the exact counterpart of EditorPanel.
+
+Register an implementation at `PluginUiExtensionPoints.FILE_PANEL`. Same lifecycle and display modes as EditorPanel, but the host screen is the **file manager**. This lets a plugin (git clone, archives, sync, ...) show its UI without leaving the file list.
+
+```java — FilePanel.java
+public interface FilePanel extends Panel {
+
+  String getId();
+
+  String getTitle();
+
+  View createView();
+
+  // Optional: which path this panel is about
+  default String getLastPath() {
+    return null;
+  }
+}
+```
+
+The host creates the panel’s `View` once when it is first shown and keeps it for the rest of the Activity’s lifetime, so build your view lazily and keep its state inside it. Inflate layouts with the plugin’s own scoped context, exactly as with `EditorPanel`:
+
+```java — MyFilePanel.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+View view = LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_panel, root, false);
+```
+
+```java — MyPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.FILE_PANEL,
+    new MyFilePanel(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+> **[TIP]** Both `EditorPanel` and `FilePanel` extend a shared `Panel` interface, so they reuse the exact same hosting logic. To show the panel with a window style other than the default side sheet, override `getState()` / call `setState(PluginStateMod)` — e.g. `BOTTOMSHEETDIALOG`.
+
+> **[INFO]** The plugin popup opened from the file manager shows `FILE_PANEL` contributions as bottom sheets inside the file manager; the same popup opened from the editor shows `EDITOR_PANEL` contributions inside the editor.
 
 
 ---
@@ -1358,6 +1427,139 @@ Several icon plugins can be active at once. The **newest installed** plugin is q
 
 ---
 
+# Toolbar Icon
+> Group: UI Integration · File: PluginIcons.java · Module: ide-ui-api
+
+A persistent action pinned next to the IDE’s own toolbar icons — one tap runs your panel, no popup needed.
+
+`PluginIcons.setPluginShowState(context, state, title, onClick, icon)` registers a `PluginToolbarIcon` at `PluginUiExtensionPoints.TOOLBAR_ICON`. `PluginIconState.Editor` pins it to the **editor** toolbar, `PluginIconState.FileES` to the **file manager** toolbar. The icon can be a resource (`R.drawable.*`) or a drawable built from your plugin assets (e.g. a `BitmapDrawable` from a PNG).
+
+```java — PluginIcons.java
+public final class PluginIcons {
+
+  public static Disposable setPluginShowState(
+      PluginContext context, PluginIconState state,
+      String title, View.OnClickListener onClick, Drawable icon) {
+
+    String pluginId = context.getDescriptor().getId();
+    String resolvedId = pluginId + "#" + state.name();
+
+    PluginToolbarIcon toolbarIcon = new PluginToolbarIcon() {
+      @Override public String getId()    { return resolvedId; }
+      @Override public String getTitle() { return title; }
+      @Override public PluginIconState getState() { return state; }
+      @Override public Drawable getIcon() { return icon; }
+      @Override public void onClick(View anchor) { onClick.onClick(anchor); }
+    };
+
+    Disposable registration =
+        context.getExtensions().register(
+            PluginUiExtensionPoints.TOOLBAR_ICON, toolbarIcon);
+    context.registerDisposable(registration);
+    return registration;
+  }
+}
+```
+
+## Running your panel from the icon
+
+A toolbar tap is just like tapping the plugin in the popup, except it never opens the popup. Look up the host’s `PanelHostService` (`IdeHostServices.PANEL_HOST`) and call `showPanel(yourPanel)`; the host renders it in its registered display mode (side sheet, dialog, floating window, ...).
+
+```java — MyPlugin.java
+Context android =
+    context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+Drawable icon = android.getDrawable(R.drawable.ic_my_tool);
+
+context.getExtensions().register(
+    PluginUiExtensionPoints.TOOLBAR_ICON,
+    new ToolbarIcon(
+        "my.tool",
+        PluginIconState.Editor,
+        "My Tool",
+        icon,
+        v -> {
+          PanelHostService panelHost =
+              context.getServices().get(IdeHostServices.PANEL_HOST);
+          if (panelHost != null) panelHost.showPanel(myPanel);
+        }));
+```
+
+> **[TIP]** Several icons from the same plugin are fine: the api’s `itemId` param (or your own `PluginToolbarIcon` ids) keeps each one unique so taps always reach the right action. Unloading the plugin removes its icons automatically.
+
+
+---
+
+# FileClickHandler
+> Group: UI Integration · File: FileClickHandler.java · Module: ide-ui-api
+
+Take over a single tap on a file in the file manager and show your own UI — perfect for your own formats (SVG → PNG, archives, custom project files).
+
+Implement `FileClickHandler` and register it at `PluginUiExtensionPoints.FILE_CLICK_HANDLER`. On every tap in the file manager the host asks each handler, in descending priority order, `supports(path, name, isDirectory)`; the first one returning `true` wins, receives a `FileClickContext`, and the built-in opening (editor, image/audio viewer, apk install, ...) is **skipped** for that tap. Returning `false` — or not registering at all — leaves the IDE’s own behaviour untouched.
+
+```java — FileClickHandler.java
+public interface FileClickHandler {
+
+  boolean supports(String path, String name, boolean isDirectory);
+
+  void onFileClick(FileClickContext context);
+}
+```
+
+## What you get: FileClickContext
+
+| Accessor | Meaning |
+| --- | --- |
+| `context()` | The host `Context`; use it to show dialogs or start activities. |
+| `path()` | Absolute path of the tapped file or directory. |
+| `name()` | Display name of the tapped entry. |
+| `file()` | The tapped path as a `java.io.File`. |
+| `isDirectory()` | `true` when the tapped entry is a directory. |
+| `anchor()` | The tapped row `View`, for a shared-element transition or popup anchor (may be `null`). |
+
+## Example: SVG → PNG
+
+```java — SvgHandler.java
+public final class SvgHandler implements FileClickHandler {
+
+  private final UiFeedbackHost ui;
+
+  public SvgHandler(PluginContext context) {
+    ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+  }
+
+  @Override
+  public boolean supports(String path, String name, boolean isDirectory) {
+    return !isDirectory && name.toLowerCase().endsWith(".svg");
+  }
+
+  @Override
+  public void onFileClick(FileClickContext context) {
+    ui.confirm(
+        "Convert to PNG?",
+        context.path(),
+        ok -> {
+          if (ok) convert(context.file());
+        });
+  }
+}
+```
+
+```java — MyPlugin.java
+public void activate(PluginContext context) {
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_CLICK_HANDLER,
+          new SvgHandler(context)));
+}
+```
+
+> **[WARN]** Keep `supports` fast: it runs on the UI thread for every tap, so decide with the already-passed `path` / `name` / `isDirectory` and do **no** disk I/O there. Do the real work inside `onFileClick`, and move anything heavy to a background thread.
+
+> **[INFO]** A handler that throws from `onFileClick` is skipped and the tap falls through to the built-in flow, so a broken plugin can never block the file manager. Contribution is cleaned up automatically when the plugin unloads.
+
+
+---
+
 # .gpl format
 > Group: Packaging (.gpl) · File: plugin.json · Module: gpl runtime
 
@@ -1605,4 +1807,1110 @@ public final class HelloScreen implements PluginScreen {
 5. Restart the app; “Hello Ghost” should be available as an active plugin screen.
 
 > **[TIP]** The same pattern, swapping `PluginUiExtensionPoints.PLUGIN_SCREEN` for `EditorExtensionPoints.LSP_SERVER_PROVIDER`, is exactly the path a language server plugin follows — see LspServerProvider.
+
+
+---
+
+# Sample project layout
+> Group: Samples · File: SampleKit/
+
+A complete, copy-paste-ready project (SampleKit) that every sample in this section is drawn from. Start from this skeleton and get your plugin running with no friction.
+
+The project is an Android app module with no Activity; it exists only to produce a `classes.dex`. Dependencies are pulled `compileOnly` from `libs/` so they are not copied into the `.gpl`.
+
+## File tree
+
+```text — tree
+SampleKit/
+├─ settings.gradle
+├─ build.gradle
+├─ gradle.properties
+└─ app/
+   ├─ build.gradle
+   └─ src/main/
+      ├─ AndroidManifest.xml
+      ├─ assets/
+      │  ├─ plugin.json
+      │  └─ fileicons/icons.json
+      ├─ res/values/strings.xml
+      └─ java/com/example/samplekit/
+         ├─ SampleKitPlugin.java
+         ├─ SampleSettings.java
+         ├─ SampleSettingsContributor.java
+         ├─ ui/SampleScreen.java
+         ├─ ui/SamplePanel.java
+         ├─ command/SampleCommand.java
+         ├─ icons/SampleIcons.java
+         └─ lsp/SampleLspProvider.java
+```
+
+## 1. settings.gradle
+
+```gradle — settings.gradle
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = 'SampleKit'
+include ':app'
+```
+
+## 2. Root build.gradle
+
+```gradle — build.gradle
+plugins {
+    id 'com.android.application' version '8.5.0' apply false
+}
+```
+
+## 3. app/build.gradle
+
+Drop the three API files into `app/libs/`: `plugin-api-0.1.0.jar`, `ide-api-0.1.0.jar` and `ide-ui-api-release.aar`. If your plugin has no LSP you can drop `ide-api`; if it has no UI you can drop `ide-ui-api`.
+
+```gradle — app/build.gradle
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.samplekit'
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+}
+```
+
+## 4. AndroidManifest.xml
+
+```text — app/src/main/AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Not a real app: only used to get a dex. No activity, no permissions. -->
+    <application
+        android:allowBackup="false"
+        android:label="SampleKit" />
+
+</manifest>
+```
+
+## 5. Plugin manifest
+
+```json — app/src/main/assets/plugin.json
+{
+  "id": "com.example.sample-kit",
+  "name": "Sample Kit",
+  "version": "1.0.0",
+  "entryClass": "com.example.samplekit.SampleKitPlugin",
+  "description": "A sample plugin demonstrating every Ghost IDE capability.",
+  "author": "You",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+> **[TIP]** The `id` field may only contain letters, numbers, `.`, `_` and `-`, and is the same id you pass as `owner` on every registration — usually `context.getDescriptor().getId()`.
+
+Next, read the full entry class to see how all the pieces are wired together.
+
+
+---
+
+# Full entry class
+> Group: Samples · File: SampleKitPlugin.java · Module: plugin-api
+
+An entry class that registers all seven kinds of contribution: settings, screen, panel, command, event, icon and language server.
+
+Everything starts in `activate(PluginContext)`. Each `register(...)` returns a `Disposable` that you hand to `context.registerDisposable(...)` so unload releases it automatically.
+
+```java — SampleKitPlugin.java
+package com.example.samplekit;
+
+import android.content.Context;
+
+import java.util.List;
+
+import ir.hanzodev1375.ghostide.ide.api.EditorExtensionPoints;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeEvents;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.CoreExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.CoreServices;
+import ir.hanzodev1375.ghostide.plugin.api.ExtensionPoint;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+import ir.hanzodev1375.ghostide.plugin.api.PluginSetupAction;
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+import com.example.samplekit.command.SampleCommand;
+import com.example.samplekit.icons.SampleIcons;
+import com.example.samplekit.lsp.SampleLspProvider;
+import com.example.samplekit.ui.SamplePanel;
+import com.example.samplekit.ui.SampleScreen;
+
+public final class SampleKitPlugin implements GhostPlugin {
+
+  private SampleSettings settings;
+  private SamplePanel panel;
+
+  /** Environment setup commands; the host only runs them in a terminal after the user confirms. */
+  @Override
+  public List<PluginSetupAction> getSetupActions() {
+    return List.of(
+        new PluginSetupAction(
+            "install-tool",
+            "Install sample tool",
+            "npm install -g sample-tool",
+            "Installs the sample language tool inside the rootfs."));
+  }
+
+  @Override
+  public void activate(PluginContext context) {
+    String owner = context.getDescriptor().getId();
+    PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+    Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+
+    settings = new SampleSettings(storage);
+    panel = new SamplePanel(context, settings);
+
+    // 1) editor panel
+    register(context, owner, PluginUiExtensionPoints.EDITOR_PANEL, panel);
+
+    // 2) full UI screen
+    register(context, owner, PluginUiExtensionPoints.PLUGIN_SCREEN, new SampleScreen());
+
+    // 3) settings rows in the host settings screen
+    register(
+        context,
+        owner,
+        CoreExtensionPoints.PLUGIN_SETTINGS,
+        new SampleSettingsContributor(android, settings, panel));
+
+    // 4) an invokable command
+    register(context, owner, CoreExtensionPoints.PLUGIN_COMMAND, new SampleCommand(context));
+
+    // 5) a custom file icon contributor
+    register(context, owner, PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR, new SampleIcons(android));
+
+    // 6) listen to file events (may be called from any thread)
+    register(
+        context,
+        owner,
+        IdeEvents.FILE_EVENT,
+        event -> context.getLogger().info("file event: " + event));
+
+    // 7) add a language server
+    register(context, owner, EditorExtensionPoints.LSP_SERVER_PROVIDER, new SampleLspProvider(context));
+
+    context.getLogger().info("Sample Kit activated");
+  }
+
+  @Override
+  public void deactivate() {
+    // Every registration already holds a Disposable; only release manual resources here.
+    if (panel != null) {
+      panel.destroy();
+      panel = null;
+    }
+  }
+
+  private static <T> void register(
+      PluginContext context, String owner, ExtensionPoint<T> point, T extension) {
+    context.registerDisposable(context.getExtensions().register(point, extension, owner, 0));
+  }
+}
+```
+
+> **[INFO]** If the plugin is LSP-only it never needs `ide-ui-api`: depend on `plugin-api` and `ide-api` and keep only registration "7".
+
+Next, see plugin settings, the newest API feature.
+
+
+---
+
+# Plugin settings in the IDE settings screen
+> Group: Samples · File: SampleSettingsContributor.java · Module: plugin-api
+
+Instead of building a separate settings screen, drop your rows straight into the host settings screen — either a toggle or a plain tappable row.
+
+Implement `PluginSettingsContributor` and register it at `CoreExtensionPoints.PLUGIN_SETTINGS`. The host re-reads `getSettings()` every time the settings screen opens and tags each row with your plugin name.
+
+> **[INFO]** There are two row kinds: `PluginSetting.toggle(...)` for a switch and `PluginSetting.action(...)` for a plain row that runs code on tap. For richer choices (lists, sliders) use an `action` and show your own dialog or screen. Callbacks run on the UI thread.
+
+## 1. Put the text in resources
+
+Read text from `R.string` so it localizes with the device language and ships inside the `.gpl`.
+
+```text — res/values/strings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_group_name">Sample Kit</string>
+
+    <string name="setting_wrap">Word wrap</string>
+    <string name="setting_wrap_desc">Wrap long lines in the panel</string>
+
+    <string name="setting_autoreload">Auto reload</string>
+    <string name="setting_autoreload_desc">Reload when the file is saved</string>
+
+    <string name="setting_clear_cache">Clear cache</string>
+    <string name="setting_clear_cache_desc">Purge the panel cache</string>
+</resources>
+```
+
+## 2. Keep state in PluginStorage
+
+```java — SampleSettings.java
+package com.example.samplekit;
+
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+/** Plugin preferences; values live in PluginStorage and survive restarts. */
+public final class SampleSettings {
+
+  public static final String KEY_WRAP = "wrap";
+  public static final String KEY_AUTORELOAD = "autoreload";
+
+  private final PluginStorage storage;
+
+  public SampleSettings(PluginStorage storage) {
+    this.storage = storage;
+  }
+
+  public boolean isWrap() {
+    return storage.getBoolean(KEY_WRAP, true);
+  }
+
+  public void setWrap(boolean value) {
+    storage.putBoolean(KEY_WRAP, value);
+  }
+
+  public boolean isAutoReload() {
+    return storage.getBoolean(KEY_AUTORELOAD, true);
+  }
+
+  public void setAutoReload(boolean value) {
+    storage.putBoolean(KEY_AUTORELOAD, value);
+  }
+}
+```
+
+## 3. Build the rows
+
+```java — SampleSettingsContributor.java
+package com.example.samplekit;
+
+import android.content.Context;
+
+import java.util.List;
+
+import ir.hanzodev1375.ghostide.plugin.api.PluginSetting;
+import ir.hanzodev1375.ghostide.plugin.api.PluginSettingsContributor;
+import com.example.samplekit.ui.SamplePanel;
+
+public final class SampleSettingsContributor implements PluginSettingsContributor {
+
+  private final Context android;
+  private final SampleSettings settings;
+  private final SamplePanel panel;
+
+  public SampleSettingsContributor(Context android, SampleSettings settings, SamplePanel panel) {
+    this.android = android;
+    this.settings = settings;
+    this.panel = panel;
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.settings";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return android.getString(R.string.prefs_group_name);
+  }
+
+  @Override
+  public List<PluginSetting> getSettings() {
+    return List.of(
+        PluginSetting.toggle(
+            SampleSettings.KEY_WRAP,
+            android.getString(R.string.setting_wrap),
+            android.getString(R.string.setting_wrap_desc),
+            settings.isWrap(),
+            value -> {
+              settings.setWrap(value);
+              panel.applySettings();
+            }),
+        PluginSetting.toggle(
+            SampleSettings.KEY_AUTORELOAD,
+            android.getString(R.string.setting_autoreload),
+            android.getString(R.string.setting_autoreload_desc),
+            settings.isAutoReload(),
+            settings::setAutoReload),
+        PluginSetting.action(
+            "clear_cache",
+            android.getString(R.string.setting_clear_cache),
+            android.getString(R.string.setting_clear_cache_desc),
+            panel::clearCache));
+  }
+}
+```
+
+> **[TIP]** Each row `id` keys the value in `storage`; use the same constants in `SampleSettings` and the contributor so the value read matches the value written.
+
+
+---
+
+# UI screen (PluginScreen)
+> Group: Samples · File: SampleScreen.java · Module: ide-ui-api
+
+A full screen added to the Ghost IDE screen list, with access to host services (editor, files, runner).
+
+`PluginScreen` needs only `getId`, `getTitle` and `createFragment`. Inside the Fragment you pull services from `IdeHostServices`; you can also use `IdeHostServices.PLUGIN_ANDROID_CONTEXT` for inflating.
+
+```java — ui/SampleScreen.java
+package com.example.samplekit.ui;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginScreen;
+
+public final class SampleScreen implements PluginScreen {
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.screen";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Sample Kit";
+  }
+
+  @Override
+  public Fragment createFragment() {
+    return new ScreenFragment();
+  }
+
+  public static final class ScreenFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(
+        @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle state) {
+      return build();
+    }
+
+    private View build() {
+      LinearLayout root = new LinearLayout(requireContext());
+      root.setOrientation(LinearLayout.VERTICAL);
+      int pad = dp(16);
+      root.setPadding(pad, pad, pad, pad);
+
+      TextView title = new TextView(requireContext());
+      title.setText("Current editor text:");
+      root.addView(title);
+
+      EditText input = new EditText(requireContext());
+      root.addView(input);
+
+      Button apply = new Button(requireContext());
+      apply.setText("Put into editor");
+      apply.setOnClickListener(v -> { /* use injected EditorHost */ });
+      root.addView(apply);
+      return root;
+    }
+
+    private int dp(int value) {
+      return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+  }
+}
+```
+
+## The correct way: inject services from activate
+
+```java — ui/SampleScreen.java (better)
+public final class SampleScreen implements PluginScreen {
+
+  private final EditorHost editor;
+  private final Context android;
+
+  public SampleScreen(EditorHost editor, Context android) {
+    this.editor = editor;
+    this.android = android;
+  }
+
+  @Override public String getId() { return "com.example.samplekit.screen"; }
+  @Override public String getTitle() { return "Sample Kit"; }
+  @Override public Fragment createFragment() { return new ScreenFragment(editor, android); }
+
+  public static final class ScreenFragment extends Fragment {
+    private final EditorHost editor;
+    private final Context android;
+    ScreenFragment(EditorHost editor, Context android) {
+      this.editor = editor;
+      this.android = android;
+    }
+    // ... same build()
+  }
+}
+```
+
+In `SampleKitPlugin.activate` build and register it like this:
+
+```java — SampleKitPlugin.java (excerpt)
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+register(context, owner, PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new SampleScreen(editor, android));
+```
+
+
+---
+
+# Editor panel (EditorPanel)
+> Group: Samples · File: SamplePanel.java · Module: ide-ui-api
+
+A panel that opens next to the editor, like the Live Preview panel. Its display mode can be changed with PluginStateMod.
+
+`Panel` (and therefore `EditorPanel` and `FilePanel`) builds a `View` via `createView()` and picks where it shows via `getState()/setState()`: `SIDESHEET`, `DIALOGFRAGMENT`, `FRAGMENT`, `FLOATINGWINDOWS` and more.
+
+```java — ui/SamplePanel.java
+package com.example.samplekit.ui;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorPanel;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginStateMod;
+
+import com.example.samplekit.SampleSettings;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SamplePanel implements EditorPanel {
+
+  private final PluginContext context;
+  private final SampleSettings settings;
+  private TextView view;
+
+  public SamplePanel(PluginContext context, SampleSettings settings) {
+    this.context = context;
+    this.settings = settings;
+    setState(PluginStateMod.SIDESHEET);
+  }
+
+  @Override public String getId() { return "com.example.samplekit.panel"; }
+
+  @Override public String getTitle() { return "Sample"; }
+
+  @Override
+  public View createView() {
+    Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+    view = new TextView(android);
+    view.setPadding(24, 24, 24, 24);
+    refresh();
+    return view;
+  }
+
+  public void applySettings() {
+    refresh();
+  }
+
+  public void clearCache() {
+    if (view != null) {
+      view.setText("cache cleared");
+    }
+  }
+
+  private void refresh() {
+    if (view == null) {
+      return;
+    }
+    EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+    String wrap = settings.isWrap() ? "on" : "off";
+    view.setText("wrap: " + wrap + ", autoReload: " + settings.isAutoReload()
+        + ", file: " + editor.getOpenFile());
+  }
+
+  public void destroy() {
+    view = null;
+  }
+}
+```
+
+> **[TIP]** To change the display mode, call `panel.setState(PluginStateMod.FLOATINGWINDOWS);` in `activate()` after building the panel — the value is stored in `PanelStateStore` and read by the host.
+
+
+---
+
+# Command (PluginCommand)
+> Group: Samples · File: SampleCommand.java · Module: plugin-api
+
+An invokable action the host (and, in future, a command palette) can list and run.
+
+`PluginCommand` has three parts: `getId()` (unique, reverse-domain), `getTitle()` and `execute()`. Execution may arrive on any thread; move to the main thread yourself before touching UI.
+
+```java — command/SampleCommand.java
+package com.example.samplekit.command;
+
+import java.util.concurrent.Executors;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.CodeRunnerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.plugin.api.PluginCommand;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleCommand implements PluginCommand {
+
+  private final PluginContext context;
+
+  public SampleCommand(PluginContext context) {
+    this.context = context;
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.runCurrentFile";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Sample Kit: Run current file";
+  }
+
+  @Override
+  public String getDescription() {
+    return "Runs the currently open file in the terminal.";
+  }
+
+  @Override
+  public void execute() {
+    CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+    EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+    if (editor.getOpenFile() == null) {
+      return;
+    }
+    String path = editor.getOpenFile().getAbsolutePath();
+    if (runner.isSupported(path)) {
+      runner.runFile(path);
+    } else {
+      Executors.newSingleThreadExecutor().execute(() -> runner.exec("file " + path, null));
+    }
+  }
+}
+```
+
+> **[INFO]** `execute()` runs off the main thread; do not block it for long and never touch views directly.
+
+
+---
+
+# Storage (PluginStorage)
+> Group: Samples · File: SampleStorageUsage.java · Module: plugin-api
+
+Every plugin has an isolated key-value space, namespaced by its id, that survives restarts.
+
+Get the `CoreServices.PLUGIN_STORAGE` service and store primitives (String/boolean/int/long/float). For large payloads create files in your own private directory instead.
+
+```java — SampleStorageUsage.java
+import ir.hanzodev1375.ghostide.plugin.api.CoreServices;
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+// inside activate:
+PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+
+storage.putString("lastFile", "/sdcard/notes.txt");
+storage.putInt("runCount", storage.getInt("runCount", 0) + 1);
+storage.putBoolean("firstRun", false);
+
+String last = storage.getString("lastFile", "");
+boolean has = storage.contains("runCount");
+storage.remove("lastFile");
+// storage.clear(); // wipes all data for this plugin
+```
+
+> **[INFO]** Always pass a default (`defValue`); a missing key returns it and never throws.
+
+
+---
+
+# Listening to file events
+> Group: Samples · File: IdeEventsListener.java · Module: ide-ui-api
+
+Use the IdeEvents.FILE_EVENT extension point to learn when a file is opened, saved, closed, deleted or renamed.
+
+Register a `FileEventListener`. A `FileEvent` carries a `type()` (OPENED/SAVED/CLOSED/DELETED/RENAMED), a `path()` and, for renames, a `previousPath()`.
+
+```java — IdeEventsListener.java
+import ir.hanzodev1375.ghostide.ide.ui.api.FileEvent;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileEventListener;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeEvents;
+
+// inside activate:
+FileEventListener listener = new FileEventListener() {
+  @Override
+  public void onFileEvent(FileEvent event) {
+    switch (event.type()) {
+      case SAVED:
+        context.getLogger().info("saved: " + event.path());
+        break;
+      case RENAMED:
+        context.getLogger().info(event.previousPath() + " -> " + event.path());
+        break;
+      default:
+        break;
+    }
+  }
+};
+context.registerDisposable(
+    context.getExtensions().register(IdeEvents.FILE_EVENT, listener, owner, 0));
+```
+
+> **[WARN]** The listener may be called on any thread; never touch a View directly from it.
+
+
+---
+
+# Custom file icons
+> Group: Samples · File: SampleIcons.java · Module: ide-ui-api
+
+With one JSON file and a few images, override the icons shown for your language files in the file tree.
+
+The ready-made `JsonFileIconContributor` takes a JSON file and an artwork folder and returns the right icon per extension / file name / folder. Artwork is extracted from assets and cached.
+
+## 1. The icon JSON file
+
+```json — assets/fileicons/icons.json
+{
+  "asset_dir": "fileicons",
+  "defaults": {
+    "file": "default_file",
+    "folder": "default_folder",
+    "root_folder": "default_root_folder"
+  },
+  "fileExtensions": {
+    "foo": "file_type_foo",
+    "bar": "file_type_bar"
+  },
+  "fileNames": {
+    "makefile": "file_type_makefile"
+  },
+  "folderNames": {
+    "src": "folder_src"
+  }
+}
+```
+
+Next to it, put artwork `file_type_foo.svg`, `folder_src.svg`, etc. in `assets/fileicons/` (`.svg/.png/.jpg/.webp` are supported).
+
+## 2. The contributor class
+
+```java — icons/SampleIcons.java
+package com.example.samplekit.icons;
+
+import android.content.Context;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.FileIconContributor;
+import ir.hanzodev1375.ghostide.ide.ui.api.JsonFileIconContributor;
+
+public final class SampleIcons implements FileIconContributor {
+
+  private final JsonFileIconContributor delegate;
+
+  public SampleIcons(Context android) {
+    this.delegate = new JsonFileIconContributor(android, "fileicons/icons.json");
+  }
+
+  @Override
+  public String getIcon(String filePath) {
+    return delegate.getIcon(filePath);
+  }
+}
+```
+
+> **[TIP]** If you only need a couple of extensions, implement `FileIconContributor` directly and return a drawable name or path based on `filePath`.
+
+
+---
+
+# Toolbar icon (one-tap action)
+> Group: Samples · File: SampleToolbarIcon.java · Module: ide-ui-api
+
+Put a persistent action next to the IDE’s own toolbar icons — editor or file manager — and run your panel with one tap instead of opening the popup.
+
+`PluginIcons.setPluginShowState(context, state, title, onClick, icon)` registers a `PluginToolbarIcon` at `PluginUiExtensionPoints.TOOLBAR_ICON` for you. `PluginIconState.Editor` puts it in the **editor** toolbar, `PluginIconState.FileES` in the **file manager** toolbar. The icon can come from `R.drawable.*` or straight from your plugin assets — like a PNG `BitmapDrawable` as below.
+
+```java — SampleToolbarIcon.java
+package com.example.samplekit;
+
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginIconState;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginIcons;
+import ir.hanzodev1375.ghostide.ide.ui.api.PanelHostService;
+import ir.hanzodev1375.ghostide.plugin.api.Disposable;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleToolbarIcon implements GhostPlugin {
+
+  private EditorPanel panel = new MyPanel();
+
+  @Override
+  public void activate(PluginContext context) {
+    Context android =
+        context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+
+    // Icon loaded from assets/icon.png (or use android.getDrawable(R.drawable.icon)).
+    Drawable icon;
+    try {
+      java.io.InputStream in = android.getAssets().open("icon.png");
+      icon = new BitmapDrawable(android.getResources(), BitmapFactory.decodeStream(in));
+      in.close();
+    } catch (java.io.IOException e) {
+      icon = null; // icon-less item still shows, clickable
+    }
+
+    Disposable d =
+        PluginIcons.setPluginShowState(
+            context,
+            PluginIconState.Editor,   // FileES = file manager toolbar
+            "Run my tool",
+            v -> openPanel(context),  // the real action
+            icon);
+    context.registerDisposable(d);
+  }
+
+  private void openPanel(PluginContext context) {
+    // Runs the panel exactly like tapping it in the plugin popup (no popup needed).
+    PanelHostService host = context.getServices().get(IdeHostServices.PANEL_HOST);
+    if (host != null) host.showPanel(panel);
+  }
+}
+```
+
+The registration is already tracked by the plugin context, so unloading the plugin removes the icon automatically. Keep the returned `Disposable` only if you need to hide the icon earlier.
+
+> **[TIP]** Pass `null` as `itemId` to auto-generate a unique id, or pass an explicit id to contribute several toolbar icons from the same plugin.
+
+
+---
+
+# Taking over a file click (SVG → PNG)
+> Group: Samples · File: SampleSvgClick.java · Module: ide-ui-api
+
+Claim a tap on `.svg` files in the file manager, read the path, and ask the user before converting — the IDE never opens its own viewer for the tap.
+
+Implement `FileClickHandler` and register it at `PluginUiExtensionPoints.FILE_CLICK_HANDLER`. `supports(...)` decides which taps you own; `onFileClick(...)` receives a `FileClickContext` with the path, the file, the host `Context` and the tapped row `View`. The built-in open is skipped for any tap you claim.
+
+```java — click/SampleSvgClick.java
+package com.example.samplekit.click;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.FileClickContext;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileClickHandler;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.UiFeedbackHost;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleSvgClick implements FileClickHandler {
+
+  private final UiFeedbackHost ui;
+
+  public SampleSvgClick(PluginContext context) {
+    this.ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+  }
+
+  // Runs on every tap: keep it pure/fast, no disk I/O here.
+  @Override
+  public boolean supports(String path, String name, boolean isDirectory) {
+    return !isDirectory && name.toLowerCase().endsWith(".svg");
+  }
+
+  @Override
+  public void onFileClick(FileClickContext context) {
+    ui.confirm(
+        "Convert to PNG?",
+        context.name(),
+        ok -> {
+          if (!ok) return;
+          // context.file() = java.io.File, context.path() = absolute path
+          convert(context);
+        });
+  }
+
+  private void convert(FileClickContext context) {
+    new Thread(
+            () -> {
+              // ... rasterize context.file() to a .png next to it ...
+              // Then hop back to the UI thread if you want to show a toast:
+              ui.toast("Done: " + context.name());
+            })
+        .start();
+  }
+}
+```
+
+## Registration
+
+```java — SampleKitPlugin.java
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+
+@Override
+public void activate(PluginContext context) {
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_CLICK_HANDLER,
+          new SampleSvgClick(context)));
+}
+```
+
+> **[INFO]** To let the IDE keep opening the file and only *add* an entry, use the built-in action row / menu instead of claiming the tap. Returning `false` from `supports` for paths you do not own makes handlers compose cleanly — the first `true` in priority order wins.
+
+
+---
+
+# Adding a language server
+> Group: Samples · File: SampleLspProvider.java · Module: ide-api
+
+Introduce a new language to the editor. The host manages the LSP lifecycle; you only declare which files you support and how to launch the process.
+
+`LspServerProvider` decides which request it supports and builds an `LspServerDefinition`. The definition carries the extensions, display name and an `LspServerConnectionFactory`. If your server is a proot binary inside the rootfs, use the `ProotProcessLauncher` service.
+
+```java — lsp/SampleLspProvider.java
+package com.example.samplekit.lsp;
+
+import java.util.List;
+import java.util.Set;
+
+import ir.hanzodev1375.ghostide.ide.api.LspServerDefinition;
+import ir.hanzodev1375.ghostide.ide.api.LspServerProvider;
+import ir.hanzodev1375.ghostide.ide.api.LspServerRequest;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.ProotProcessLauncher;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleLspProvider implements LspServerProvider {
+
+  private final ProotProcessLauncher launcher;
+
+  public SampleLspProvider(PluginContext context) {
+    this.launcher = context.getServices().require(IdeHostServices.PROOT_PROCESS_LAUNCHER);
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.lsp";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return "Sample Language";
+  }
+
+  @Override
+  public boolean supports(LspServerRequest request) {
+    return "foo".equals(request.extension());
+  }
+
+  @Override
+  public LspServerDefinition createDefinition(LspServerRequest request) {
+    return LspServerDefinition
+        .builder(
+            "sample-language",
+            Set.of("foo"),
+            "Sample Language",
+            r -> launcher.launch(
+                r.projectRoot().getAbsolutePath(),
+                "/usr/bin/sample-ls",
+                List.of("--stdio")))
+        .grammarScopeName("source.foo")
+        .enableInlayHints(true)
+        .enableSignatureHelp(true)
+        .initializationTimeoutMillis(10000)
+        .build();
+  }
+}
+```
+
+## Manual connection (without proot)
+
+If you want to manage the process yourself, write an `LspServerConnection` implementing `start()`, `getInputStream()/getOutputStream()` and `close()`, and pass it into the builder.
+
+```java — MyConnection.java
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import ir.hanzodev1375.ghostide.ide.api.LspServerConnection;
+
+public final class MyConnection implements LspServerConnection {
+
+  private final Process process;
+
+  public MyConnection(Process process) {
+    this.process = process;
+  }
+
+  @Override public void start() throws IOException { /* process already started */ }
+  @Override public OutputStream getOutputStream() { return process.getOutputStream(); }
+  @Override public InputStream getInputStream() { return process.getInputStream(); }
+  @Override public boolean isClosed() { return !process.isAlive(); }
+  @Override public void close() { process.destroy(); }
+}
+```
+
+> **[INFO]** `grammarScopeName` connects to ThemeMaker so syntax highlighting colors are applied correctly.
+
+
+---
+
+# Feedback and host services
+> Group: Samples · File: FeedbackUsage.java · Module: ide-ui-api
+
+For short messages, input prompts and confirmations use UiFeedbackHost; for editor, file and runner access the host services are available.
+
+`UiFeedbackHost` exposes `toast`, `promptInput` and `confirm`. All host services are obtained with `context.getServices().require(...)`.
+
+```java — FeedbackUsage.java
+import ir.hanzodev1375.ghostide.ide.ui.api.CodeRunnerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileManagerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.UiFeedbackHost;
+
+// inside activate or anywhere:
+UiFeedbackHost feedback = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+FileManagerHost files = context.getServices().require(IdeHostServices.FILE_MANAGER_HOST);
+CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+
+feedback.toast("Sample Kit ready");
+
+feedback.promptInput("New file name", "untitled.txt", text -> {
+  if (text != null) {
+    editor.setEditorText("// " + text);
+  }
+});
+
+feedback.confirm("Clear cache?", "This cannot be undone.", confirmed -> {
+  if (confirmed) {
+    runner.runShell("rm -rf cache", true);
+  }
+});
+
+// Run a command and read its output
+CodeRunnerHost.ExecResult result = runner.exec("echo hi", line -> {});
+if (result.success()) {
+  feedback.toast(result.output());
+}
+```
+
+## Host services table
+
+| Service | Key | Purpose |
+| --- | --- | --- |
+| `EditorHost` | `IdeHostServices.EDITOR_HOST` | open file, editor text, open file |
+| `FileManagerHost` | `IdeHostServices.FILE_MANAGER_HOST` | project root, selected file, refresh |
+| `CodeRunnerHost` | `IdeHostServices.CODE_RUNNER_HOST` | run shell/file and read output |
+| `UiFeedbackHost` | `IdeHostServices.UI_FEEDBACK` | toast, prompt input, confirm |
+| `ProotProcessLauncher` | `IdeHostServices.PROOT_PROCESS_LAUNCHER` | run a process inside the rootfs |
+| `Context` | `IdeHostServices.PLUGIN_ANDROID_CONTEXT` | access resources and inflate |
+
+
+---
+
+# Building and packaging .gpl
+> Group: Samples · File: build-gpl.sh
+
+Turn the project output into a .gpl file: compile, build the dex with d8, and zip it with the manifest.
+
+A `.gpl` file is really a zip that contains at least `classes.dex` and `assets/plugin.json`. Resources (such as `resources.arsc` for `R.string`) must be inside the zip too, so plugin strings resolve.
+
+1. Compile the plugin: `./gradlew :app:assembleDebug` (intermediate dex/jar output).
+2. Convert the plugin classes to `classes.dex` with `d8`.
+3. Zip `classes.dex`, the `assets/` folder (with `plugin.json`) and `resources.arsc`/`res/` when present.
+4. Rename the zip to `.gpl`.
+5. Copy it into the device `filesDir/gpl_plugins/` and restart the app.
+
+## Sample script
+
+```bash — build-gpl.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT=build/gpl
+rm -rf "$OUT"
+mkdir -p "$OUT"
+
+# 1) compile plugin classes against the APIs
+javac -source 17 -target 17 \
+  -cp "app/libs/plugin-api-0.1.0.jar:app/libs/ide-api-0.1.0.jar" \
+  -d "$OUT/classes" \
+  $(find app/src/main/java -name '*.java')
+
+# 2) convert to dex  (d8 from Android build-tools)
+d8 --min-api 26 --output "$OUT" \
+  $(find "$OUT/classes" -name '*.class')
+
+# 3) bring in the manifest and resources
+cp -r app/src/main/assets "$OUT/" 2>/dev/null || true
+
+# 4) build the .gpl file
+mkdir -p "$OUT/zip"
+cp "$OUT/classes.dex" "$OUT/zip/"
+cp -r "$OUT/assets" "$OUT/zip/" 2>/dev/null || true
+(cd "$OUT/zip" && zip -r ../samplekit.gpl .)
+
+echo "built: $OUT/samplekit.gpl"
+```
+
+> **[TIP]** To include `R.string` text you must also place `resources.arsc` and the `res/` folder from the `assembleDebug` output inside the zip; otherwise `Context.getString` cannot find the plugin resources.
+
+> **[INFO]** See the install and load path in .gpl format and Installing plugins.
 

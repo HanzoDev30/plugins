@@ -1,0 +1,2927 @@
+# Ghost IDE Plugin Docs — فارسی
+
+سایت مستندات پلاگین‌نویسی Ghost IDE — API سه‌بخشی (plugin-api، ide-api، ide-ui-api)، سیستم اکستنشن/سرویس، یکپارچه‌سازی LSP، رابط کاربری و بسته‌بندی .gpl.
+
+- Repository: https://github.com/HanzoDev1375/GhostIdes
+- Version: plugin-api 0.1.0
+- Pages: 55
+- Generated from the real module source (no build step).
+
+# فهرست مطالب
+
+## شروع کار
+- معرفی — `intro`
+- معماری — `architecture`
+- شروع سریع — `quickstart`
+
+## مفاهیم پایه
+- GhostPlugin — `ghost-plugin` (plugin-api)
+- PluginContext — `plugin-context` (plugin-api)
+- PluginDescriptor — `plugin-descriptor` (plugin-api)
+- PluginDependency — `plugin-dependency` (plugin-api)
+- PluginLogger — `plugin-logger` (plugin-api)
+- Disposable — `disposable` (plugin-api)
+- PluginSetupAction — `setup-actions` (plugin-api)
+- PluginStorage — `plugin-storage` (plugin-api)
+
+## اکستنشن‌ها
+- ExtensionPoint — `extension-point` (plugin-api)
+- ExtensionRegistry — `extension-registry` (plugin-api)
+- ConfigurableExtension — `configurable-extension` (plugin-api)
+- PluginCommand — `plugin-command` (plugin-api)
+
+## سرویس‌ها
+- ServiceKey — `service-key` (plugin-api)
+- ServiceRegistry — `service-registry` (plugin-api)
+- GlobalRegistry — `global-registry` (plugin-api)
+
+## یکپارچه‌سازی LSP
+- نمای کلی — `lsp-overview` (ide-api)
+- LspServerProvider — `lsp-server-provider` (ide-api)
+- LspServerDefinition — `lsp-server-definition` (ide-api)
+- LspServerConnection — `lsp-server-connection` (ide-api)
+
+## رابط کاربری
+- نمای کلی — `ui-overview` (ide-ui-api)
+- IdeHostServices — `ide-host-services` (ide-ui-api)
+- EditorHost — `editor-host` (ide-ui-api)
+- FileManagerHost — `file-manager-host` (ide-ui-api)
+- CodeRunnerHost — `code-runner-host` (ide-ui-api)
+- EditorPanel — `editor-panel` (ide-ui-api)
+- FilePanel — `file-panel` (ide-ui-api)
+- EditorActionHandler — `editor-action-handler` (ide-ui-api)
+- UiFeedbackHost — `ui-feedback-host` (ide-ui-api)
+- IdeEvents / FileEvent — `ide-events` (ide-ui-api)
+- PluginScreen — `plugin-screen` (ide-ui-api)
+- FileIconContributor — `file-icon-contributor` (ide-ui-api)
+- نوار ابزار (Toolbar Icon) — `toolbar-icon` (ide-ui-api)
+- FileClickHandler — `file-click-handler` (ide-ui-api)
+
+## بسته‌بندی (.gpl)
+- فرمت .gpl — `gpl-format` (gpl runtime)
+- ساخت پلاگین — `build-plugin` (gpl runtime)
+- چرخه‌ی بارگذاری — `loading-lifecycle` (gpl runtime)
+- نصب پلاگین — `installing` (gpl runtime)
+
+## نمونه‌ی کامل
+- Hello Ghost — `hello-world` (gpl runtime)
+
+## نمونه‌های آماده
+- ساختار پروژه‌ی نمونه — `sample-overview`
+- کلاس ورودی کامل — `sample-entry` (plugin-api)
+- تنظیمات پلاگین در صفحه‌ی تنظیمات — `sample-settings` (plugin-api)
+- صفحه‌ی UI (PluginScreen) — `sample-screen` (ide-ui-api)
+- پنل ادیتور (EditorPanel) — `sample-panel` (ide-ui-api)
+- دستور (PluginCommand) — `sample-command` (plugin-api)
+- ذخیره‌سازی (PluginStorage) — `sample-storage` (plugin-api)
+- گوش‌دادن به رویدادهای فایل — `sample-events` (ide-ui-api)
+- ایکون فایل سفارشی — `sample-icons` (ide-ui-api)
+- ایکون نوار ابزار (عمل یک‌لمسی) — `sample-toolbar` (ide-ui-api)
+- تصاحب کلیک فایل (SVG → PNG) — `sample-file-click` (ide-ui-api)
+- افزودن Language Server — `sample-lsp` (ide-api)
+- پیام‌ها و سرویس‌های میزبان — `sample-feedback` (ide-ui-api)
+- ساخت و بسته‌بندی .gpl — `sample-build`
+
+
+# معرفی
+> گروه: شروع کار · فایل: README.md
+
+Ghost IDE با یک لایه‌ی پلاگین رسمی گسترش‌پذیر است؛ همین API که خود ویژگی‌های داخلی اپ هم از آن استفاده می‌کنند.
+
+یک پلاگین Ghost IDE یک کلاس Java است که رابط `GhostPlugin` را پیاده می‌کند، داخل یک بسته‌ی `.gpl` می‌شود، و در زمان اجرا با DexClassLoader بارگذاری می‌شود. بعد از بارگذاری، متد `activate(PluginContext)` صدا زده می‌شود و از همان‌جا پلاگین به رجیستری‌های اکستنشن و سرویس دسترسی پیدا می‌کند.
+
+API در سه ماژول جدا از هم پخش شده تا هر پلاگین فقط به چیزی وابسته شود که واقعاً لازم دارد:
+
+| ماژول | نوع | وابستگی | کاربرد |
+| --- | --- | --- | --- |
+| `plugin-api` | کتابخانه‌ی جاوای خالص | ندارد | مدل پایه‌ی پلاگین، اکستنشن و سرویس |
+| `ide-api` | کتابخانه‌ی جاوای خالص | `plugin-api` + `lsp4j` | افزودن Language Server (LSP) به ادیتور |
+| `ide-ui-api` | کتابخانه‌ی اندروید | `plugin-api` + `androidx.appcompat` | افزودن صفحه‌ی UI و دسترسی به سرویس‌های میزبان |
+
+> **[INFO]** هر سه ماژول با **Java 17** کامپایل می‌شوند. `plugin-api` عمداً هیچ وابستگی به اندروید ندارد تا منطق خالص پلاگین بدون نیاز به SDK اندروید قابل کامپایل و تست باشد.
+
+## یک پلاگین از چه اجزایی تشکیل شده؟
+
+- **کلاس ورودی** — پیاده‌سازی `GhostPlugin` با یک سازنده‌ی بدون آرگومان.
+- **مانیفست** — فایل `assets/plugin.json` با شناسه، نسخه و نام کلاس ورودی.
+- **بسته‌ی `.gpl`** — فایل نهایی نصب؛ یک zip حاوی مانیفست و `classes.dex`.
+
+برای شروع سریع به صفحه‌ی شروع سریع برو، یا برای دیدن یک پلاگین کامل از صفر تا نصب، مستقیم سراغ نمونه‌ی Hello Ghost برو.
+
+
+---
+
+# معماری
+> گروه: شروع کار · فایل: ARCHITECTURE.md
+
+نقشه‌ی ماژول‌ها، رجیستری‌های اکستنشن/سرویس، و مرز بین کد پلاگین و کد اپ میزبان.
+
+## نقشه‌ی ماژول‌ها
+
+- **plugin-api** — مدل پلاگین، PluginContext، ExtensionPoint/Registry، ServiceKey/Registry، GlobalRegistry.
+- **ide-api** — وابسته به plugin-api. اکستنشن‌پوینت LSP_SERVER_PROVIDER برای افزودن Language Server.
+- **ide-ui-api** — وابسته به plugin-api. اکستنشن‌پوینت‌های PLUGIN_SCREEN / EDITOR_PANEL / FILE_PANEL / EDITOR_ACTION_HANDLER / FILE_ICON_CONTRIBUTOR / TOOLBAR_ICON / FILE_CLICK_HANDLER و سرویس‌های EditorHost / FileManagerHost / CodeRunnerHost / PanelHostService.
+
+ماژول `:app` (خود اپ) به هر سه بستگی دارد و در واقع تنها جایی است که پیاده‌سازی واقعی رجیستری‌ها (`DefaultExtensionRegistry`, `DefaultServiceRegistry`) و بارگذار پلاگین (`GplPluginLoader`) در آن زندگی می‌کند. کد پلاگین هرگز مستقیم با کلاس‌های داخلی `:app` صحبت نمی‌کند — فقط با رابط‌های `plugin-api`/`ide-api`/`ide-ui-api`.
+
+## دو رجیستری مشترک
+
+`GlobalRegistry` یک نگه‌دارنده‌ی استاتیک برای کل پردازه است و دو رجیستری در اختیار می‌گذارد:
+
+| رجیستری | محدوده | چرا |
+| --- | --- | --- |
+| `GlobalRegistry.extensions()` | یک نمونه‌ی مشترک بین همه‌ی پلاگین‌ها | ماژول‌هایی مثل `:editor` باید بتوانند تمام providerهای ثبت‌شده — از هر پلاگینی — را ببینند. |
+| `GlobalRegistry.services()` | پایه‌ی مشترک؛ هر پلاگین یک **کپی** از آن می‌گیرد | هر پلاگین باید بتواند یک `Context` اندرویدِ مخصوص به خودش داشته باشد، بدون آن‌که به پلاگین‌های دیگر درز کند. |
+
+> **[WARN]** چون اکستنشن‌ها در یک رجیستری *مشترک* ذخیره می‌شوند، پاک‌سازی هنگام unload کاملاً به درست پرکردن `ownerPluginId` هنگام ثبت بستگی دارد. جزئیات در صفحه‌ی Extension Registry.
+
+## مسیر یک درخواست
+
+1. اپ میزبان یک فایل `.gpl` را از پوشه‌ی نصب می‌خواند و `GplPluginLoader.load()` را صدا می‌زند.
+2. لودر مانیفست را می‌خواند، کلاس ورودی را با ClassLoader اختصاصی بارگذاری می‌کند و یک `PluginContext` می‌سازد.
+3. `activate(context)` صدا زده می‌شود؛ پلاگین از طریق `context.getExtensions()` و `context.getServices()` قابلیت ثبت می‌کند.
+4. بقیه‌ی اپ (مثلاً `:editor` هنگام باز شدن یک فایل) از `ExtensionRegistry.extensions(point)` برای پیدا کردن providerهای فعال استفاده می‌کند.
+
+
+---
+
+# شروع سریع
+> گروه: شروع کار · فایل: QUICKSTART.md
+
+کوتاه‌ترین مسیر از صفر تا یک پلاگین نصب‌شده روی Ghost IDE.
+
+1. **وابستگی اضافه کن** — به `plugin-api` (و در صورت نیاز `ide-api` یا `ide-ui-api`) در `build.gradle` ماژول پلاگینت وابسته شو.
+2. **رابط `GhostPlugin` را پیاده کن** — یک کلاس با سازنده‌ی بدون آرگومان که `activate(PluginContext)` را override می‌کند.
+3. **قابلیت خودت را ثبت کن** — از طریق `context.getExtensions().register(...)`، با `ownerPluginId` برابر شناسه‌ی خودت.
+4. **مانیفست بنویس** — `assets/plugin.json` شامل `id`, `name`, `version`, `entryClass`.
+5. **بسته‌بندی کن** — مانیفست و `classes.dex` را در یک zip با پسوند `.gpl.` قرار بده.
+6. **نصب کن** — فایل `.gpl` را در پوشه‌ی نصب پلاگین‌های دستگاه کپی کن.
+
+```gradle — build.gradle
+dependencies {
+  // plugin-api و ide-api و ide-ui-api هیچ کجای عمومی منتشر نشده‌اند.
+  // آن‌ها را از GitHub Actions (آرتیفکت "ghostide-plugin-sdk")
+  // یا از یک Release دانلود کن و به فایل‌های محلی jar/aar اشاره بده:
+  compileOnly files('libs/plugin-api.jar')
+  compileOnly files('libs/ide-api.jar')
+  compileOnly files('libs/ide-ui-api.aar')
+}
+```
+
+> **[INFO]** گروه `ir.hanzodev1375.ghostide:...` **هیچ‌جا منتشر نشده** — خود اپ میزبان این APIها را همراه دارد. فایل‌های آماده را از آرتیفکت **ghostide-plugin-sdk** در [GitHub Actions](https://github.com/HanzoDev1375/GhostIdes/actions) یا از یک [Release](https://github.com/HanzoDev1375/GhostIdes/releases) مخزن Ghost IDE دانلود کن.
+
+> **[TIP]** برای دیدن این شش قدم با کد کامل و واقعی، برو سراغ نمونه‌ی Hello Ghost — دقیقاً همین مسیر را از اول تا آخر طی می‌کند.
+
+
+---
+
+# GhostPlugin
+> گروه: مفاهیم پایه · فایل: GhostPlugin.java · ماژول: plugin-api
+
+نقطه‌ی ورود هر پلاگین Ghost IDE.
+
+زمان اجرا کلاسی را که در `entryClass` مانیفست معرفی شده، با یک سازنده‌ی بدون آرگومان می‌سازد و سپس `activate(PluginContext)` را صدا می‌زند. پلاگین باید قابلیت‌های خودش را از طریق `context.getExtensions()` ثبت کند و `Disposable` برگشتی را حتماً با `PluginContext.registerDisposable(Disposable)` ثبت کند تا هنگام unload، رهاسازی به‌صورت قطعی انجام شود.
+
+```java — GhostPlugin.java
+public interface GhostPlugin {
+
+  default List<PluginSetupAction> getSetupActions() {
+    return Collections.emptyList();
+  }
+
+  void activate(PluginContext context);
+
+  default void deactivate() {}
+}
+```
+
+| متد | اجباری | توضیح |
+| --- | --- | --- |
+| `activate(PluginContext)` | بله | یک‌بار پس از بارگذاری صدا زده می‌شود؛ محل ثبت اکستنشن‌ها و سرویس‌ها. |
+| `deactivate()` | خیر، پیش‌فرض خالی | درست پیش از unload صدا زده می‌شود؛ محل خاتمه‌ی کارهایی که در activate شروع شده‌اند. |
+| `getSetupActions()` | خیر، پیش‌فرض لیست خالی | دستورهای راه‌اندازی محیط (مثل نصب یک Language Server) که فقط با تأیید کاربر در ترمینال اجرا می‌شوند. |
+
+> **[WARN]** اگر `Disposable`ای که از `register(...)` برمی‌گردد را با `registerDisposable` ثبت نکنی، هنگام unload کسی آن را برایت آزاد نمی‌کند.
+
+
+---
+
+# PluginContext
+> گروه: مفاهیم پایه · فایل: PluginContext.java · ماژول: plugin-api
+
+همه‌چیزی که یک پلاگین در activate() برای معرفی خودش لازم دارد.
+
+این رابط عمداً هیچ وابستگی به فریمورک اندروید ندارد؛ همین باعث می‌شود ماژول `plugin-api` یک وابستگی خالص JVM باقی بماند و منطق پلاگین بدون نیاز به SDK اندروید قابل کامپایل و تست باشد.
+
+```java — PluginContext.java
+public interface PluginContext {
+
+  PluginDescriptor getDescriptor();
+
+  MutableExtensionRegistry getExtensions();
+
+  ServiceRegistry getServices();
+
+  PluginLogger getLogger();
+
+  Disposable registerDisposable(Disposable disposable);
+}
+```
+
+| متد | برمی‌گرداند | توضیح |
+| --- | --- | --- |
+| `getDescriptor()` | `PluginDescriptor` | هویت پلاگین جاری (شناسه، نام، نسخه، ...). |
+| `getExtensions()` | `MutableExtensionRegistry` | برای ثبت قابلیت در یک `ExtensionPoint`؛ همین رجیستری بین همه‌ی پلاگین‌ها مشترک است. |
+| `getServices()` | `ServiceRegistry` | دسترسی فقط‌خواندنی به سرویس‌های در دسترس این پلاگین — یک کپی مخصوص خودش. |
+| `getLogger()` | `PluginLogger` | لاگر با تگ خودکار شناسه‌ی پلاگین. |
+| `registerDisposable(Disposable)` | `Disposable` | برای رهاسازی قطعی هنگام unload — همیشه صدا بزن. |
+
+> **[INFO]** `getServices()` نوع `ServiceRegistry` (فقط‌خواندنی) برمی‌گرداند، نه `MutableServiceRegistry`. پلاگین‌ها فقط اجازه‌ی *خواندن* سرویس‌های میزبان را دارند، نه ثبت سرویس جدید برای بقیه.
+
+
+---
+
+# PluginDescriptor
+> گروه: مفاهیم پایه · فایل: PluginDescriptor.java · ماژول: plugin-api
+
+هویت تغییرناپذیر و پارس‌شده‌ی یک پلاگین نصب‌شده.
+
+نمونه‌ها تغییرناپذیرند و فقط با `Builder` ساخته می‌شوند. برابری (`equals`) بر اساس ترکیب `id` + `version` تعیین می‌شود.
+
+| فیلد | نوع | الزام |
+| --- | --- | --- |
+| `id` | `String` | باید با الگوی `[A-Za-z0-9_.-]+` مطابقت داشته باشد. |
+| `name` | `String` | نباید خالی باشد. |
+| `version` | `String` | نباید خالی باشد. |
+| `entryClass` | `String` | نام کامل کلاسی که `GhostPlugin` را پیاده می‌کند. |
+| `description`, `author`, `source` | `String` | اختیاری؛ پیش‌فرض رشته‌ی خالی. |
+| `classPath` | `List<String>` | اختیاری؛ پیش‌فرض لیست خالی. |
+| `dependencies` | `List<PluginDependency>` | اختیاری؛ پیش‌فرض لیست خالی. |
+| `capabilities` | `Set<String>` | اختیاری؛ پیش‌فرض مجموعه‌ی خالی. |
+| `enabledByDefault` | `boolean` | اختیاری؛ پیش‌فرض `true`. |
+
+```java — PluginDescriptor.java
+PluginDescriptor descriptor = PluginDescriptor
+    .builder("com.example.rust-tools", "Rust Tools", "1.0.0", "com.example.RustPlugin")
+    .description("rust-analyzer integration for Ghost IDE")
+    .author("you")
+    .capabilities(Set.of("lsp"))
+    .build();
+```
+
+> **[INFO]** در عمل، ساختن `PluginDescriptor` کار خود میزبان است — `GplPluginLoader` این را از روی `plugin.json` تو می‌سازد. تو معمولاً فقط از طریق `context.getDescriptor()` آن را می‌خوانی.
+
+
+---
+
+# PluginDependency
+> گروه: مفاهیم پایه · فایل: PluginDependency.java · ماژول: plugin-api
+
+وابستگی اعلام‌شده‌ی یک پلاگین به شناسه‌ی پلاگین دیگر.
+
+یک `record` ساده که پیش از فعال‌سازی پلاگین بررسی می‌شود. `id` نباید خالی باشد.
+
+```java — PluginDependency.java
+public record PluginDependency(String id, String minVersion, boolean optional) {
+
+  public static PluginDependency required(String id) {
+    return new PluginDependency(id, null, false);
+  }
+
+  public static PluginDependency optional(String id) {
+    return new PluginDependency(id, null, true);
+  }
+}
+```
+
+| فیلد | توضیح |
+| --- | --- |
+| `id` | شناسه‌ی پلاگین موردنیاز. |
+| `minVersion` | کمترین نسخه‌ی قابل‌قبول، یا `null` یعنی هر نسخه‌ای قابل‌قبول است. |
+| `optional` | اگر `true` باشد، نبودِ این وابستگی مانع فعال‌سازی نمی‌شود. |
+
+استفاده‌ی معمول در `PluginDescriptor.Builder.dependencies(...)`:
+
+```java — PluginDescriptor.java
+.dependencies(List.of(
+    PluginDependency.required("ir.hanzodev1375.ghostide.core"),
+    PluginDependency.optional("com.example.icons-pack")
+))
+```
+
+
+---
+
+# PluginLogger
+> گروه: مفاهیم پایه · فایل: PluginLogger.java · ماژول: plugin-api
+
+رابط لاگ‌گیری که میزبان از طریق PluginContext در اختیار پلاگین می‌گذارد.
+
+```java — PluginLogger.java
+public interface PluginLogger {
+
+  void debug(String message);
+
+  void info(String message);
+
+  void warn(String message, Throwable throwable);
+
+  void error(String message, Throwable throwable);
+
+  default void warn(String message) {
+    warn(message, null);
+  }
+
+  default void error(String message) {
+    error(message, null);
+  }
+}
+```
+
+در پیاده‌سازی فعلی میزبان، هر پیام با تگ `gpl:<شناسه‌ی پلاگین>` به Logcat اندروید فرستاده می‌شود؛ یعنی لاگ‌های هر پلاگین به‌طور خودکار قابل تفکیک از بقیه هستند.
+
+```java — RustPlugin.java
+context.getLogger().info("rust-analyzer connection started");
+```
+
+
+---
+
+# Disposable
+> گروه: مفاهیم پایه · فایل: Disposable.java · ماژول: plugin-api
+
+یک واحد پاک‌سازی، متعلق به یک ثبت‌نام مشخص.
+
+تقریباً هر عملیات ثبتی در این API — چه ثبت اکستنشن، چه ثبت سرویس — یک `Disposable` برمی‌گرداند. مسئولیت پلاگین این است که این مقدار را با `PluginContext.registerDisposable(Disposable)` نگه دارد تا زمان‌اجرا بتواند هنگام unload آن را آزاد کند.
+
+```java — Disposable.java
+@FunctionalInterface
+public interface Disposable {
+
+  Disposable NONE = () -> {};
+
+  void dispose();
+}
+```
+
+```java — HelloGhostPlugin.java
+Disposable registration = context.getExtensions().register(
+    PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new HelloScreen(),
+    context.getDescriptor().getId(),
+    0);
+
+context.registerDisposable(registration);
+```
+
+> **[TIP]** چون `Disposable` یک رابط تابعی است، خود یک لامبدا هم می‌تواند یک `Disposable` باشد — مثلاً برای بستن یک منبع دستی: `context.registerDisposable(() -> myResource.close());`
+
+
+---
+
+# PluginSetupAction
+> گروه: مفاهیم پایه · فایل: PluginSetupAction.java · ماژول: plugin-api
+
+یک دستور راه‌اندازی محیط، متعلق به کل پلاگین — نه به یک اکستنشن‌پوینت خاص.
+
+برای کارهایی مثل نصب یک Language Server داخل محیط proot Debian طراحی شده. میزبان این دستورها را **فقط** از طریق یک هندآف تعاملی به ترمینال — با تأیید صریح کاربر — اجرا می‌کند؛ هیچ‌وقت به‌صورت خاموش (silent) اجرا نمی‌شوند.
+
+```java — PluginSetupAction.java
+public record PluginSetupAction(String id, String label, String command, String description) {
+
+  public PluginSetupAction(String id, String label, String command) {
+    this(id, label, command, "");
+  }
+}
+```
+
+| فیلد | توضیح |
+| --- | --- |
+| `id` | شناسه‌ی پایدار این اکشن، داخل پلاگین خودش. |
+| `label` | برچسب کوتاه و قابل‌نمایش به کاربر. |
+| `command` | متن دستور شل، عیناً به یک login shell پاس داده می‌شود. |
+| `description` | توضیح بلندتر که پیش از تأیید کاربر نمایش داده می‌شود. |
+
+```java — RustPlugin.java
+@Override
+public List<PluginSetupAction> getSetupActions() {
+  return List.of(new PluginSetupAction(
+      "install-rust-analyzer",
+      "نصب rust-analyzer",
+      "rustup component add rust-analyzer",
+      "rust-analyzer را از طریق rustup داخل محیط ترمینال نصب می‌کند."));
+}
+```
+
+
+---
+
+# PluginStorage
+> گروه: مفاهیم پایه · فایل: PluginStorage.java · ماژول: plugin-api
+
+فضای ذخیره‌سازی دائمی key-value مخصوص پلاگین خودت — بعد از ری‌استارت و reload هم می‌ماند.
+
+هاست این سرویس را زیر `CoreServices.PLUGIN_STORAGE` منتشر می‌کند. هر پلاگین نمونه‌ی ایزوله‌ی خودش را می‌گیرد (با namespace بر اساس descriptor id)، پس هیچ‌وقت نمی‌توانی داده‌ی پلاگین دیگری را بخوانی یا بازنویسی کنی. چون این اینترفیس در `plugin-api` است، حتی پلاگین‌های LSP خالص بدون اندروید هم می‌توانند از آن استفاده کنند.
+
+```java — PluginStorage.java
+public interface PluginStorage {
+
+  String getString(String key, String defValue);
+  void putString(String key, String value);
+
+  boolean getBoolean(String key, boolean defValue);
+  void putBoolean(String key, boolean value);
+
+  int getInt(String key, int defValue);
+  void putInt(String key, int value);
+
+  long getLong(String key, long defValue);
+  void putLong(String key, long value);
+
+  float getFloat(String key, float defValue);
+  void putFloat(String key, float value);
+
+  void remove(String key);
+  boolean contains(String key);
+  void clear();
+}
+```
+
+```java — MyPlugin.java
+PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+
+int runs = storage.getInt("runCount", 0);
+storage.putInt("runCount", runs + 1);
+storage.putString("lastPath", "/sdcard/Project/main.py");
+```
+
+> **[TIP]** مقادیر را کوچک نگه دار — این store برای blobهای بزرگ ساخته نشده. برای حجم بیشتر، فایل را داخل دایرکتوری خصوصی پلاگین‌ات بنویس.
+
+
+---
+
+# ExtensionPoint
+> گروه: اکستنشن‌ها · فایل: ExtensionPoint.java · ماژول: plugin-api
+
+قراردادی که یک گروه از قابلیت‌های ثبت‌شده باید پیاده کنند.
+
+یک `record` ساده شامل شناسه‌ی یکتا و نوع (`Class`) قراردادی که هر ثبت‌کننده باید پیاده کند. خود این پلتفرم فعلاً این اکستنشن‌پوینت‌ها را دارد:
+
+| اکستنشن‌پوینت | نوع | ماژول |
+| --- | --- | --- |
+| `EditorExtensionPoints.LSP_SERVER_PROVIDER` | `LspServerProvider` | `ide-api` |
+| `PluginUiExtensionPoints.PLUGIN_SCREEN` | `PluginScreen` | `ide-ui-api` |
+| `PluginUiExtensionPoints.EDITOR_PANEL` | `EditorPanel` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_PANEL` | `FilePanel` | `ide-ui-api` |
+| `PluginUiExtensionPoints.EDITOR_ACTION_HANDLER` | `EditorActionHandler` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR` | `FileIconContributor` | `ide-ui-api` |
+| `PluginUiExtensionPoints.TOOLBAR_ICON` | `PluginToolbarIcon` | `ide-ui-api` |
+| `PluginUiExtensionPoints.FILE_CLICK_HANDLER` | `FileClickHandler` | `ide-ui-api` |
+| `IdeEvents.FILE_EVENT` | `FileEventListener` | `ide-ui-api` |
+| `CoreExtensionPoints.PLUGIN_COMMAND` | `PluginCommand` | `plugin-api` |
+
+```java — ExtensionPoint.java
+public record ExtensionPoint<T>(String id, Class<T> type) {
+
+  public ExtensionPoint {
+    if (id == null || id.isBlank()) {
+      throw new IllegalArgumentException("Extension point id must not be blank");
+    }
+    if (type == null) {
+      throw new IllegalArgumentException("Extension point type must not be null");
+    }
+  }
+}
+```
+
+برای جزئیات هر کدام، صفحه‌ی LspServerProvider، PluginScreen، EditorPanel، FilePanel، EditorActionHandler، FileIconContributor، Toolbar Icon یا FileClickHandler را ببین.
+
+
+---
+
+# ExtensionRegistry
+> گروه: اکستنشن‌ها · فایل: ExtensionRegistry.java · ماژول: plugin-api
+
+محل ثبت و خواندن قابلیت‌های ثبت‌شده در یک ExtensionPoint، مرتب‌شده بر اساس اولویت.
+
+`ExtensionRegistry` فقط‌خواندنی است. `MutableExtensionRegistry` که `PluginContext.getExtensions()` برمی‌گرداند، امکان ثبت و پاک‌سازی را هم اضافه می‌کند.
+
+```java — ExtensionRegistry.java
+public interface ExtensionRegistry {
+
+  <T> List<ExtensionRegistration<T>> registrations(ExtensionPoint<T> point);
+
+  default <T> List<T> extensions(ExtensionPoint<T> point) {
+    return registrations(point).stream()
+        .map(ExtensionRegistration::extension)
+        .collect(Collectors.toList());
+  }
+}
+```
+
+```java — MutableExtensionRegistry.java
+public interface MutableExtensionRegistry extends ExtensionRegistry {
+
+  <T> Disposable register(ExtensionPoint<T> point, T extension, String ownerPluginId, int priority);
+
+  default <T> Disposable register(ExtensionPoint<T> point, T extension) {
+    return register(point, extension, PluginIds.CORE, 0);
+  }
+
+  void unregisterOwner(String ownerPluginId);
+}
+```
+
+> **[WARN]** همیشه از overload چهارآرگومانه‌ی `register(point, extension, ownerPluginId, priority)` استفاده کن و `ownerPluginId` را برابر `context.getDescriptor().getId()` بگذار. overload دوآرگومانه از `PluginIds.CORE` به‌عنوان مالک استفاده می‌کند — یعنی هنگام unload شدنِ پلاگین تو، `unregisterOwner(شناسه‌ی تو)` هرگز آن ثبت را پیدا نمی‌کند و پاک نمی‌شود.
+
+```java — HelloGhostPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new HelloScreen(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+## DefaultExtensionRegistry
+
+پیاده‌سازی درون‌حافظه‌ای، مبتنی بر `CopyOnWriteArrayList` و امن برای دسترسی هم‌زمان. هنگام ثبت، اگر شیء اکستنشن نوع اعلام‌شده در `ExtensionPoint.type()` را پیاده نکند، `IllegalArgumentException` می‌اندازد.
+
+`registrations(point)` نتیجه را بر اساس اولویت **نزولی** مرتب می‌کند و در تساوی، بر اساس `ownerPluginId` مرتب‌سازی پایدار انجام می‌دهد — یعنی هر بار همان ترتیب را می‌گیری.
+
+
+---
+
+# ConfigurableExtension
+> گروه: اکستنشن‌ها · فایل: ConfigurableExtension.java · ماژول: plugin-api
+
+هویت پایدار و متادیتای قابل‌نمایش برای یک اکستنشن — پایه‌ی هر قرارداد تایپ‌شده.
+
+هر قرارداد اکستنشنِ تایپ‌شده (فعلاً فقط `LspServerProvider`) از این رابط ارث می‌برد.
+
+```java — ConfigurableExtension.java
+public interface ConfigurableExtension {
+
+  String getId();
+
+  default String getDisplayName() {
+    return getId();
+  }
+
+  default String getDescription() {
+    return "";
+  }
+
+  default boolean isEnabledByDefault() {
+    return true;
+  }
+
+  default boolean isCanDisable() {
+    return true;
+  }
+}
+```
+
+| متد | پیش‌فرض |
+| --- | --- |
+| `getId()` | اجباری — بدون پیش‌فرض. |
+| `getDisplayName()` | برابر `getId()`. |
+| `getDescription()` | رشته‌ی خالی. |
+| `isEnabledByDefault()` | `true`. |
+| `isCanDisable()` | `true`. |
+
+
+---
+
+# PluginCommand
+> گروه: اکستنشن‌ها · فایل: PluginCommand.java · ماژول: plugin-api
+
+یک اکشن نام‌دار که کاربر می‌تواند اجرایش کند — بلوک سازنده‌ی command palette.
+
+پیاده‌سازی‌هایت را در `CoreExtensionPoints.PLUGIN_COMMAND` ثبت کن تا هاست بتواند آن‌ها را لیست و اجرا کند. شناسه‌ها باید یکتا و به سبک reverse-domain باشند، مثل `com.example.myplugin.format`.
+
+```java — PluginCommand.java
+public interface PluginCommand {
+
+  String getId();      // یکتا، reverse-domain
+  String getTitle();   // برچسب کوتاه و قابل‌نمایش
+
+  default String getDescription() {
+    return "";
+  }
+
+  void execute();
+}
+```
+
+```java — FormatCommand.java
+public final class FormatCommand implements PluginCommand {
+
+  @Override public String getId() { return "com.example.myplugin.format"; }
+
+  @Override public String getTitle() { return "Format project"; }
+
+  @Override public void execute() {
+    // ممکن است خارج از ترد اصلی صدا زده شود — قبل از UI به ترد اصلی برو
+  }
+}
+```
+
+```java — MyPlugin.java
+context.registerDisposable(
+    context.getExtensions().register(
+        CoreExtensionPoints.PLUGIN_COMMAND,
+        new FormatCommand(),
+        context.getDescriptor().getId(),
+        0));
+```
+
+> **[TIP]** `execute()` ممکن است از هر تردی فراخوانی شود. خودت قبل از دست زدن به ادیتور یا هر view ای به ترد اصلی سوییچ کن.
+
+
+---
+
+# ServiceKey
+> گروه: سرویس‌ها · فایل: ServiceKey.java · ماژول: plugin-api
+
+هویت یک سرویسِ در دسترس‌گذاشته‌شده توسط میزبان.
+
+```java — ServiceKey.java
+public record ServiceKey<T>(String name, Class<T> type) {
+
+  public ServiceKey {
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Service key name must not be blank");
+    }
+    if (type == null) {
+      throw new IllegalArgumentException("Service key type must not be null");
+    }
+  }
+}
+```
+
+ماژول `ide-ui-api` شش کلید آماده منتشر می‌کند — `IdeHostServices.EDITOR_HOST`, `FILE_MANAGER_HOST`, `CODE_RUNNER_HOST`, `PLUGIN_ANDROID_CONTEXT`, `PROOT_PROCESS_LAUNCHER` و `UI_FEEDBACK`. جزئیات در صفحه‌ی IdeHostServices.
+
+
+---
+
+# ServiceRegistry
+> گروه: سرویس‌ها · فایل: ServiceRegistry.java · ماژول: plugin-api
+
+جستجوی فقط‌خواندنی سرویس‌هایی که میزبان در دسترس پلاگین گذاشته.
+
+```java — ServiceRegistry.java
+public interface ServiceRegistry {
+
+  <T> T get(ServiceKey<T> key);
+
+  default <T> T require(ServiceKey<T> key) {
+    T service = get(key);
+    if (service == null) {
+      throw new IllegalStateException("Required service '" + key.name() + "' is not registered");
+    }
+    return service;
+  }
+}
+```
+
+```java — HelloGhostPlugin.java
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+String openPath = editor.getOpenFile().getAbsolutePath();
+```
+
+## MutableServiceRegistry و DefaultServiceRegistry
+
+`MutableServiceRegistry` امکان `register`, `unregister` و `copy()` را اضافه می‌کند. `DefaultServiceRegistry` پیاده‌سازی درون‌حافظه‌ایِ آن است، مبتنی بر `ConcurrentHashMap`.
+
+> **[INFO]** `copy()` دقیقاً همان مکانیزمی است که هر پلاگین را از بقیه ایزوله نگه می‌دارد: میزبان یک کپی مستقل از `GlobalRegistry.services()` می‌سازد و فقط داخل همان کپی، `PLUGIN_ANDROID_CONTEXT` مخصوص همان پلاگین را ثبت می‌کند.
+
+
+---
+
+# GlobalRegistry
+> گروه: سرویس‌ها · فایل: GlobalRegistry.java · ماژول: plugin-api
+
+نگه‌دارنده‌ی استاتیک و مشترکِ رجیستری اکستنشن و سرویس برای کل پردازه.
+
+```java — GlobalRegistry.java
+public final class GlobalRegistry {
+
+  public static MutableExtensionRegistry extensions() {
+    return EXTENSIONS;
+  }
+
+  public static MutableServiceRegistry services() {
+    return SERVICES;
+  }
+}
+```
+
+زندگی این کلاس در `plugin-api` است تا هم `:editor` و هم `:app` بدون وابستگی به یکدیگر بتوانند به آن دسترسی داشته باشند — `:editor` برای خواندن providerهای ثبت‌شده، `:app` برای نوشتن ثبت‌های داخلی و ثبت‌های پلاگین‌ها.
+
+> **[WARN]** کد پلاگین معمولاً هرگز مستقیم `GlobalRegistry` را صدا نمی‌زند. همیشه از `context.getExtensions()` و `context.getServices()` استفاده کن — همان‌ها هستند که میزبان برایت مهیا کرده، اما با محدودیت و ایزوله‌سازی درست.
+
+
+---
+
+# نمای کلی ماژول ide-api
+> گروه: یکپارچه‌سازی LSP · فایل: ide-api/README.md · ماژول: ide-api
+
+اکستنشن‌پوینتی که به ادیتور اجازه می‌دهد یک Language Server تازه را از یک پلاگین بشناسد.
+
+`ide-api` روی `plugin-api` و `org.eclipse.lsp4j` سوار می‌شود و دقیقاً یک اکستنشن‌پوینت اضافه می‌کند: `EditorExtensionPoints.LSP_SERVER_PROVIDER`. اگر زبانی که می‌خواهی پشتیبانی کنی از قبل داخل اپ نیست، از همین‌جا وارد می‌شوی.
+
+> **[INFO]** ادیتور از قبل با سرورهایی مثل Clangd، OmniSharp (سی‌شارپ)، HTML، CSS، Emmet، Go، JSON، Markdown، PHP، Pylsp (پایتون)، Ruby (Solargraph)، Sass، TypeScript و Vue کار می‌کند — همه داخل محیط proot Debian اجرا می‌شوند. `LSP_SERVER_PROVIDER` برای زبان‌هایی است که این لیست را پوشش نمی‌دهد.
+
+برای معرفی سرور جدید، سه چیز لازم داری: یک `LspServerProvider` که تشخیص می‌دهد چه فایلی را پوشش می‌دهد، یک `LspServerDefinition` که مشخصات سرور را توصیف می‌کند، و یک `LspServerConnection` که واقعاً پروسه/جریان I/O سرور را مدیریت می‌کند.
+
+
+---
+
+# LspServerProvider
+> گروه: یکپارچه‌سازی LSP · فایل: LspServerProvider.java · ماژول: ide-api
+
+یک Language Server را به ادیتور معرفی می‌کند.
+
+نمونه‌ای از این رابط را در اکستنشن‌پوینت `EditorExtensionPoints.LSP_SERVER_PROVIDER` ثبت کن.
+
+```java — LspServerProvider.java
+public interface LspServerProvider extends ConfigurableExtension {
+
+  default int getPriority() {
+    return 0;
+  }
+
+  boolean supports(LspServerRequest request);
+
+  LspServerDefinition createDefinition(LspServerRequest request);
+}
+```
+
+| متد | توضیح |
+| --- | --- |
+| `supports(request)` | بر اساس `LspServerRequest` (مسیر پروژه + فایل) تصمیم می‌گیرد این provider مسئول این فایل هست یا نه. |
+| `createDefinition(request)` | وقتی `supports` مثبت بود، `LspServerDefinition` کامل را می‌سازد و برمی‌گرداند. |
+| `getPriority()` | وقتی چند provider یک فایل را پوشش می‌دهند، بالاترین اولویت انتخاب می‌شود. |
+
+```java — RustLspProvider.java
+public final class RustLspProvider implements LspServerProvider {
+
+  @Override
+  public String getId() {
+    return "com.example.rust-analyzer";
+  }
+
+  @Override
+  public boolean supports(LspServerRequest request) {
+    return "rs".equalsIgnoreCase(request.extension());
+  }
+
+  @Override
+  public LspServerDefinition createDefinition(LspServerRequest request) {
+    return LspServerDefinition
+        .builder(getId(), Set.of("rs"), "rust-analyzer", RustConnection::new)
+        .build();
+  }
+}
+```
+
+```java — RustPlugin.java
+context.getExtensions().register(
+    EditorExtensionPoints.LSP_SERVER_PROVIDER,
+    new RustLspProvider(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+
+---
+
+# LspServerDefinition
+> گروه: یکپارچه‌سازی LSP · فایل: LspServerDefinition.java · ماژول: ide-api
+
+هر چیزی که ادیتور برای مسیریابی فایل‌ها به یک Language Server و تطبیق‌دادن اتصال لازم دارد.
+
+تغییرناپذیر است و فقط با `Builder` ساخته می‌شود. اپ به‌ازای هر ترکیب شناسه/پروژه، یک اتصال مشترک نگه می‌دارد.
+
+| فیلد Builder | نوع | پیش‌فرض |
+| --- | --- | --- |
+| `grammarScopeName(String)` | String | — |
+| `expectedCapabilities(ServerCapabilities)` | lsp4j `ServerCapabilities` | — |
+| `initializationOptions(Object)` | Object | — |
+| `configuration(Object)` | Object | — |
+| `enableInlayHints(boolean)` | boolean | `true` |
+| `enableSignatureHelp(boolean)` | boolean | `true` |
+| `initializationTimeoutMillis(int)` | int | `10000` |
+| `traceIncomingMessages(boolean)` | boolean | `false` |
+| `textMateGrammarLink(String)` | String | — |
+
+```java — RustLspProvider.java
+LspServerDefinition definition = LspServerDefinition
+    .builder("com.example.rust-analyzer", Set.of("rs"), "rust-analyzer", RustConnection::new)
+    .grammarScopeName("source.rust")
+    .initializationTimeoutMillis(15_000)
+    .enableInlayHints(true)
+    .build();
+```
+
+> **[WARN]** اگر `fileExtensions` خالی باشد، `displayName` خالی باشد، یا `initializationTimeoutMillis` صفر یا منفی باشد، سازنده بلافاصله `IllegalArgumentException` می‌اندازد.
+
+
+---
+
+# LspServerConnection
+> گروه: یکپارچه‌سازی LSP · فایل: LspServerConnection.java · ماژول: ide-api
+
+اتصال واقعی به یک Language Server — جریان ورودی/خروجی خام پروتکل LSP.
+
+```java — LspServerConnection.java
+public interface LspServerConnection extends AutoCloseable {
+
+  void start() throws IOException;
+
+  OutputStream getOutputStream();
+
+  InputStream getInputStream();
+
+  boolean isClosed();
+
+  @Override
+  void close();
+}
+```
+
+> **[WARN]** پیاده‌سازی باید فقط داخل `start()` واقعاً پروسه/اتصال را راه بیندازد — نه داخل سازنده. همچنین هر خروجی تشخیصی سرور باید به stderr برود، نه به `getOutputStream()`، وگرنه فریمینگ stdio پروتکل LSP خراب می‌شود.
+
+```java — LspServerConnectionFactory.java
+@FunctionalInterface
+public interface LspServerConnectionFactory {
+  LspServerConnection create(LspServerRequest request);
+}
+```
+
+```java — LspServerRequest.java
+public record LspServerRequest(File projectRoot, File file) {
+
+  public String extension() {
+    String name = file.getName();
+    int dot = name.lastIndexOf('.');
+    if (dot < 0 || dot == name.length() - 1) {
+      return "";
+    }
+    return name.substring(dot + 1).toLowerCase(Locale.ROOT);
+  }
+}
+```
+
+
+---
+
+# نمای کلی ماژول ide-ui-api
+> گروه: رابط کاربری · فایل: ide-ui-api/README.md · ماژول: ide-ui-api
+
+اکستنشن‌پوینت و سرویس‌هایی برای افزودن رابط کاربری و دسترسی به میزبان.
+
+`ide-ui-api` یک کتابخانه‌ی اندرویدی است (namespace: `ir.hanzodev1375.ghostide.ide.ui.api`، `minSdk 26`، `compileSdk 36`) که روی `plugin-api` و `androidx.appcompat` سوار می‌شود.
+
+> **[INFO]** اندروید اجازه نمی‌دهد کد بارگذاری‌شده در زمان اجرا یک `<activity>` تازه در مانیفست میزبان اعلام کند. به همین دلیل "صفحه" یک پلاگین در واقع یک `Fragment` است، نه یک Activity — همان تکنیکی که چارچوب‌های پلاگین اندرویدی معمولاً استفاده می‌کنند. اپ میزبان یک اکتیویتی میزبان‌کننده‌ی صفحه دارد که این Fragment را نمایش می‌دهد.
+
+برای افزودن یک صفحه، رابط PluginScreen را ببین. برای بازکردن پنل داخل ادیتورِ در حال اجرا، EditorPanel را ببین؛ برای بازکردن پنل داخل فایل‌منیجر، FilePanel را ببین. برای دسترسی به ادیتور یا فایل‌منیجر باز، رابط‌های EditorHost و FileManagerHost را ببین. برای اجرای کد یا دستور شل، CodeRunnerHost را ببین. برای هندل محلی دستورهای سرور زبان، EditorActionHandler را ببین. برای پین کردن یک اکشن روی نوار ابزار یا تصاحب لمس یک فایل با فرمت خودت، Toolbar Icon و FileClickHandler را ببین.
+
+
+---
+
+# IdeHostServices
+> گروه: رابط کاربری · فایل: IdeHostServices.java · ماژول: ide-ui-api
+
+کلیدهای سرویسی که میزبان منتشر می‌کند تا پلاگین از `services()` پیدایشان کند.
+
+```java — IdeHostServices.java
+public final class IdeHostServices {
+
+  public static final ServiceKey<EditorHost> EDITOR_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.editorHost", EditorHost.class);
+
+  public static final ServiceKey<FileManagerHost> FILE_MANAGER_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.fileManagerHost", FileManagerHost.class);
+
+  public static final ServiceKey<CodeRunnerHost> CODE_RUNNER_HOST =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.codeRunnerHost", CodeRunnerHost.class);
+
+  public static final ServiceKey<Context> PLUGIN_ANDROID_CONTEXT =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.pluginAndroidContext", Context.class);
+
+  public static final ServiceKey<ProotProcessLauncher> PROOT_PROCESS_LAUNCHER =
+      new ServiceKey<>("ir.hanzodev1375.ghostide.ui.prootProcessLauncher", ProotProcessLauncher.class);
+}
+```
+
+## PLUGIN_ANDROID_CONTEXT
+
+یک `Context` مخصوص خودِ پلاگین، نه اکتیویتی میزبان. برای `inflate` کردن layout یک `PluginScreen` باید از همین Context عبور کنی، نه از inflater پیش‌فرض اکتیویتی میزبان — وگرنه شناسه‌های `R.layout` خودِ پلاگین resolve نمی‌شوند.
+
+```java — HelloScreenFragment.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_screen, container, false);
+```
+
+## CODE_RUNNER_HOST
+
+سرویسی که پلاگین وقتی می‌خواهد کدی یا دستوری را اجرا کند از آن استفاده می‌کند — CodeRunnerHost را ببین.
+
+
+---
+
+# EditorHost
+> گروه: رابط کاربری · فایل: EditorHost.java · ماژول: ide-ui-api
+
+سرویسی که زیر IdeHostServices.EDITOR_HOST منتشر می‌شود.
+
+فقط قابلیت‌هایی را توصیف می‌کند که یک پلاگین از صفحه‌ی ادیتور لازم دارد — هرگز کلاس‌های واقعی `EditorActivity`/`IdeEditor` را افشا نمی‌کند، تا `:app` تنها ماژولی باقی بماند که آن‌ها را می‌شناسد.
+
+```java — EditorHost.java
+public interface EditorHost {
+
+  File getProjectRoot();
+
+  File getOpenFile();
+
+  String getEditorText();
+
+  void setEditorText(String text);
+
+  void openFile(File file);
+
+  Context getContext();
+
+  // اختیاری: ادیتور خام، یا null وقتی فایلی باز نیست
+  Object getEditor();
+}
+```
+
+```java — HelloGhostPlugin.java
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+editor.setEditorText(editor.getEditorText() + "\n// added by HelloGhost");
+```
+
+## getEditor()
+
+متدهای ساده‌ی بالا برای بیشتر پلاگین‌ها کافی‌اند. `getEditor()` راه فرار است: خودِ ویجت ادیتورِ پشت تب فعلی را برمی‌گرداند — یعنی `IdeEditor` میزبان — به‌صورت `Object`، یا وقتی فایلی باز نیست `null` برمی‌گرداند. `IdeEditor` در ماژول ادیتورِ میزبان زندگی می‌کند نه در این API، پس آن ماژول را به‌صورت `compileOnly` اضافه کن و cast کن:
+
+```java — HelloGhostPlugin.java
+Object raw = editor.getEditor();
+if (raw instanceof IdeEditor ide) {   // add ':editor' as compileOnly to cast
+  String path = ide.getCurrentFilePath();
+  ide.getLspEditor();
+}
+```
+
+
+---
+
+# FileManagerHost
+> گروه: رابط کاربری · فایل: FileManagerHost.java · ماژول: ide-ui-api
+
+سرویسی که زیر IdeHostServices.FILE_MANAGER_HOST منتشر می‌شود.
+
+```java — FileManagerHost.java
+public interface FileManagerHost {
+
+  File getRootDirectory();
+
+  File getSelectedFile();
+
+  void refresh();
+
+  void openFile(File file);
+
+  Context getContext();
+}
+```
+
+```java — HelloGhostPlugin.java
+FileManagerHost fileManager = context.getServices().require(IdeHostServices.FILE_MANAGER_HOST);
+fileManager.refresh();
+```
+
+
+---
+
+# CodeRunnerHost
+> گروه: رابط کاربری · فایل: CodeRunnerHost.java · ماژول: ide-ui-api
+
+یک دستور شل یا یک فایل منبع را در ترمینال IDE اجرا می‌کند — دقیقاً مثل زدن دکمه‌ی اجرای (FAB) ادیتور.
+
+میزبان این سرویس را زیر `IdeHostServices.CODE_RUNNER_HOST` ثبت می‌کند. هر وقت پلاگین‌ت نیاز به اجرای کد یا دستور شل داشت از آن استفاده کن — دستور به ترمینال IDE سپرده می‌شود که یا به‌صورت bottom sheet باز می‌شود یا تمام‌صفحه.
+
+```java — CodeRunnerHost.java
+public interface CodeRunnerHost {
+
+  void runShell(String command, boolean asBottomSheet);
+
+  void runCurrentFile(boolean asBottomSheet);
+
+  void runFile(String filePath, boolean asBottomSheet);
+
+  boolean isSupported(String filePath);
+
+  ExecResult exec(String command, Consumer<String> onOutputLine);
+
+  record ExecResult(int exitCode, String output) {
+    public boolean success() { return exitCode == 0; }
+  }
+}
+```
+
+| متد | توضیح |
+| --- | --- |
+| `runShell(command, asBottomSheet)` | هر دستور شلی را در ترمینال اجرا می‌کند. |
+| `runCurrentFile(asBottomSheet)` | فایلی را که الان در ادیتور باز است اجرا می‌کند، مثل دکمه‌ی FAB. |
+| `runFile(filePath, asBottomSheet)` | یک فایل مشخص را با مسیر آن اجرا می‌کند. |
+| `isSupported(filePath)` | اگر `true` بود یعنی اجراکننده آن نوع فایل را می‌شناسد. |
+| `exec(command, onOutputLine)` | اجرای headless بدون هیچ UI ای — یک `ExecResult` برمی‌گرداند. بلاکینگ است؛ از ترد پس‌زمینه صدا بزن. |
+
+آرگومان `asBottomSheet` تعیین می‌کند ترمینال چطور نمایش داده شود: `true` یعنی bottom sheet، `false` یعنی تمام‌صفحه.
+
+```java — HelloGhostPlugin.java
+CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+
+// اجرای هر دستوری در ترمینال
+runner.runShell("python3 main.py", true);
+
+// اجرای فایل بازِ فعلی ادیتور
+runner.runCurrentFile();
+
+// اجرای یک فایل مشخص
+runner.runFile("/sdcard/Project/main.py", false);
+
+// بررسی قبل از اجرا
+if (runner.isSupported("/sdcard/Project/main.py")) {
+  runner.runFile("/sdcard/Project/main.py", true);
+}
+```
+
+> **[TIP]** `runCurrentFile()` مسیر را از `EditorPanel`های ثبت‌شده می‌گیرد: اولین `EditorPanel.getLastPath()` غیرخالی برنده است، وگرنه به فایل بازِ ادیتور برمی‌گردد. EditorPanel را ببین.
+
+## exec() — اجرای headless با گرفتن خروجی
+
+وقتی خروجی یک دستور را برنامه‌نویسی‌شده می‌خواهی (نه نمایش در ترمینال)، از `exec()` استفاده کن. این متد از طریق `sh -c` و بدون هیچ UI ای اجرا می‌کند و تا تموم شدن پروسس بلاک می‌شود — همیشه از ترد پس‌زمینه صدا بزنش. `Consumer<String>` اختیاری هر خط از stdout/stderr (ادغام‌شده) را همان لحظه دریافت می‌کند.
+
+```java — GitStatusTask.java
+CodeRunnerHost.ExecResult result =
+    runner.exec("git -C /sdcard/Project status --porcelain", null);
+
+if (result.success()) {
+  String listing = result.output();   // هرجور خواستی پردازشش کن
+} else {
+  ui.toast("git failed: " + result.exitCode());
+}
+```
+
+> **[WARN]** `exec()` در محیط شل خودِ اپ اجرا می‌شود که لزوماً با سشن ترمینال تعاملی یکی نیست. باینری‌های داخل rootfs پرووت باید از ProotProcessLauncher بروند.
+
+
+---
+
+# EditorPanel
+> گروه: رابط کاربری · فایل: EditorPanel.java · ماژول: ide-ui-api
+
+یک پنل UI که پلاگین داخل صفحه‌ی بازِ ادیتور باز می‌کند — معادل «webview / side panel» در VS Code.
+
+یک پیاده‌سازی را در `PluginUiExtensionPoints.EDITOR_PANEL` ثبت کن. میزبان فقط یک‌بار، وقتی پنل اولین بار نمایش داده می‌شود، `View` آن را می‌سازد و تا پایان عمر اکتیویتی نگهش می‌دارد؛ پس view را تنبل (lazy) بساز و حالتش را داخل خودش نگه دار.
+
+```java — EditorPanel.java
+public interface EditorPanel {
+
+  String getId();
+
+  String getTitle();
+
+  View createView();
+
+  // اختیاری: این پنل به چه فایل/مسیری اشاره دارد
+  default String getLastPath() {
+    return null;
+  }
+}
+```
+
+برای inflate باید از Context مخصوص خودِ پلاگین استفاده کنی، وگرنه شناسه‌های `R.layout` تو resolve نمی‌شوند:
+
+```java — MyPanel.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+View view = LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_panel, root, false);
+```
+
+## getLastPath()
+
+مسیری را برمی‌گرداند که پنل در حال حاضر درباره‌ی آن است — مثلاً فایلی که کاربر پنل انتخاب کرده. میزبان هنگام اجرای فایل جاری (`CodeRunnerHost.runCurrentFile()`) به `getLastPath()` همه‌ی پنل‌ها نگاه می‌کند؛ اگر `null` برگردانی، به فایل بازِ ادیتور سقوط می‌کند.
+
+> **[TIP]** برای نمایش پنل با نوع پنجره‌ی متفاوت، `getState()` را override کن یا `setState(PluginStateMod)` صدا بزن — side sheet، dialog، bottom sheet و بقیه همگی پشتیبانی می‌شوند.
+
+
+---
+
+# FilePanel
+> گروه: رابط کاربری · فایل: FilePanel.java · ماژول: ide-ui-api
+
+یک پنل UI که پلاگین داخل صفحه‌ی بازِ فایل‌منیجر باز می‌کند — دقیقاً قرینه‌ی EditorPanel.
+
+یک پیاده‌سازی را در `PluginUiExtensionPoints.FILE_PANEL` ثبت کن. چرخه‌ی عمر و حالت‌های نمایشش دقیقاً مثل EditorPanel است، با این تفاوت که صفحه‌ی میزبان **فایل‌منیجر** است. این باعث می‌شود پلاگین (git clone، آرشیو، sync و ...) بدون ترک لیست فایل‌ها UI خودش را نشان دهد.
+
+```java — FilePanel.java
+public interface FilePanel extends Panel {
+
+  String getId();
+
+  String getTitle();
+
+  View createView();
+
+  // اختیاری: این پنل به چه مسیری اشاره دارد
+  default String getLastPath() {
+    return null;
+  }
+}
+```
+
+میزبان فقط یک‌بار، وقتی پنل اولین بار نمایش داده می‌شود، `View` آن را می‌سازد و تا پایان عمر اکتیویتی نگهش می‌دارد؛ پس view را تنبل (lazy) بساز و حالتش را داخل خودش نگه دار. برای inflate هم مثل `EditorPanel` باید از Context مخصوص خودِ پلاگین استفاده کنی:
+
+```java — MyFilePanel.java
+Context pluginContext = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+View view = LayoutInflater.from(pluginContext)
+    .cloneInContext(pluginContext)
+    .inflate(R.layout.my_panel, root, false);
+```
+
+```java — MyPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.FILE_PANEL,
+    new MyFilePanel(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+> **[TIP]** هر دو `EditorPanel` و `FilePanel` از واسط مشترک `Panel` ارث می‌برند، پس دقیقاً از یک منطق میزبانی مشترک استفاده می‌کنند. برای نمایش پنل با نوع پنجره‌ای غیر از side sheet پیش‌فرض، `getState()` را override کن یا `setState(PluginStateMod)` صدا بزن — مثلاً `BOTTOMSHEETDIALOG`.
+
+> **[INFO]** پاپ‌آپ پلاگین که از فایل‌منیجر باز می‌شود، پنل‌های `FILE_PANEL` را به‌صورت bottom sheet داخل فایل‌منیجر نشان می‌دهد؛ همان پاپ‌آپ اگر از ادیتور باز شود، پنل‌های `EDITOR_PANEL` را داخل ادیتور نشان می‌دهد.
+
+
+---
+
+# EditorActionHandler
+> گروه: رابط کاربری · فایل: EditorActionHandler.java · ماژول: ide-ui-api
+
+به پلاگین اجازه می‌دهد دستورهای LSP خودش را محلی مدیریت کند، به‌جای فرستادن دوباره‌شان به سرور زبان.
+
+دستورهایی که ادیتور از code actionهای LSP دریافت می‌کند معمولاً با `workspace/executeCommand` دوباره به سرور فرستاده می‌شوند. ثبت یک `EditorActionHandler` در `PluginUiExtensionPoints.EDITOR_ACTION_HANDLER` به پلاگین‌ت اجازه می‌دهد دستورهای خودش را محلی هندل کند — جایی که خودِ ویجت ادیتور در دسترس است.
+
+```java — EditorActionHandler.java
+public interface EditorActionHandler {
+
+  String getCommandId();
+
+  boolean execute(Object editor, String command, List<Object> arguments);
+}
+```
+
+| متد | توضیح |
+| --- | --- |
+| `getCommandId()` | شناسه‌ی دستوری که این هندلر مالکش است — ادیتور فقط برای دستورهای با همین شناسه صداات می‌زند. |
+| `execute(editor, command, arguments)` | دستور را اجرا می‌کند. اگر `true` برگردانی یعنی هندل شد؛ `false` یعنی ادیتور مثل قبل به سرور بفرستد. |
+
+آرگومان `editor` همان ویجت خام `IdeEditor` پشت اکشن است (به‌صورت `Object`، چون `IdeEditor` در ماژول ادیتورِ میزبان زندگی می‌کند نه در این API)، یا وقتی ادیتوری متصل نیست `null`. برای cast کردن، ماژول ادیتور میزبان را به‌صورت `compileOnly` اضافه کن:
+
+```java — MyActionHandler.java
+public final class MyActionHandler implements EditorActionHandler {
+
+  @Override
+  public String getCommandId() {
+    return "com.example.myplugin.run";
+  }
+
+  @Override
+  public boolean execute(Object editor, String command, List<Object> arguments) {
+    if (editor instanceof IdeEditor ide) {   // add ':editor' as compileOnly to cast
+      ide.getCurrentFilePath();
+    }
+    return true;
+  }
+}
+```
+
+```java — RustPlugin.java
+context.getExtensions().register(
+    PluginUiExtensionPoints.EDITOR_ACTION_HANDLER,
+    new MyActionHandler(),
+    context.getDescriptor().getId(),
+    0);
+```
+
+> **[WARN]** `execute` ممکن است روی یک thread پس‌زمینه اجرا شود؛ قبل از دست‌زدن به ادیتور به thread اصلی برگرد.
+
+
+---
+
+# UiFeedbackHost
+> گروه: رابط کاربری · فایل: UiFeedbackHost.java · ماژول: ide-ui-api
+
+نمایش toast و دیالوگ‌های ساده (ورودی، تأیید) به نام پلاگین شما — بدون نیاز به Activity.
+
+هاست این سرویس را زیر `IdeHostServices.UI_FEEDBACK` منتشر می‌کند. همه‌ی متدهایش از هر thread ای امن هستند — هاست خودش داخلاً به ترد اصلی می‌رود. اگر Activity ای برای میزبانی دیالوگ در دسترس نباشد، callback ها با `null`/`false` صدا زده می‌شوند؛ پس همیشه این حالت‌ها را هندل کن.
+
+```java — UiFeedbackHost.java
+public interface UiFeedbackHost {
+
+  default void toast(String message) { toast(message, false); }
+  void toast(String message, boolean longDuration);
+
+  void promptInput(String title, String prefill, InputCallback callback);
+
+  void confirm(String title, String message, ConfirmCallback callback);
+
+  @FunctionalInterface interface InputCallback {
+    void onInput(String text);   // null = کنسل شد
+  }
+
+  @FunctionalInterface interface ConfirmCallback {
+    void onResult(boolean confirmed);
+  }
+}
+```
+
+```java — MyPlugin.java
+UiFeedbackHost ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+
+ui.toast("۴۲ فایل ایندکس شد");
+
+ui.confirm("فرمت همه؟", "این کار ۱۲ فایل را بازنویسی می‌کند.", confirmed -> {
+  if (confirmed) formatAll();
+});
+
+ui.promptInput("اسم پروژه", "my-app", name -> {
+  if (name == null) return; // کنسل شد
+  createProject(name);
+});
+```
+
+> **[TIP]** به جای نگه داشتن یک `Context` برای خودت، از این سرویس استفاده کن: همیشه همان صفحه‌ای هدف‌گیری می‌شود که کاربر الان به آن نگاه می‌کند.
+
+
+---
+
+# IdeEvents / FileEvent
+> گروه: رابط کاربری · فایل: IdeEvents.java · ماژول: ide-ui-api
+
+گوش دادن به تغییرات چرخه‌ی عمر فایل در کل IDE — باز شدن، ذخیره، بسته شدن، حذف، تغییر نام.
+
+یک `FileEventListener` را در `IdeEvents.FILE_EVENT` ثبت کن. لیسنر تو موقع unload شدن پلاگین به‌صورت خودکار حذف می‌شود. لیسنر ممکن است از هر thread ای صدا زده شود (ذخیره و حذف روی ترد پس‌زمینه اتفاق می‌افتند) — قبل از کار با UI به ترد اصلی برو.
+
+| نوع رویداد | معنی |
+| --- | --- |
+| `OPENED` | یک فایل در تب جدیدی از ادیتور باز شد (نه فقط فوکوس مجدد). |
+| `SAVED` | ادیتور محتوای یک فایل را روی دیسک نوشت. |
+| `CLOSED` | تبی که این فایل را نشان می‌داد بسته شد. |
+| `DELETED` | یک فایل یا پوشه از دیسک حذف شد. |
+| `RENAMED` | یک فایل یا پوشه rename/move شد؛ `path()` مسیر جدید و `previousPath()` مسیر قبلی است. |
+
+```java — MyPlugin.java
+context.registerDisposable(
+    context.getExtensions().register(
+        IdeEvents.FILE_EVENT,
+        event -> {
+          switch (event.type()) {
+            case SAVED -> lint(event.path());
+            case RENAMED -> updateIndex(event.previousPath(), event.path());
+            case OPENED, CLOSED, DELETED -> {}
+          }
+        },
+        context.getDescriptor().getId(),
+        0));
+```
+
+مسیرها absolute هستند. خود هاست هم برای ارسال رویداد به همه‌ی لیسنرها از همان متد استاتیک `IdeEvents.post(FileEvent)` استفاده می‌کند.
+
+> **[TIP]** کاربردهای معمول: فرمت خودکار موقع ذخیره، باطل کردن ایندکس موقع حذف/rename، بازیابی session موقع باز شدن.
+
+
+---
+
+# PluginScreen
+> گروه: رابط کاربری · فایل: PluginScreen.java · ماژول: ide-ui-api
+
+یک صفحه‌ی کامل که یک پلاگین معرفی می‌کند.
+
+```java — PluginScreen.java
+public interface PluginScreen {
+
+  String getId();
+
+  String getTitle();
+
+  Fragment createFragment();
+}
+```
+
+نمونه را در اکستنشن‌پوینت `PluginUiExtensionPoints.PLUGIN_SCREEN` ثبت کن. layout و منابع Fragment از بسته‌ی `.gpl` خودِ پلاگین می‌آیند، نه از منابع اپ میزبان.
+
+```java — PluginUiExtensionPoints.java
+public final class PluginUiExtensionPoints {
+
+  public static final ExtensionPoint<PluginScreen> PLUGIN_SCREEN =
+      new ExtensionPoint<>("ir.hanzodev1375.ghostide.ui.pluginScreen", PluginScreen.class);
+
+  public static final ExtensionPoint<EditorPanel> EDITOR_PANEL =
+      new ExtensionPoint<>("ir.hanzodev1375.ghostide.ui.editorPanel", EditorPanel.class);
+
+  public static final ExtensionPoint<EditorActionHandler> EDITOR_ACTION_HANDLER =
+      new ExtensionPoint<>(
+          "ir.hanzodev1375.ghostide.ui.editorActionHandler", EditorActionHandler.class);
+}
+```
+
+برای یک پیاده‌سازی کامل — شامل خودِ Fragment — به نمونه‌ی Hello Ghost نگاه کن.
+
+
+---
+
+# FileIconContributor
+> گروه: رابط کاربری · فایل: FileIconContributor.java · ماژول: ide-ui-api
+
+ایکون فایل/پوشه‌ی داخلی را برای مسیرهایی که پلاگین تشخیص می‌دهد override می‌کند — از جمله کل ایکون‌پک‌ها.
+
+یک `FileIconContributor` را در `PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR` ثبت کن. برای هر ایکونی که در فایل منیجر، تب‌های ادیتور، تاریخچه و بوکمارک‌ها نمایش داده می‌شود، **قبل از** مجموعه‌ی داخلی `file_icons.json` از او پرسیده می‌شود. برای مسیرهایی که هندل نمی‌کنی `null` برگردان تا contributor بعدی — یا مجموعه‌ی داخلی — جواب بدهد.
+
+```java — FileIconContributor.java
+public interface FileIconContributor {
+
+  String getIcon(String filePath);
+}
+```
+
+| مقدار بازگشتی | معنی |
+| --- | --- |
+| `file://...`, `content://...` | یک URI کامل. برای آرت‌ورکی که داخل `.gpl` خودت داری؛ موقع `activate()` آن را به حافظه‌ی خصوصی کپی کن چون Glide نمی‌تواند asset پلاگین را از طریق `android_asset` باز کند. |
+| `file_type_kotlin` | یک نام ایکون ساده؛ به‌صورت `vscode_icons/<name>.svg` در assetهای میزبان حل می‌شود. |
+| `null` / خالی | این مسیر را هندل نمی‌کنی — به contributor بعدی و سپس مجموعه‌ی داخلی می‌رسد. |
+
+## JsonFileIconContributor
+
+برای مپ کردن گروهی، یک فایل JSON داخل assetهای پلاگین بگذار و `JsonFileIconContributor` آماده را ثبت کن. این JSON **جزئی** است: فقط بخشی را که می‌خواهی override کنی بنویس و بقیه fallback می‌شود. کلید پسوند را می‌توان `hsi` یا `.hsi` یا `*.hsi` نوشت — هر سه یکی‌اند.
+
+```json — assets/myicons.json
+{
+  "asset_dir": "myicons",
+  "extensions": {
+    "hsi": "file_type_hsi",
+    "ghost": "file_type_ghost"
+  },
+  "filenames": {
+    "makefile": "file_type_makefile",
+    "ghostide.json": "file_type_ghost"
+  },
+  "folders": {
+    "components": "folder_type_components",
+    "node_modules": "folder_type_node"
+  },
+  "defaults": {
+    "file": "default_file",
+    "folder": "default_folder",
+    "root_folder": "default_root_folder"
+  }
+}
+```
+
+معادل VS Code هم قبول است: `fileExtensions` → `extensions`، `fileNames` → `filenames`، `folderNames` / `folderNamesExpanded` → `folders`. یک پک مینیمال چیزی جز مپ لازم ندارد:
+
+```json — assets/myicons.json
+{
+  "extensions": {
+    "hsi": "iconhsi"
+  }
+}
+```
+
+```java — MyPlugin.java
+public void activate(PluginContext context) {
+  Context pluginContext =
+      context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR,
+          new JsonFileIconContributor(pluginContext, "myicons.json")));
+}
+```
+
+`asset_dir` اختیاری است؛ نام‌هایی که به یک SVG داخلش اشاره کنند یک بار به حافظه‌ی خصوصی پلاگین استخراج و به‌صورت `file://` سرو می‌شوند، و نام‌های ناشناخته به مجموعه‌ی داخلی `vscode_icons` می‌رسند. `defaults` از `file`، `folder` و `root_folder` پشتیبانی می‌کند.
+
+## اولویت بین ایکون‌پک‌ها
+
+چند افزونه‌ی ایکون می‌توانند هم‌زمان فعال باشند. **جدیدترین پکی که نصب شده** اول پرسیده می‌شود — اولویتش از زمان نصب فایل `.gpl` گرفته می‌شود و بعد از ری‌استارت هم حفظ می‌شود. اولین جواب non-null برای هر مسیر برنده است، پس پک جدید روی کلیدهایی که تعریف می‌کند پک‌های قدیمی‌تر را override می‌کند و بقیه‌جاها به آن‌ها و در نهایت به مجموعه‌ی داخلی fallback می‌کند. با unload شدن پلاگین، contributionهایش خودکار حذف می‌شوند.
+
+> **[TIP]** برای استفاده از آرت‌ورک داخلی، یک مپ را به هر نام ایکون موجود اشاره بده (مثلاً `file_type_kotlin`). SVGهای خودت را فقط برای ایکون‌هایی که در مجموعه‌ی داخلی نیستند زیر `asset_dir` بگذار.
+
+
+---
+
+# نوار ابزار (Toolbar Icon)
+> گروه: رابط کاربری · فایل: PluginIcons.java · ماژول: ide-ui-api
+
+یک اکشن دائمی که کنار ایکون‌های خود IDE پین می‌شود — با یک لمس پنل‌ات اجرا می‌شود، بدون پاپ‌آپ.
+
+`PluginIcons.setPluginShowState(context, state, title, onClick, icon)` یک `PluginToolbarIcon` در `PluginUiExtensionPoints.TOOLBAR_ICON` برایت ثبت می‌کند. `PluginIconState.Editor` آن را به نوار ابزار **ادیتور** و `PluginIconState.FileES` به نوار ابزار **فایل‌منیجر** پین می‌کند. ایکون می‌تواند یک منبع (`R.drawable.*`) باشد یا یک drawable ساخته‌شده از assetهای پلاگین (مثلاً `BitmapDrawable` از یک PNG).
+
+```java — PluginIcons.java
+public final class PluginIcons {
+
+  public static Disposable setPluginShowState(
+      PluginContext context, PluginIconState state,
+      String title, View.OnClickListener onClick, Drawable icon) {
+
+    String pluginId = context.getDescriptor().getId();
+    String resolvedId = pluginId + "#" + state.name();
+
+    PluginToolbarIcon toolbarIcon = new PluginToolbarIcon() {
+      @Override public String getId()    { return resolvedId; }
+      @Override public String getTitle() { return title; }
+      @Override public PluginIconState getState() { return state; }
+      @Override public Drawable getIcon() { return icon; }
+      @Override public void onClick(View anchor) { onClick.onClick(anchor); }
+    };
+
+    Disposable registration =
+        context.getExtensions().register(
+            PluginUiExtensionPoints.TOOLBAR_ICON, toolbarIcon);
+    context.registerDisposable(registration);
+    return registration;
+  }
+}
+```
+
+## اجرای پنل از روی ایکون
+
+یک لمس روی ایکون دقیقاً مثل لمس پلاگین در پاپ‌آپ است، فقط پاپ‌آپ باز نمی‌شود. سرویس `PanelHostService` هاست (`IdeHostServices.PANEL_HOST`) را بگیر و `showPanel(yourPanel)` را صدا بزن؛ هاست پنل را در حالت نمایش ثبت‌شده‌اش (side sheet، دیالوگ، پنجره‌ی شناور، ...) رندر می‌کند.
+
+```java — MyPlugin.java
+Context android =
+    context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+Drawable icon = android.getDrawable(R.drawable.ic_my_tool);
+
+context.getExtensions().register(
+    PluginUiExtensionPoints.TOOLBAR_ICON,
+    new ToolbarIcon(
+        "my.tool",
+        PluginIconState.Editor,
+        "My Tool",
+        icon,
+        v -> {
+          PanelHostService panelHost =
+              context.getServices().get(IdeHostServices.PANEL_HOST);
+          if (panelHost != null) panelHost.showPanel(myPanel);
+        }));
+```
+
+> **[TIP]** چند ایکون از یک پلاگین مشکلی ندارد: پارامتر `itemId` در api (یا idهای خودِ `PluginToolbarIcon`) هرکدام را یکتا نگه می‌دارد تا لمس‌ها همیشه به اکشن درست برسند. با unload پلاگین، ایکون‌هایش خودکار حذف می‌شوند.
+
+
+---
+
+# FileClickHandler
+> گروه: رابط کاربری · فایل: FileClickHandler.java · ماژول: ide-ui-api
+
+تصاحب یک تک‌ضربه روی فایل در فایل‌منیجر و نمایش رابط خودت — عالی برای فرمت‌های خودت (SVG → PNG، آرشیوها، فایل‌های پروژه‌ی سفارشی).
+
+`FileClickHandler` را پیاده کن و در `PluginUiExtensionPoints.FILE_CLICK_HANDLER` ثبتش کن. برای هر ضربه در فایل‌منیجر، هاست به ترتیب نزولی اولویت از هر هندلر `supports(path, name, isDirectory)` می‌پرسد؛ اولین هندلری که `true` برگرداند برنده است، یک `FileClickContext` می‌گیرد، و باز شدن داخلی (ادیتور، نمایش تصویر/صدا، نصب apk، ...) برای آن ضربه **skip** می‌شود. برگرداندن `false` — یا ثبت‌نکردن — رفتار خودِ IDE را دست‌نخورده می‌گذارد.
+
+```java — FileClickHandler.java
+public interface FileClickHandler {
+
+  boolean supports(String path, String name, boolean isDirectory);
+
+  void onFileClick(FileClickContext context);
+}
+```
+
+## چی به دستت می‌آید: FileClickContext
+
+| دسترسی | معنی |
+| --- | --- |
+| `context()` | Context میزبان؛ برای نمایش دیالوگ یا شروع Activity. |
+| `path()` | مسیر مطلق فایل یا پوشه‌ی لمس‌شده. |
+| `name()` | نام نمایشی آیتم لمس‌شده. |
+| `file()` | مسیر لمس‌شده به‌صورت `java.io.File`. |
+| `isDirectory()` | اگر آیتم لمس‌شده پوشه باشد `true`. |
+| `anchor()` | ویوی ردیف لمس‌شده، برای shared element یا لنگر پاپ‌آپ (ممکن است `null` باشد). |
+
+## مثال: SVG → PNG
+
+```java — SvgHandler.java
+public final class SvgHandler implements FileClickHandler {
+
+  private final UiFeedbackHost ui;
+
+  public SvgHandler(PluginContext context) {
+    ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+  }
+
+  @Override
+  public boolean supports(String path, String name, boolean isDirectory) {
+    return !isDirectory && name.toLowerCase().endsWith(".svg");
+  }
+
+  @Override
+  public void onFileClick(FileClickContext context) {
+    ui.confirm(
+        "تبدیل به PNG؟",
+        context.path(),
+        ok -> {
+          if (ok) convert(context.file());
+        });
+  }
+}
+```
+
+```java — MyPlugin.java
+public void activate(PluginContext context) {
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_CLICK_HANDLER,
+          new SvgHandler(context)));
+}
+```
+
+> **[WARN]** `supports` را سریع نگه دار: روی ترد اصلی برای هر ضربه اجرا می‌شود، پس با همان `path` / `name` / `isDirectory` تصمیم بگیر و **هیچ** I/O دیسکی آنجا انجام نده. کار اصلی را داخل `onFileClick` انجام بده و هر چیز سنگین را به ترد پس‌زمینه ببر.
+
+> **[INFO]** هندلری که در `onFileClick` exception بیندازد skip می‌شود و ضربه به جریان داخلی می‌رسد، پس یک پلاگین خراب هرگز نمی‌تواند فایل‌منیجر را قفل کند. با unload شدن پلاگین، contribution خودکار حذف می‌شود.
+
+
+---
+
+# فرمت .gpl
+> گروه: بسته‌بندی (.gpl) · فایل: plugin.json · ماژول: gpl runtime
+
+ساختار فایل نصب یک پلاگین Ghost IDE.
+
+یک فایل `.gpl` از نظر ساختار یک zip است — شبیه یک APK ساده‌شده — و دو چیز داخلش اجباری است:
+
+| مسیر داخل zip | محتوا |
+| --- | --- |
+| `assets/plugin.json` | مانیفست پلاگین. |
+| `classes.dex` (یا `classes2.dex`, ...) | بایت‌کد کامپایل‌شده‌ی پلاگین. |
+
+## فیلدهای plugin.json
+
+| فیلد | نوع | الزام |
+| --- | --- | --- |
+| `id` | رشته | اجباری — با `PluginDescriptor` هم‌قرارداد؛ شناسه‌ی reverse-domain. |
+| `name` | رشته | اجباری. |
+| `version` | رشته | اجباری. |
+| `entryClass` | رشته | اجباری — نام کامل کلاسِ پیاده‌کننده‌ی `GhostPlugin`، با سازنده‌ی بدون‌آرگومان و public. |
+| `description` | رشته | اختیاری؛ پیش‌فرض رشته‌ی خالی. |
+| `minHostVersion` | عدد صحیح | اختیاری؛ پیش‌فرض `۰`. کمترین versionCode اپ میزبان که این پلاگین را پشتیبانی می‌کند. |
+| `icon` | رشته | اختیاری؛ نام یک فایل PNG/JPG داخل `assets/` (همان پوشه‌ی `plugin.json`). اگر نباشد، پلاگین ایکون ندارد. |
+
+```json — assets/plugin.json
+{
+  "id": "com.example.hello-ghost",
+  "name": "Hello Ghost",
+  "version": "1.0.0",
+  "entryClass": "com.example.helloghost.HelloGhostPlugin",
+  "description": "یک صفحه‌ی نمونه به Ghost IDE اضافه می‌کند.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+> **[WARN]** اگر `assets/plugin.json` داخل zip نباشد یا JSON نامعتبر باشد، بارگذاری با خطا شکست می‌خورد و پلاگین اصلاً فعال نمی‌شود.
+
+
+---
+
+# ساخت پلاگین
+> گروه: بسته‌بندی (.gpl) · فایل: BUILD.md · ماژول: gpl runtime
+
+یک روش پیشنهادی برای تولید بسته‌ای که GplPluginLoader انتظارش را دارد.
+
+زمان‌اجرا هیچ ابزار ساخت خاصی را اجبار نمی‌کند — فقط به خروجی نهایی اهمیت می‌دهد: یک zip با پسوند `.gpl` که `assets/plugin.json` و حداقل یک `classes*.dex` معتبر دارد. مسیر زیر یک الگوی ساده و رایج است:
+
+1. ماژول پلاگین را در برابر `plugin-api` (و در صورت نیاز `ide-api`/`ide-ui-api`) با `compileOnly` کامپایل کن — این وابستگی‌ها را در زمان اجرا خودِ اپ میزبان تأمین می‌کند، پس نباید داخل `.gpl` هم بسته‌بندی شوند.
+2. .class های خروجی را با دکسر اندروید (`d8`) به یک یا چند فایل `classes.dex` تبدیل کن.
+3. `assets/plugin.json` را کنار `classes.dex` در یک zip قرار بده.
+4. فایل zip را با پسوند `.gpl` تغییرنام بده.
+
+```bash — package.sh
+d8 --output build/dex build/classes/*.class
+
+cd build/dex
+zip -r ../hello-ghost.gpl classes.dex ../../assets/plugin.json -j
+mv ../../assets/plugin.json assets/plugin.json 2>/dev/null || true
+```
+
+> **[TIP]** برای کامپایل در برابر APIها به فایل‌های آماده‌ی `plugin-api.jar` / `ide-api.jar` / `ide-ui-api.aar` نیاز داری — آن‌ها را از آرتیفکت **ghostide-plugin-sdk** در [GitHub Actions](https://github.com/HanzoDev1375/GhostIdes/actions) یا از یک [Release](https://github.com/HanzoDev1375/GhostIdes/releases) بردار.
+
+> **[TIP]** ساده‌ترین راه برای اطمینان از ساختار درست، این است که پیش از فشرده‌سازی یک پوشه‌ی موقت با همین چیدمان بسازی: `classes.dex` در ریشه و `assets/plugin.json` داخل زیرپوشه‌ی `assets/` — دقیقاً همان چیزی که `GplManifestReader` با نام `assets/plugin.json` جست‌وجو می‌کند.
+
+
+---
+
+# چرخه‌ی بارگذاری
+> گروه: بسته‌بندی (.gpl) · فایل: GplPluginLoader.java · ماژول: gpl runtime
+
+دقیقاً چه اتفاقی از لحظه‌ی نصب یک .gpl تا فعال‌شدنش می‌افتد — و هنگام حذف.
+
+این بخش داخلیِ اپ میزبان است، نه بخشی از سطح API عمومی؛ اما دانستنش کمک می‌کند بفهمی دقیقاً چه چیزی زیر `activate(context)` تو در حال اجراست.
+
+## بارگذاری
+
+1. `GplManifestReader` مانیفست را از `assets/plugin.json` می‌خواند.
+2. اگر پلاگینی با همین شناسه از قبل بارگذاری شده باشد، همان نمونه بدون کار اضافه برگردانده می‌شود.
+3. در Android 14 (API 34) به بالا، همه‌ی `classes*.dex` مستقیم در حافظه خوانده می‌شوند و با `InMemoryDexClassLoader` بارگذاری می‌شوند — بدون استخراج روی دیسک. زیر API 34، فایل‌های dex استخراج و با `DexClassLoader` بارگذاری می‌شوند.
+4. یک `Context` مخصوص پلاگین ساخته می‌شود که منابع (`R.layout` و بقیه) را از خودِ فایل `.gpl` می‌خواند — با تکنیک reflection روی `AssetManager.addAssetPath`، همان روشی که چارچوب‌های پلاگین اندرویدی مثل RePlugin و VirtualAPK استفاده می‌کنند.
+5. `entryClass` بارگذاری، با سازنده‌ی بدون‌آرگومان ساخته، و پیاده‌سازیِ `GhostPlugin` بودنش تأیید می‌شود.
+6. یک `PluginDescriptor` از روی مانیفست ساخته می‌شود.
+7. یک کپیِ مخصوص همین پلاگین از `GlobalRegistry.services()` گرفته می‌شود و `PLUGIN_ANDROID_CONTEXT` فقط داخل همین کپی ثبت می‌گردد.
+8. `activate(context)` صدا زده می‌شود.
+
+> **[WARN]** اگر reflection روی `addAssetPath` به هر دلیلی شکست بخورد (مثلاً نسخه‌ی آینده‌ی اندروید این API غیررسمی را ببندد)، بارگذاری به‌جای شکست کامل، به منابع اپ میزبان سقوط می‌کند — یعنی پلاگین بالا می‌آید ولی layout و drawable اختصاصی خودش را نمی‌بیند.
+
+## حذف (unload)
+
+1. `plugin.deactivate()` صدا زده می‌شود.
+2. هر `Disposable`ای که با `registerDisposable` ثبت شده، به ترتیب معکوسِ ثبت (LIFO) آزاد می‌شود.
+3. `GlobalRegistry.extensions().unregisterOwner(pluginId)` به‌عنوان یک لایه‌ی اطمینان اضافی، هر ثبتی که هنوز به این شناسه نسبت داده شده را جارو می‌کند.
+
+
+---
+
+# نصب پلاگین
+> گروه: بسته‌بندی (.gpl) · فایل: GplInstalledPlugins.java · ماژول: gpl runtime
+
+محل زندگی فایل‌های .gpl نصب‌شده روی دستگاه و روند اسکن آن‌ها در استارتاپ.
+
+همه‌ی فایل‌های `.gpl` نصب‌شده داخل `filesDir/gpl_plugins/` اپ میزبان نگه‌داری می‌شوند. هر فایل با پسوند `.gpl` داخل این پوشه «نصب‌شده» حساب می‌شود.
+
+```java — GplInstalledPlugins.java
+public static File installDir(Context context) {
+  File dir = new File(context.getApplicationContext().getFilesDir(), "gpl_plugins");
+  if (!dir.exists()) {
+    dir.mkdirs();
+  }
+  return dir;
+}
+```
+
+در زمان استارتاپ، `loadAll(context, loader)` تمام فایل‌های این پوشه را اسکن می‌کند و برای هر شناسه‌ای که هنوز بارگذاری نشده، `loader.load(file)` را صدا می‌زند.
+
+> **[TIP]** یک پلاگین خراب یا مانیفست نامعتبر باعث توقف کل اسکن نمی‌شود — فقط همان یکی رد می‌شود و بقیه‌ی پلاگین‌ها عادی بالا می‌آیند.
+
+## پلاگین‌ها از کجا میان؟
+
+پلاگین‌ها هیچ‌جای جداگانه‌ای منتشر نمی‌شوند. باندل‌های آماده‌ی `.gpl` از خودِ مخزن Ghost IDE به اشتراک گذاشته می‌شوند — یا از تب **Actions** همان رانِ ورک‌فلو، یا از پیوست‌های فایل یک **Release** دانلودشان کن:
+
+```text — GitHub
+https://github.com/HanzoDev1375/GhostIdes
+
+Releases -> می‌توانی فایل .gpl را به یک Release پیوست کنی و کاربران از آنجا بردارند
+Actions  -> هر ران ورک‌فلو آرتیفکت‌هایش را ۹۰ روز نگه می‌دارد، از جمله باندل‌های .gpl
+```
+
+> **[INFO]** آرتیفکت `app-debug` خودِ APK است، `ghostide-plugin-sdk` شامل jar/aarهایی است که برای کامپایل پلاگین لازم داری، و هر باندل `.gpl` که نویسنده‌ی پلاگین می‌خواهد به اشتراک بگذارد هم به‌صورت پیوست Release یا آرتیفکت ورک‌فلو در دسترس است.
+
+
+---
+
+# نمونه‌ی کامل: Hello Ghost
+> گروه: نمونه‌ی کامل · فایل: HelloGhostPlugin.java · ماژول: gpl runtime
+
+یک پلاگین کوچک ولی کامل — از پیاده‌سازی تا مانیفست تا بسته‌بندی — که همه‌ی مفاهیم قبلی را کنار هم می‌گذارد.
+
+این پلاگین یک صفحه‌ی ساده به Ghost IDE اضافه می‌کند که متن فایل بازِ فعلی را نشان می‌دهد. سه فایل لازم داریم: کلاس ورودی، خودِ صفحه (Fragment)، و مانیفست.
+
+## ۱. کلاس ورودی
+
+```java — HelloGhostPlugin.java
+package com.example.helloghost;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.Disposable;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class HelloGhostPlugin implements GhostPlugin {
+
+  @Override
+  public void activate(PluginContext context) {
+    Disposable registration = context.getExtensions().register(
+        PluginUiExtensionPoints.PLUGIN_SCREEN,
+        new HelloScreen(),
+        context.getDescriptor().getId(),
+        0);
+
+    context.registerDisposable(registration);
+    context.getLogger().info("Hello Ghost activated");
+  }
+
+  @Override
+  public void deactivate() {
+    // نیازی به کاری اضافه بر آنچه Disposable انجام می‌دهد نیست
+  }
+}
+```
+
+## ۲. صفحه
+
+`HelloScreen` رابط `PluginScreen` را پیاده می‌کند و یک `Fragment` می‌سازد. برای این‌که نمونه بدون هیچ فایل layout اضافه کار کند، `TextView` به‌صورت برنامه‌نویسی‌شده ساخته می‌شود.
+
+```java — HelloScreen.java
+package com.example.helloghost;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginScreen;
+
+public final class HelloScreen implements PluginScreen {
+
+  @Override
+  public String getId() {
+    return "com.example.hello-ghost.screen";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Hello Ghost";
+  }
+
+  @Override
+  public Fragment createFragment() {
+    return new HelloFragment();
+  }
+
+  public static final class HelloFragment extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(
+        @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle state) {
+      TextView view = new TextView(requireContext());
+      view.setPadding(32, 32, 32, 32);
+      view.setTextSize(15f);
+      view.setText("این صفحه از یک پلاگین Ghost IDE می‌آید.");
+      return view;
+    }
+  }
+}
+```
+
+## ۳. مانیفست
+
+```json — assets/plugin.json
+{
+  "id": "com.example.hello-ghost",
+  "name": "Hello Ghost",
+  "version": "1.0.0",
+  "entryClass": "com.example.helloghost.HelloGhostPlugin",
+  "description": "یک صفحه‌ی نمونه به Ghost IDE اضافه می‌کند.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+## ۴. بسته‌بندی و نصب
+
+1. `HelloGhostPlugin.java` و `HelloScreen.java` را در برابر `plugin-api` + `ide-ui-api` کامپایل کن.
+2. خروجی را با `d8` به `classes.dex` تبدیل کن.
+3. `classes.dex` را کنار `assets/plugin.json` در یک zip قرار بده و پسوند را به `.gpl` تغییر بده — طبق فرمت .gpl.
+4. فایل `hello-ghost.gpl` را داخل `filesDir/gpl_plugins/` دستگاه کپی کن — طبق نصب پلاگین.
+5. اپ را ری‌استارت کن؛ «Hello Ghost» باید به‌عنوان یک صفحه‌ی پلاگین فعال در دسترس باشد.
+
+> **[TIP]** همین الگو، با جایگزین‌کردن `PluginUiExtensionPoints.PLUGIN_SCREEN` با `EditorExtensionPoints.LSP_SERVER_PROVIDER`، دقیقاً همان مسیری است که یک پلاگین Language Server طی می‌کند — LspServerProvider را ببین.
+
+
+---
+
+# ساختار پروژه‌ی نمونه
+> گروه: نمونه‌های آماده · فایل: SampleKit/
+
+یک پروژه‌ی کامل و آماده‌ی کپی (SampleKit) که همه‌ی نمونه‌های این بخش از آن گرفته شده‌اند. با همین اسکلت، پلاگین خودت را بدون دردسر بالا بیاور.
+
+پروژه یک ماژول اپ اندروید است که هیچ Activity ندارد؛ فقط برای گرفتن خروجی `classes.dex` ساخته می‌شود. وابستگی‌ها به‌صورت `compileOnly` از پوشه‌ی `libs/` خوانده می‌شوند تا داخل `.gpl` کپی نشوند.
+
+## ساختار درخت فایل‌ها
+
+```text — tree
+SampleKit/
+├─ settings.gradle
+├─ build.gradle
+├─ gradle.properties
+└─ app/
+   ├─ build.gradle
+   └─ src/main/
+      ├─ AndroidManifest.xml
+      ├─ assets/
+      │  ├─ plugin.json
+      │  └─ fileicons/icons.json
+      ├─ res/values/strings.xml
+      └─ java/com/example/samplekit/
+         ├─ SampleKitPlugin.java
+         ├─ SampleSettings.java
+         ├─ SampleSettingsContributor.java
+         ├─ ui/SampleScreen.java
+         ├─ ui/SamplePanel.java
+         ├─ command/SampleCommand.java
+         ├─ icons/SampleIcons.java
+         └─ lsp/SampleLspProvider.java
+```
+
+## ۱. settings.gradle
+
+```gradle — settings.gradle
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = 'SampleKit'
+include ':app'
+```
+
+## ۲. build.gradle ریشه
+
+```gradle — build.gradle
+plugins {
+    id 'com.android.application' version '8.5.0' apply false
+}
+```
+
+## ۳. app/build.gradle
+
+سه فایل API را در `app/libs/` بگذار: `plugin-api-0.1.0.jar`، `ide-api-0.1.0.jar` و `ide-ui-api-release.aar`. اگر پلاگینت LSP ندارد می‌توانی `ide-api` را حذف کنی و اگر UI ندارد `ide-ui-api` را.
+
+```gradle — app/build.gradle
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.samplekit'
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    compileOnly fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+}
+```
+
+## ۴. AndroidManifest.xml
+
+```text — app/src/main/AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- این یک اپ واقعی نیست؛ فقط برای ساختن dex. هیچ Activity و مجوزی لازم نیست. -->
+    <application
+        android:allowBackup="false"
+        android:label="SampleKit" />
+
+</manifest>
+```
+
+## ۵. مانیفست پلاگین
+
+```json — app/src/main/assets/plugin.json
+{
+  "id": "com.example.sample-kit",
+  "name": "Sample Kit",
+  "version": "1.0.0",
+  "entryClass": "com.example.samplekit.SampleKitPlugin",
+  "description": "یک پلاگین نمونه که همه‌ی قابلیت‌های Ghost IDE را نشان می‌دهد.",
+  "author": "You",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
+```
+
+> **[TIP]** فیلد `id` باید فقط حرف، عدد، `.`، `_` و `-` داشته باشد و همان شناسه‌ای باشد که همه‌جا به‌عنوان `owner` هنگام ثبت اکستنشن‌ها می‌دهی — معمولاً `context.getDescriptor().getId()`.
+
+حالا سراغ کلاس ورودی کامل برو تا ببینی همه‌ی قطعات چطور به هم وصل می‌شوند.
+
+
+---
+
+# کلاس ورودی کامل
+> گروه: نمونه‌های آماده · فایل: SampleKitPlugin.java · ماژول: plugin-api
+
+یک کلاس ورودی که هر هفت نوع مشارکت را ثبت می‌کند: تنظیمات، صفحه، پنل، دستور، رویداد، ایکون و Language Server.
+
+همه‌چیز از `activate(PluginContext)` شروع می‌شود. هر `register(...)` یک `Disposable` برمی‌گرداند که با `context.registerDisposable(...)` ثبت می‌شود تا هنگام unload خودکار آزاد شود.
+
+```java — SampleKitPlugin.java
+package com.example.samplekit;
+
+import android.content.Context;
+
+import java.util.List;
+
+import ir.hanzodev1375.ghostide.ide.api.EditorExtensionPoints;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeEvents;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.CoreExtensionPoints;
+import ir.hanzodev1375.ghostide.plugin.api.CoreServices;
+import ir.hanzodev1375.ghostide.plugin.api.ExtensionPoint;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+import ir.hanzodev1375.ghostide.plugin.api.PluginSetupAction;
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+import com.example.samplekit.command.SampleCommand;
+import com.example.samplekit.icons.SampleIcons;
+import com.example.samplekit.lsp.SampleLspProvider;
+import com.example.samplekit.ui.SamplePanel;
+import com.example.samplekit.ui.SampleScreen;
+
+public final class SampleKitPlugin implements GhostPlugin {
+
+  private SampleSettings settings;
+  private SamplePanel panel;
+
+  /** دستورهای نصب محیط؛ میزبان فقط با تأیید کاربر در ترمینال اجرا می‌کند. */
+  @Override
+  public List<PluginSetupAction> getSetupActions() {
+    return List.of(
+        new PluginSetupAction(
+            "install-tool",
+            "Install sample tool",
+            "npm install -g sample-tool",
+            "ابزار زبان نمونه را داخل rootfs نصب می‌کند."));
+  }
+
+  @Override
+  public void activate(PluginContext context) {
+    String owner = context.getDescriptor().getId();
+    PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+    Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+
+    settings = new SampleSettings(storage);
+    panel = new SamplePanel(context, settings);
+
+    // ۱) پنل ادیتور
+    register(context, owner, PluginUiExtensionPoints.EDITOR_PANEL, panel);
+
+    // ۲) صفحه‌ی کامل UI
+    register(context, owner, PluginUiExtensionPoints.PLUGIN_SCREEN, new SampleScreen());
+
+    // ۳) ردیف‌های تنظیمات در صفحه‌ی تنظیمات خود اپ
+    register(
+        context,
+        owner,
+        CoreExtensionPoints.PLUGIN_SETTINGS,
+        new SampleSettingsContributor(android, settings, panel));
+
+    // ۴) یک دستور قابل فراخوانی
+    register(context, owner, CoreExtensionPoints.PLUGIN_COMMAND, new SampleCommand(context));
+
+    // ۵) ایکون فایل سفارشی
+    register(context, owner, PluginUiExtensionPoints.FILE_ICON_CONTRIBUTOR, new SampleIcons(android));
+
+    // ۶) گوش‌دادن به رویداد فایل (ممکن است از هر threadی صدا زده شود)
+    register(
+        context,
+        owner,
+        IdeEvents.FILE_EVENT,
+        event -> context.getLogger().info("file event: " + event));
+
+    // ۷) افزودن Language Server
+    register(context, owner, EditorExtensionPoints.LSP_SERVER_PROVIDER, new SampleLspProvider(context));
+
+    context.getLogger().info("Sample Kit activated");
+  }
+
+  @Override
+  public void deactivate() {
+    // همه‌ی ثبت‌ها قبلاً Disposable گرفته‌اند؛ فقط منابع دستی را این‌جا آزاد کن.
+    if (panel != null) {
+      panel.destroy();
+      panel = null;
+    }
+  }
+
+  private static <T> void register(
+      PluginContext context, String owner, ExtensionPoint<T> point, T extension) {
+    context.registerDisposable(context.getExtensions().register(point, extension, owner, 0));
+  }
+}
+```
+
+> **[INFO]** اگر پلاگین فقط LSP است، لازم نیست به `ide-ui-api` وابسته شود؛ کافی است `plugin-api` و `ide-api` را بگیری و فقط رجیستر «۷» را نگه داری.
+
+بعد برو سراغ تنظیمات پلاگین که جدیدترین قابلیت API است.
+
+
+---
+
+# تنظیمات پلاگین در صفحه‌ی تنظیمات
+> گروه: نمونه‌های آماده · فایل: SampleSettingsContributor.java · ماژول: plugin-api
+
+به‌جای ساختن صفحه‌ی تنظیمات جداگانه، ردیف‌های تنظیمات را داخل صفحه‌ی تنظیمات خود اپ بریز — یا به‌صورت کلید روشن/خاموش یا یک ردیف قابل کلیک.
+
+واسط `PluginSettingsContributor` را پیاده کن و در اکستنشن‌پوینت `CoreExtensionPoints.PLUGIN_SETTINGS` رجیستر کن. میزبان هر بار که صفحه‌ی تنظیمات باز می‌شود `getSettings()` را تازه می‌خواند و هر ردیف را با نام پلاگین تو برچسب می‌زند.
+
+> **[INFO]** دو نوع ردیف داری: `PluginSetting.toggle(...)` برای سوئیچ و `PluginSetting.action(...)` برای یک ردیف ساده که با کلیک کد اجرا می‌کند. برای انتخاب‌های پیچیده‌تر (لیست، اسلایدر) از یک `action` استفاده کن و خودت دیالوگ یا صفحه‌ات را باز کن. callbackها روی UI thread اجرا می‌شوند.
+
+## ۱. متن‌ها را در resources بگذار
+
+متن‌ها را از `R.string` بخوان تا با زبان دستگاه ترجمه شوند و داخل `.gpl` همراه بیایند.
+
+```text — res/values/strings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_group_name">Sample Kit</string>
+
+    <string name="setting_wrap">Word wrap</string>
+    <string name="setting_wrap_desc">شکستن خطوط بلند در پنل</string>
+
+    <string name="setting_autoreload">Auto reload</string>
+    <string name="setting_autoreload_desc">بارگذاری مجدد هنگام ذخیره‌ی فایل</string>
+
+    <string name="setting_clear_cache">Clear cache</string>
+    <string name="setting_clear_cache_desc">پاک‌کردن کش پنل</string>
+</resources>
+```
+
+## ۲. وضعیت را در PluginStorage نگه دار
+
+```java — SampleSettings.java
+package com.example.samplekit;
+
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+/** تنظیمات پلاگین؛ مقادیر در PluginStorage ذخیره می‌شوند و بین ری‌استارت‌ها می‌مانند. */
+public final class SampleSettings {
+
+  public static final String KEY_WRAP = "wrap";
+  public static final String KEY_AUTORELOAD = "autoreload";
+
+  private final PluginStorage storage;
+
+  public SampleSettings(PluginStorage storage) {
+    this.storage = storage;
+  }
+
+  public boolean isWrap() {
+    return storage.getBoolean(KEY_WRAP, true);
+  }
+
+  public void setWrap(boolean value) {
+    storage.putBoolean(KEY_WRAP, value);
+  }
+
+  public boolean isAutoReload() {
+    return storage.getBoolean(KEY_AUTORELOAD, true);
+  }
+
+  public void setAutoReload(boolean value) {
+    storage.putBoolean(KEY_AUTORELOAD, value);
+  }
+}
+```
+
+## ۳. ردیف‌ها را بساز
+
+```java — SampleSettingsContributor.java
+package com.example.samplekit;
+
+import android.content.Context;
+
+import java.util.List;
+
+import ir.hanzodev1375.ghostide.plugin.api.PluginSetting;
+import ir.hanzodev1375.ghostide.plugin.api.PluginSettingsContributor;
+import com.example.samplekit.ui.SamplePanel;
+
+public final class SampleSettingsContributor implements PluginSettingsContributor {
+
+  private final Context android;
+  private final SampleSettings settings;
+  private final SamplePanel panel;
+
+  public SampleSettingsContributor(Context android, SampleSettings settings, SamplePanel panel) {
+    this.android = android;
+    this.settings = settings;
+    this.panel = panel;
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.settings";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return android.getString(R.string.prefs_group_name);
+  }
+
+  @Override
+  public List<PluginSetting> getSettings() {
+    return List.of(
+        PluginSetting.toggle(
+            SampleSettings.KEY_WRAP,
+            android.getString(R.string.setting_wrap),
+            android.getString(R.string.setting_wrap_desc),
+            settings.isWrap(),
+            value -> {
+              settings.setWrap(value);
+              panel.applySettings();
+            }),
+        PluginSetting.toggle(
+            SampleSettings.KEY_AUTORELOAD,
+            android.getString(R.string.setting_autoreload),
+            android.getString(R.string.setting_autoreload_desc),
+            settings.isAutoReload(),
+            settings::setAutoReload),
+        PluginSetting.action(
+            "clear_cache",
+            android.getString(R.string.setting_clear_cache),
+            android.getString(R.string.setting_clear_cache_desc),
+            panel::clearCache));
+  }
+}
+```
+
+> **[TIP]** شناسه‌ی هر ردیف (`id`) در `storage` کلید می‌شود؛ پس همان ثابت‌ها را در `SampleSettings` و contributor به کار ببر تا مقدار خوانده‌شده با مقدار ذخیره‌شده یکی بماند.
+
+
+---
+
+# صفحه‌ی UI (PluginScreen)
+> گروه: نمونه‌های آماده · فایل: SampleScreen.java · ماژول: ide-ui-api
+
+یک صفحه‌ی کامل که به لیست صفحه‌های Ghost IDE اضافه می‌شود و به سرویس‌های میزبان (ادیتور، فایل، اجرا) دسترسی دارد.
+
+`PluginScreen` فقط سه چیز می‌خواهد: `getId`، `getTitle` و `createFragment`. داخل Fragment از `IdeHostServices` سرویس می‌گیری و از `IdeHostServices.PLUGIN_ANDROID_CONTEXT` هم می‌توانی برای inflate استفاده کنی.
+
+```java — ui/SampleScreen.java
+package com.example.samplekit.ui;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginScreen;
+
+public final class SampleScreen implements PluginScreen {
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.screen";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Sample Kit";
+  }
+
+  @Override
+  public Fragment createFragment() {
+    return new ScreenFragment();
+  }
+
+  public static final class ScreenFragment extends Fragment {
+
+    private EditorHost editor;
+
+    @Nullable
+    @Override
+    public View onCreateView(
+        @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle state) {
+      editor = (EditorHost) requireContext().getSystemService("__plugin_editor_host__");
+      return build(inflater);
+    }
+
+    private View build(LayoutInflater inflater) {
+      LinearLayout root = new LinearLayout(requireContext());
+      root.setOrientation(LinearLayout.VERTICAL);
+      int pad = dp(16);
+      root.setPadding(pad, pad, pad, pad);
+
+      TextView title = new TextView(requireContext());
+      title.setText("متن فایل فعلی:");
+      root.addView(title);
+
+      EditText input = new EditText(requireContext());
+      input.setText(editor == null ? "" : editor.getEditorText());
+      root.addView(input);
+
+      Button apply = new Button(requireContext());
+      apply.setText("جای‌گذاری در ادیتور");
+      apply.setOnClickListener(v -> {
+        if (editor != null) {
+          editor.setEditorText(input.getText().toString());
+        }
+      });
+      root.addView(apply);
+      return root;
+    }
+
+    private int dp(int value) {
+      return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+  }
+}
+```
+
+> **[WARN]** دسترسی به سرویس‌ها از این‌گونه `getSystemService` روش صحیح نیست؛ این‌جا فقط برای کوتاه‌شدن نمونه است. در کد واقعی سرویس‌ها را در `activate()` بگیر و به `createFragment()`/سازنده تزریق کن.
+
+## نسخه‌ی درست: تزریق سرویس از activate
+
+```java — ui/SampleScreen.java (بهتر)
+public final class SampleScreen implements PluginScreen {
+
+  private final EditorHost editor;
+  private final Context android;
+
+  public SampleScreen(EditorHost editor, Context android) {
+    this.editor = editor;
+    this.android = android;
+  }
+
+  @Override public String getId() { return "com.example.samplekit.screen"; }
+  @Override public String getTitle() { return "Sample Kit"; }
+  @Override public Fragment createFragment() { return new ScreenFragment(editor, android); }
+
+  public static final class ScreenFragment extends Fragment {
+    private final EditorHost editor;
+    private final Context android;
+    ScreenFragment(EditorHost editor, Context android) {
+      this.editor = editor;
+      this.android = android;
+    }
+    // ... همان build(...)
+  }
+}
+```
+
+در `SampleKitPlugin.activate` این‌طور بساز و رجیستر کن:
+
+```java — SampleKitPlugin.java (بخش)
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+register(context, owner, PluginUiExtensionPoints.PLUGIN_SCREEN,
+    new SampleScreen(editor, android));
+```
+
+
+---
+
+# پنل ادیتور (EditorPanel)
+> گروه: نمونه‌های آماده · فایل: SamplePanel.java · ماژول: ide-ui-api
+
+یک پنل که کنار ادیتور باز می‌شود؛ مثل پنل Live Preview. حالت نمایشش را هم می‌توانی با PluginStateMod عوض کنی.
+
+`Panel` (و در نتیجه `EditorPanel` و `FilePanel`) با `createView()` یک `View` می‌سازد و با `getState()/setState()` جای نمایشش را تعیین می‌کند: `SIDESHEET`، `DIALOGFRAGMENT`، `FRAGMENT`، `FLOATINGWINDOWS` و… .
+
+```java — ui/SamplePanel.java
+package com.example.samplekit.ui;
+
+import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorPanel;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginStateMod;
+
+import com.example.samplekit.SampleSettings;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SamplePanel implements EditorPanel {
+
+  private final PluginContext context;
+  private final SampleSettings settings;
+  private TextView view;
+
+  public SamplePanel(PluginContext context, SampleSettings settings) {
+    this.context = context;
+    this.settings = settings;
+    setState(PluginStateMod.SIDESHEET);
+  }
+
+  @Override public String getId() { return "com.example.samplekit.panel"; }
+
+  @Override public String getTitle() { return "Sample"; }
+
+  @Override
+  public View createView() {
+    Context android = context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+    view = new TextView(android);
+    view.setPadding(24, 24, 24, 24);
+    refresh();
+    return view;
+  }
+
+  public void applySettings() {
+    refresh();
+  }
+
+  public void clearCache() {
+    if (view != null) {
+      view.setText("cache cleared");
+    }
+  }
+
+  private void refresh() {
+    if (view == null) {
+      return;
+    }
+    EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+    String wrap = settings.isWrap() ? "on" : "off";
+    view.setText("wrap: " + wrap + ", autoReload: " + settings.isAutoReload()
+        + ", file: " + editor.getOpenFile());
+  }
+
+  public void destroy() {
+    view = null;
+  }
+}
+```
+
+> **[TIP]** برای تغییر حالت نمایش، در `activate()` بعد از ساخت پنل این‌طور صدا بزن: `panel.setState(PluginStateMod.FLOATINGWINDOWS);` — این مقدار از طریق `PanelStateStore` ذخیره و به میزبان داده می‌شود.
+
+
+---
+
+# دستور (PluginCommand)
+> گروه: نمونه‌های آماده · فایل: SampleCommand.java · ماژول: plugin-api
+
+یک عمل قابل فراخوانی که میزبان (و آینده: command palette) می‌تواند فهرست و اجرا کند.
+
+`PluginCommand` سه چیز دارد: `getId()` (یکتا و reverse-domain)، `getTitle()` و `execute()`. اجرا ممکن است از هر threadی باشد؛ قبل از دست‌زدن به UI خودت به main thread برو.
+
+```java — command/SampleCommand.java
+package com.example.samplekit.command;
+
+import java.util.concurrent.Executors;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.CodeRunnerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.plugin.api.PluginCommand;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleCommand implements PluginCommand {
+
+  private final PluginContext context;
+
+  public SampleCommand(PluginContext context) {
+    this.context = context;
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.runCurrentFile";
+  }
+
+  @Override
+  public String getTitle() {
+    return "Sample Kit: Run current file";
+  }
+
+  @Override
+  public String getDescription() {
+    return "فایل باز فعلی را در ترمینال اجرا می‌کند.";
+  }
+
+  @Override
+  public void execute() {
+    CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+    EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+    if (editor.getOpenFile() == null) {
+      return;
+    }
+    String path = editor.getOpenFile().getAbsolutePath();
+    if (runner.isSupported(path)) {
+      runner.runFile(path);
+    } else {
+      Executors.newSingleThreadExecutor().execute(() -> runner.exec("file \"" + path + "\"", null));
+    }
+  }
+}
+```
+
+> **[WARN]** در رشته‌ی داخل کد، نقل‌قول‌ها فرار داده شده‌اند تا داخل خود رشته قرار بگیرند؛ هنگام کامپایل مطمئن شو کاراکترهای escape درست باشند.
+
+
+---
+
+# ذخیره‌سازی (PluginStorage)
+> گروه: نمونه‌های آماده · فایل: SampleStorageUsage.java · ماژول: plugin-api
+
+هر پلاگین یک فضای کلید-مقدار مستقل دارد که با شناسه‌ی خودش namespace می‌شود و بین ری‌استارت‌ها می‌ماند.
+
+سرویس `CoreServices.PLUGIN_STORAGE` را بگیر و مقادیر اولیه (String/boolean/int/long/float) را ذخیره کن. برای داده‌ی حجیم فایل جداگانه در پوشه‌ی خودت بساز.
+
+```java — SampleStorageUsage.java
+import ir.hanzodev1375.ghostide.plugin.api.CoreServices;
+import ir.hanzodev1375.ghostide.plugin.api.PluginStorage;
+
+// داخل activate:
+PluginStorage storage = context.getServices().require(CoreServices.PLUGIN_STORAGE);
+
+storage.putString("lastFile", "/sdcard/notes.txt");
+storage.putInt("runCount", storage.getInt("runCount", 0) + 1);
+storage.putBoolean("firstRun", false);
+
+String last = storage.getString("lastFile", "");
+boolean has = storage.contains("runCount");
+storage.remove("lastFile");
+// storage.clear(); // همه‌ی داده‌های این پلاگین را پاک می‌کند
+```
+
+> **[INFO]** مقدار پیش‌فرض (`defValue`) را همیشه بده؛ کلید ناموجود همان را برمی‌گرداند و استثنایی پرتاب نمی‌شود.
+
+
+---
+
+# گوش‌دادن به رویدادهای فایل
+> گروه: نمونه‌های آماده · فایل: IdeEventsListener.java · ماژول: ide-ui-api
+
+با اکستنشن‌پوینت IdeEvents.FILE_EVENT بفهم کِی فایلی باز، ذخیره، بسته، حذف یا تغییرنام داده شده.
+
+یک `FileEventListener` ثبت کن. رویداد `FileEvent` یک `type()` (OPENED/SAVED/CLOSED/DELETED/RENAMED)، یک `path()` و برای تغییرنام یک `previousPath()` دارد.
+
+```java — IdeEventsListener.java
+import ir.hanzodev1375.ghostide.ide.ui.api.FileEvent;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileEventListener;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeEvents;
+
+// داخل activate:
+FileEventListener listener = new FileEventListener() {
+  @Override
+  public void onFileEvent(FileEvent event) {
+    switch (event.type()) {
+      case SAVED:
+        context.getLogger().info("saved: " + event.path());
+        break;
+      case RENAMED:
+        context.getLogger().info(event.previousPath() + " -> " + event.path());
+        break;
+      default:
+        break;
+    }
+  }
+};
+context.registerDisposable(
+    context.getExtensions().register(IdeEvents.FILE_EVENT, listener, owner, 0));
+```
+
+> **[WARN]** listener ممکن است روی هر threadی صدا زده شود؛ هرگز مستقیم از آن به View دست نزن.
+
+
+---
+
+# ایکون فایل سفارشی
+> گروه: نمونه‌های آماده · فایل: SampleIcons.java · ماژول: ide-ui-api
+
+با یک فایل JSON و چند تصویر، ایکون فایل‌های مخصوص زبان خودت را در درخت فایل جایگزین کن.
+
+کلاس آماده‌ی `JsonFileIconContributor` یک فایل JSON و پوشه‌ی تصاویر می‌گیرد و ایکون مناسب هر پسوند/نام فایل/پوشه را برمی‌گرداند. تصاویر از assets استخراج و کش می‌شوند.
+
+## ۱. فایل JSON ایکون‌ها
+
+```json — assets/fileicons/icons.json
+{
+  "asset_dir": "fileicons",
+  "defaults": {
+    "file": "default_file",
+    "folder": "default_folder",
+    "root_folder": "default_root_folder"
+  },
+  "fileExtensions": {
+    "foo": "file_type_foo",
+    "bar": "file_type_bar"
+  },
+  "fileNames": {
+    "makefile": "file_type_makefile"
+  },
+  "folderNames": {
+    "src": "folder_src"
+  }
+}
+```
+
+کنار همین فایل، تصاویر `file_type_foo.svg`، `folder_src.svg` و… را در پوشه‌ی `assets/fileicons/` بگذار (پسوندهای `.svg/.png/.jpg/.webp` پشتیبانی می‌شوند).
+
+## ۲. کلاس contributor
+
+```java — icons/SampleIcons.java
+package com.example.samplekit.icons;
+
+import android.content.Context;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.FileIconContributor;
+import ir.hanzodev1375.ghostide.ide.ui.api.JsonFileIconContributor;
+
+public final class SampleIcons implements FileIconContributor {
+
+  private final JsonFileIconContributor delegate;
+
+  public SampleIcons(Context android) {
+    this.delegate = new JsonFileIconContributor(android, "fileicons/icons.json");
+  }
+
+  @Override
+  public String getIcon(String filePath) {
+    return delegate.getIcon(filePath);
+  }
+}
+```
+
+> **[TIP]** اگر فقط چند پسوند ساده می‌خواهی، می‌توانی مستقیماً `FileIconContributor` را پیاده کنی و بسته به `filePath` یک نام drawable یا مسیر برگردانی.
+
+
+---
+
+# ایکون نوار ابزار (عمل یک‌لمسی)
+> گروه: نمونه‌های آماده · فایل: SampleToolbarIcon.java · ماژول: ide-ui-api
+
+یک اکشن دائمی کنار ایکون‌های خود IDE بگذار — در ادیتور یا فایل‌منیجر — و پنل خودت را با یک لمس اجرا کن، بدون باز کردن پاپ‌آپ.
+
+`PluginIcons.setPluginShowState(context, state, title, onClick, icon)` برایت یک `PluginToolbarIcon` در `PluginUiExtensionPoints.TOOLBAR_ICON` ثبت می‌کند. `PluginIconState.Editor` آن را در نوار ابزار **ادیتور** و `PluginIconState.FileES` در نوار ابزار **فایل‌منیجر** می‌گذارد. ایکون می‌تواند از `R.drawable.*` باشد یا مستقیم از assetهای پلاگین — مثل `BitmapDrawable` از یک PNG در نمونه‌ی زیر.
+
+```java — SampleToolbarIcon.java
+package com.example.samplekit;
+
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginIconState;
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginIcons;
+import ir.hanzodev1375.ghostide.ide.ui.api.PanelHostService;
+import ir.hanzodev1375.ghostide.plugin.api.Disposable;
+import ir.hanzodev1375.ghostide.plugin.api.GhostPlugin;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleToolbarIcon implements GhostPlugin {
+
+  private EditorPanel panel = new MyPanel();
+
+  @Override
+  public void activate(PluginContext context) {
+    Context android =
+        context.getServices().require(IdeHostServices.PLUGIN_ANDROID_CONTEXT);
+
+    // ایکون از assets/icon.png بارگذاری شده (یا android.getDrawable(R.drawable.icon)).
+    Drawable icon;
+    try {
+      java.io.InputStream in = android.getAssets().open("icon.png");
+      icon = new BitmapDrawable(android.getResources(), BitmapFactory.decodeStream(in));
+      in.close();
+    } catch (java.io.IOException e) {
+      icon = null; // بدون ایکون هم می‌ماند و کلیک‌پذیر است
+    }
+
+    Disposable d =
+        PluginIcons.setPluginShowState(
+            context,
+            PluginIconState.Editor,   // FileES = نوار ابزار فایل‌منیجر
+            "Run my tool",
+            v -> openPanel(context),  // اکشن واقعی
+            icon);
+    context.registerDisposable(d);
+  }
+
+  private void openPanel(PluginContext context) {
+    // دقیقاً مثل لمس پنل در پاپ‌آپ اجرا می‌کند (بدون پاپ‌آپ).
+    PanelHostService host = context.getServices().get(IdeHostServices.PANEL_HOST);
+    if (host != null) host.showPanel(panel);
+  }
+}
+```
+
+ثبت‌نام به‌صورت خودکار توسط کانتکست پلاگین ردیابی می‌شود، پس unload کردن پلاگین ایکون را هم حذف می‌کند. `Disposable` برگردانده‌شده را فقط اگر خواستی زودتر ایکون را مخفی کنی نگه دار.
+
+> **[TIP]** برای تولید خودکار id یکتا `null` بده، یا برای چند ایکون از یک پلاگین یک `itemId` صریح پاس بده.
+
+
+---
+
+# تصاحب کلیک فایل (SVG → PNG)
+> گروه: نمونه‌های آماده · فایل: SampleSvgClick.java · ماژول: ide-ui-api
+
+تک‌ضربه روی فایل‌های `.svg` در فایل‌منیجر را تصاحب کن، مسیر را بخوان، و قبل از تبدیل از کاربر بپرس — IDE دیگر viewer خودش را برای آن ضربه باز نمی‌کند.
+
+`FileClickHandler` را پیاده کن و در `PluginUiExtensionPoints.FILE_CLICK_HANDLER` ثبتش کن. `supports(...)` تعیین می‌کند کدام ضربه‌ها مال تو هستند؛ `onFileClick(...)` یک `FileClickContext` با مسیر، فایل، Context میزبان و ویوی ردیف لمس‌شده می‌گیرد. برای هر ضربه‌ای که تصاحب کنی، باز شدن داخلی skip می‌شود.
+
+```java — click/SampleSvgClick.java
+package com.example.samplekit.click;
+
+import ir.hanzodev1375.ghostide.ide.ui.api.FileClickContext;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileClickHandler;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.UiFeedbackHost;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleSvgClick implements FileClickHandler {
+
+  private final UiFeedbackHost ui;
+
+  public SampleSvgClick(PluginContext context) {
+    this.ui = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+  }
+
+  // برای هر ضربه اجرا می‌شود: خالص و سریع نگهش دار، اینجا I/O دیسکی نکن.
+  @Override
+  public boolean supports(String path, String name, boolean isDirectory) {
+    return !isDirectory && name.toLowerCase().endsWith(".svg");
+  }
+
+  @Override
+  public void onFileClick(FileClickContext context) {
+    ui.confirm(
+        "تبدیل به PNG؟",
+        context.name(),
+        ok -> {
+          if (!ok) return;
+          // context.file() = java.io.File، context.path() = مسیر مطلق
+          convert(context);
+        });
+  }
+
+  private void convert(FileClickContext context) {
+    new Thread(
+            () -> {
+              // ... context.file() را به یک .png کنارش رستر کن ...
+              // بعد اگر خواستی toast نشان بدهی به ترد UI برگرد:
+              ui.toast("انجام شد: " + context.name());
+            })
+        .start();
+  }
+}
+```
+
+## ثبت‌نام
+
+```java — SampleKitPlugin.java
+import ir.hanzodev1375.ghostide.ide.ui.api.PluginUiExtensionPoints;
+
+@Override
+public void activate(PluginContext context) {
+  context.registerDisposable(
+      context.getExtensions().register(
+          PluginUiExtensionPoints.FILE_CLICK_HANDLER,
+          new SampleSvgClick(context)));
+}
+```
+
+> **[INFO]** اگر می‌خواهی IDE همچنان فایل را باز کند و تو فقط یک آیتم *اضافه* کنی، به‌جای تصاحب ضربه از ردیف action داخلی / منو استفاده کن. برگرداندن `false` از `supports` برای مسیرهایی که مال تو نیستند باعث می‌شود هندلرها تمیز با هم ترکیب شوند — اولین `true` به ترتیب اولویت برنده است.
+
+
+---
+
+# افزودن Language Server
+> گروه: نمونه‌های آماده · فایل: SampleLspProvider.java · ماژول: ide-api
+
+یک زبان جدید را به ادیتور معرفی کن. میزبان خودش چرخه‌ی LSP را مدیریت می‌کند؛ تو فقط می‌گویی کدام فایل‌ها را پشتیبانی می‌کنی و چطور پروسه را اجرا کنی.
+
+`LspServerProvider` تعیین می‌کند کدام درخواست را پشتیبانی می‌کند و یک `LspServerDefinition` می‌سازد. خود تعریف شامل پسوندها، نمایش‌نام و یک `LspServerConnectionFactory` است. اگر سرورت داخل rootfs پروت است، از سرویس `ProotProcessLauncher` استفاده کن.
+
+```java — lsp/SampleLspProvider.java
+package com.example.samplekit.lsp;
+
+import java.util.List;
+import java.util.Set;
+
+import ir.hanzodev1375.ghostide.ide.api.LspServerConnection;
+import ir.hanzodev1375.ghostide.ide.api.LspServerDefinition;
+import ir.hanzodev1375.ghostide.ide.api.LspServerProvider;
+import ir.hanzodev1375.ghostide.ide.api.LspServerRequest;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.ProotProcessLauncher;
+import ir.hanzodev1375.ghostide.plugin.api.PluginContext;
+
+public final class SampleLspProvider implements LspServerProvider {
+
+  private final ProotProcessLauncher launcher;
+
+  public SampleLspProvider(PluginContext context) {
+    this.launcher = context.getServices().require(IdeHostServices.PROOT_PROCESS_LAUNCHER);
+  }
+
+  @Override
+  public String getId() {
+    return "com.example.samplekit.lsp";
+  }
+
+  @Override
+  public String getDisplayName() {
+    return "Sample Language";
+  }
+
+  @Override
+  public boolean supports(LspServerRequest request) {
+    return "foo".equals(request.extension());
+  }
+
+  @Override
+  public LspServerDefinition createDefinition(LspServerRequest request) {
+    return LspServerDefinition
+        .builder(
+            "sample-language",
+            Set.of("foo"),
+            "Sample Language",
+            r -> launcher.launch(
+                r.projectRoot().getAbsolutePath(),
+                "/usr/bin/sample-ls",
+                List.of("--stdio")))
+        .grammarScopeName("source.foo")
+        .enableInlayHints(true)
+        .enableSignatureHelp(true)
+        .initializationTimeoutMillis(10000)
+        .build();
+  }
+}
+```
+
+## اتصال دستی (بدون proot)
+
+اگر می‌خواهی پروسه را خودت مدیریت کنی، یک `LspServerConnection` بنویس که `start()`، `getInputStream()/getOutputStream()` و `close()` را پیاده کند و همان را داخل builder بده.
+
+```java — MyConnection.java
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import ir.hanzodev1375.ghostide.ide.api.LspServerConnection;
+
+public final class MyConnection implements LspServerConnection {
+
+  private final Process process;
+
+  public MyConnection(Process process) {
+    this.process = process;
+  }
+
+  @Override public void start() throws IOException { /* process already started */ }
+  @Override public OutputStream getOutputStream() { return process.getOutputStream(); }
+  @Override public InputStream getInputStream() { return process.getInputStream(); }
+  @Override public boolean isClosed() { return !process.isAlive(); }
+  @Override public void close() { process.destroy(); }
+}
+```
+
+> **[INFO]** مقدار `grammarScopeName` به ThemeMaker وصل می‌شود تا رنگ‌آمیزی نحو درست اعمال شود.
+
+
+---
+
+# پیام‌ها و سرویس‌های میزبان
+> گروه: نمونه‌های آماده · فایل: FeedbackUsage.java · ماژول: ide-ui-api
+
+برای پیام کوتاه، پرسیدن ورودی و تأیید، از UiFeedbackHost استفاده کن؛ برای کار با ادیتور، فایل و اجرا هم سرویس‌های میزبان در دسترس‌اند.
+
+`UiFeedbackHost` سه متد دارد: `toast`، `promptInput` و `confirm`. همه‌ی سرویس‌های میزبان با `context.getServices().require(...)` گرفته می‌شوند.
+
+```java — FeedbackUsage.java
+import ir.hanzodev1375.ghostide.ide.ui.api.CodeRunnerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.EditorHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.FileManagerHost;
+import ir.hanzodev1375.ghostide.ide.ui.api.IdeHostServices;
+import ir.hanzodev1375.ghostide.ide.ui.api.UiFeedbackHost;
+
+// داخل activate یا هر جای دیگر:
+UiFeedbackHost feedback = context.getServices().require(IdeHostServices.UI_FEEDBACK);
+EditorHost editor = context.getServices().require(IdeHostServices.EDITOR_HOST);
+FileManagerHost files = context.getServices().require(IdeHostServices.FILE_MANAGER_HOST);
+CodeRunnerHost runner = context.getServices().require(IdeHostServices.CODE_RUNNER_HOST);
+
+feedback.toast("Sample Kit ready");
+
+feedback.promptInput("نام فایل جدید", "untitled.txt", text -> {
+  if (text != null) {
+    editor.setEditorText("// " + text);
+  }
+});
+
+feedback.confirm("پاک کردن کش؟", "این عمل برگشت‌پذیر نیست.", confirmed -> {
+  if (confirmed) {
+    runner.runShell("rm -rf cache", true);
+  }
+});
+
+// اجرای مستقیم یک دستور و خواندن خروجی
+CodeRunnerHost.ExecResult result = runner.exec("echo hi", line -> {});
+if (result.success()) {
+  feedback.toast(result.output());
+}
+```
+
+## جدول سرویس‌های میزبان
+
+| سرویس | کلید | کاربرد |
+| --- | --- | --- |
+| `EditorHost` | `IdeHostServices.EDITOR_HOST` | فایل باز، متن ادیتور، باز کردن فایل |
+| `FileManagerHost` | `IdeHostServices.FILE_MANAGER_HOST` | ریشه‌ی پروژه، فایل انتخاب‌شده، refresh |
+| `CodeRunnerHost` | `IdeHostServices.CODE_RUNNER_HOST` | اجرای شل/فایل و گرفتن خروجی |
+| `UiFeedbackHost` | `IdeHostServices.UI_FEEDBACK` | toast، پرسیدن ورودی، تأیید |
+| `ProotProcessLauncher` | `IdeHostServices.PROOT_PROCESS_LAUNCHER` | اجرای پروسه داخل rootfs |
+| `Context` | `IdeHostServices.PLUGIN_ANDROID_CONTEXT` | دسترسی به resources و inflate |
+
+
+---
+
+# ساخت و بسته‌بندی .gpl
+> گروه: نمونه‌های آماده · فایل: build-gpl.sh
+
+خروجی پروژه را به یک فایل .gpl تبدیل کن: کامپایل، ساختن dex با d8، و zip کردن همراه مانیفست.
+
+فایل `.gpl` در واقع یک zip است که حداقل `classes.dex` و `assets/plugin.json` را دارد. منابع (مانند `resources.arsc` برای `R.string`) هم باید داخل zip باشند تا متن‌های پلاگین درست بیایند.
+
+1. پلاگین را کامپایل کن: `./gradlew :app:assembleDebug` (خروجی dex/jar موقت).
+2. کلاس‌های پلاگین را با `d8` به `classes.dex` تبدیل کن.
+3. `classes.dex`، پوشه‌ی `assets/` (شامل `plugin.json`) و در صورت وجود `resources.arsc`/`res/` را در یک zip بگذار.
+4. پسوند zip را به `.gpl` تغییر بده.
+5. فایل را در `filesDir/gpl_plugins/` دستگاه کپی کن و اپ را ری‌استارت کن.
+
+## اسکریپت نمونه
+
+```bash — build-gpl.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT=build/gpl
+rm -rf "$OUT"
+mkdir -p "$OUT"
+
+# ۱) کامپایل کلاس‌های پلاگین در برابر APIها
+javac -source 17 -target 17 \
+  -cp "app/libs/plugin-api-0.1.0.jar:app/libs/ide-api-0.1.0.jar" \
+  -d "$OUT/classes" \
+  $(find app/src/main/java -name '*.java')
+
+# ۲) تبدیل به dex  (d8 از build-tools اندروید)
+d8 --min-api 26 --output "$OUT" \
+  $(find "$OUT/classes" -name '*.class')
+
+# ۳) کنار هم گذاشتن مانیفست و منابع
+cp -r app/src/main/assets "$OUT/" 2>/dev/null || true
+
+# ۴) ساخت فایل .gpl
+mkdir -p "$OUT/zip"
+cp "$OUT/classes.dex" "$OUT/zip/"
+cp -r "$OUT/assets" "$OUT/zip/" 2>/dev/null || true
+(cd "$OUT/zip" && zip -r ../samplekit.gpl .)
+
+echo "ساخته شد: $OUT/samplekit.gpl"
+```
+
+> **[TIP]** برای افزودن متن‌های `R.string` باید `resources.arsc` و پوشه‌ی `res/` را هم از خروجی `assembleDebug` داخل zip بگذاری؛ وگرنه `Context.getString` روی منابع پلاگین پیدا نمی‌شود.
+
+> **[INFO]** مسیر نصب و بارگذاری را در فرمت .gpl و نصب پلاگین ببین.
+

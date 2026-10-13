@@ -369,5 +369,12 @@
     "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/htmliconviews/doc.json",
     "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/htmliconviews/htmliconviewer.gpl",
     "source": "https://github.com/HanzoDev30/plugins/tree/main/htmliconviews/HtmlIconView"
+  },
+  {
+    "name": "jadx",
+    "icon": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jadx/icon.png",
+    "doc": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jadx/doc.json",
+    "gplfile": "https://raw.githubusercontent.com/HanzoDev30/plugins/main/jadx/JadxDecompiler.gpl",
+    "source": "https://github.com/HanzoDev30/plugins/tree/main/jadx/JadxProject"
   }
 ]
