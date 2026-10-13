@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "icon.png",
+  "note": "# icon viewer \n - with this plugin you can see the icons that are on the way \n - this plugin works for `html`, `htm`, `css`, `scss`, `less`, `sass`, `js`, `mjs`, `cjs`, `jsx`, `ts`, `tsx`, `vue`, `php`, `asp`, `jsp`, `aspx`, `ejs`, `erb`, `md` and most web-related formats and py + json"
+}

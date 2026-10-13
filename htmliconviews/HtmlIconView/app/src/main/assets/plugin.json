@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.htmlicons",
+  "name": "Html Icon View",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.htmlicons.HtmlIconsPlugin",
+  "description": "Shows inline image previews for web languages (HTML/CSS/JS/TS/PHP). Detects any image reference by extension (.svg/.png/.jpg/.gif/.webp/...) including relative paths like ./img.png or ../assets/x.svg, and renders the local file as an inlay hint. SVG is rendered through AndroidSVG and converted to Bitmap.",
+  "minHostVersion": 1,
+  "icon": "icon.png"
+}
