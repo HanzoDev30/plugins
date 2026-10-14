@@ -1,0 +1,5 @@
+{
+  "devname": "Ghost",
+  "icon": "react.png",
+  "note": "## React (JS + TS)\n - React language server backed by TypeScript with full JSX awareness \u2014 completion, diagnostics, hover, go-to-definition, rename, signature help and inlay hints\n - Applies to `.tsx`/`.jsx` everywhere, and to plain `.ts`/`.js` only inside a React project so the built-in TypeScript server keeps handling the rest\n - Bundled React TextMate grammars (`source.tsx`, `source.js`, `source.ts`) for accurate JSX/TSX highlighting even before the server connects\n - Built-in runner: open **Run React** from the editor toolbar or the command list\n   - Inside a React project it runs your `package.json` dev script (detects npm/pnpm/yarn/bun and installs dependencies on first run)\n   - For a standalone `.tsx`/`.jsx` component it creates a throwaway Vite project next to it and starts the dev server\n   - Any other script is bundled with esbuild and run with Node\n - Everything runs in the IDE terminal; install the language server once from the Plugin Manager setup action"
+}

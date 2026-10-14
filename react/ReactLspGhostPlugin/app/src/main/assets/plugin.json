@@ -1,0 +1,9 @@
+{
+  "id": "ir.hanzodev1375.react",
+  "name": "React Support",
+  "version": "1.0.0",
+  "entryClass": "ir.hanzodev1375.react.ReactPlugin",
+  "description": "React JS/TS support: a TypeScript-backed language server with JSX awareness, bundled React TextMate grammars for .tsx/.jsx and a runner that starts React projects or single components in the IDE terminal.",
+  "minHostVersion": 1,
+  "icon": "react.png"
+}

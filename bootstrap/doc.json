@@ -1,5 +1,5 @@
 {
   "devname": "Ghost",
   "icon": "bootstrap.png",
-  "note": "## Bootstrap Lsp \n - Bootstrap class completion and hover in HTML (priority 500)"
+  "note": "## Bootstrap Lsp \n - Bootstrap class completion and hover in HTML (priority 500)\n - Shows the Bootstrap logo inline next to every valid Bootstrap class name\n - Class names come from the project's node_modules/bootstrap/dist/css/bootstrap.css, the same source the language server indexes"
 }

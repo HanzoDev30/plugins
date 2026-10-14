@@ -1,7 +1,11 @@
 package ir.ghostide.tailwindcsslsp;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,8 +14,13 @@ import ir.hanzodev1375.ghostide.ide.api.LspServerDefinition;
 import ir.hanzodev1375.ghostide.ide.api.LspServerProvider;
 import ir.hanzodev1375.ghostide.ide.api.LspServerRequest;
 import ir.hanzodev1375.ghostide.ide.ui.api.ProotProcessLauncher;
+import ir.hanzodev1375.ghostide.plugin.api.PluginLogger;
 
 public final class TailwindCssLspProvider implements LspServerProvider {
+
+  // Outranks the Bootstrap proxy (500) so, in a workspace that uses both, the
+  // Tailwind proxy owns the HTML language server and its own utilities win.
+  public static final int PRIORITY = 600;
 
   private static final List<String> CANDIDATE_PATHS =
       Arrays.asList(
@@ -69,9 +78,11 @@ public final class TailwindCssLspProvider implements LspServerProvider {
           Map.entry("erb", "html"));
 
   private final ProotProcessLauncher launcher;
+  private final PluginLogger log;
 
-  public TailwindCssLspProvider(ProotProcessLauncher launcher) {
+  public TailwindCssLspProvider(ProotProcessLauncher launcher, PluginLogger log) {
     this.launcher = launcher;
+    this.log = log;
   }
 
   @Override
@@ -86,7 +97,7 @@ public final class TailwindCssLspProvider implements LspServerProvider {
 
   @Override
   public int getPriority() {
-    return 300;
+    return PRIORITY;
   }
 
   public boolean isInstalled() {
@@ -100,14 +111,66 @@ public final class TailwindCssLspProvider implements LspServerProvider {
 
   @Override
   public boolean supports(LspServerRequest request) {
-    if (request == null || request.extension() == null) {
+    if (request == null || request.file() == null || request.extension() == null) {
       return false;
     }
-    return SUPPORTED_EXTENSIONS.contains(request.extension().toLowerCase());
+    if (!SUPPORTED_EXTENSIONS.contains(request.extension().toLowerCase(Locale.ROOT))) {
+      return false;
+    }
+    boolean ok = usesTailwind(request.file());
+    if (log != null) {
+      log.info("tailwind: supports " + request.file() + " -> " + ok);
+    }
+    return ok;
+  }
+
+  private static boolean usesTailwind(File file) {
+    File dir = file.isDirectory() ? file : file.getParentFile();
+    for (int depth = 0; dir != null && depth < 10; depth++, dir = dir.getParentFile()) {
+      if (new File(dir, "node_modules/tailwindcss").isDirectory()) {
+        return true;
+      }
+      if (new File(dir, "node_modules/@tailwindcss").isDirectory()) {
+        return true;
+      }
+      for (String name : new String[] {
+        "tailwind.config.js",
+        "tailwind.config.ts",
+        "tailwind.config.cjs",
+        "tailwind.config.mjs",
+        "tailwind.config.mts"
+      }) {
+        if (new File(dir, name).isFile()) {
+          return true;
+        }
+      }
+      File pkg = new File(dir, "package.json");
+      if (pkg.isFile()) {
+        try {
+          String json = new String(Files.readAllBytes(pkg.toPath()), StandardCharsets.UTF_8);
+          if (json.contains("\"tailwindcss\"")) {
+            return true;
+          }
+        } catch (Exception ignored) {
+          // keep walking up
+        }
+      }
+    }
+    return false;
   }
 
   @Override
   public LspServerDefinition createDefinition(LspServerRequest request) {
+    if (log != null) {
+      log.info(
+          "tailwind: selected for "
+              + (request != null && request.file() != null ? request.file() : "?")
+              + " (root="
+              + (request != null && request.projectRoot() != null
+                  ? request.projectRoot().getAbsolutePath()
+                  : "?")
+              + ")");
+    }
     Map<String, Object> initOptions =
         Map.of("userLanguages", USER_LANGUAGES, "tailwindCSS", TAILWIND_CONFIG);
 
@@ -124,17 +187,34 @@ public final class TailwindCssLspProvider implements LspServerProvider {
   }
 
   private LspServerConnection connect(LspServerRequest request) {
-    return launcher.launch(
-        request.projectRoot().getAbsolutePath(), findExecutable(), SERVER_ARGS);
+    try {
+      String exe = findExecutable();
+      String root =
+          request != null && request.projectRoot() != null
+              ? request.projectRoot().getAbsolutePath()
+              : "/";
+      if (log != null) {
+        log.info("tailwind: launching " + exe + " in " + root);
+      }
+      return launcher.launch(root, exe, SERVER_ARGS);
+    } catch (Throwable t) {
+      if (log != null) {
+        log.error("tailwind: failed to launch language server", t);
+      }
+      throw t;
+    }
   }
 
   private String findExecutable() {
+    StringBuilder seen = new StringBuilder();
     for (String path : CANDIDATE_PATHS) {
-      if (launcher.isInstalled(path)) {
+      boolean installed = launcher.isInstalled(path);
+      seen.append(path).append(installed ? "=yes " : "=no ");
+      if (installed) {
         return path;
       }
     }
     throw new IllegalStateException(
-        "tailwindcss-language-server not found in: " + CANDIDATE_PATHS);
+        "tailwindcss-language-server not installed; candidates: " + seen);
   }
 }

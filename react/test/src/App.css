@@ -1,0 +1,71 @@
+.app {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h1 {
+  margin: 0;
+  color: #61dafb;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: #8b98a9;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  font-size: 0.85rem;
+  color: #8b98a9;
+}
+
+.hello {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.counter-value {
+  min-width: 2ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.3rem;
+}
+
+.todos {
+  border: 1px solid #2a3a52;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.todos ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.todo-add {
+  display: flex;
+  gap: 8px;
+}
+
+.todo-add input {
+  flex: 1;
+}
